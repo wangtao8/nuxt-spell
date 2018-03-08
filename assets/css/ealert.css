@@ -1,0 +1,22 @@
+.mint-msgbox{
+  background-color: rgba(0, 0, 0, 0.76);
+  width: 50%;
+  border-radius: 16px;
+  font-size: 24px;
+}
+.mint-msgbox-message {
+  color: #fff;
+}
+.mint-msgbox-btn{
+  background-color: rgba(0, 0, 0, 0);
+}
+.v-modal{
+  background: rgba(141, 141, 141, 0);
+}
+.mint-msgbox-confirm{
+  color: #fff;
+}
+.mint-msgbox-content {
+  border-bottom: 1px solid #ffffff;
+  padding: 40px 20px;
+}
