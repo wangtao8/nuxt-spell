@@ -254,4 +254,9 @@ router.post('/myGroups', (req, res, next) => {
         }
   })
 })
+
+router.get('/activityDetail', (req, res, next) => {
+  console.log('storeId:', req.query.storeId, 'shopId:', req.query.shopId, 'activityId:', req.query.activityId)
+res.send('2')
+})
 export default router
