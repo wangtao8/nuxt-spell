@@ -65,7 +65,7 @@
       }
     },
     async asyncData({ params }, callback) {
-      axios.post('http://localhost:3222/api/myGroups',{"state":1})
+      axios.post('http://172.30.3.40:3222/spell/myGroups',{"state":1})
          .then((data) => {
            let  res=data.data;
             callback(null, { fightData:res.data })
@@ -81,22 +81,22 @@
         this.indexGroup = $index;
             if($index==0){
 //拼团进行中
-                    axios.post('http://localhost:3222/api/myGroups',{"state":1}).then(({ data }) => {
+                    axios.post('../spell/myGroups',{"state":1}).then(({ data }) => {
                            this.fightData=data.data
                      })
               }else if($index==1){
            //           	拼团成功
-                      axios.post('http://localhost:3222/api/myGroups',{"state":2}).then(({ data }) => {
+                      axios.post('../spell/myGroups',{"state":2}).then(({ data }) => {
                             this.fightData=data.data
                       })
               }else if($index==2){
                 //           	拼团失败
-                       axios.post('http://localhost:3222/api/myGroups',{"state":3}).then(({ data }) => {
+                       axios.post('../spell/myGroups',{"state":3}).then(({ data }) => {
                            this.fightData=data.data
                        })
               }else {
                 //           	拼团完成
-                      axios.post('http://localhost:3222/api/myGroups',{"state":4}).then(({ data }) => {
+                      axios.post('../spell/myGroups',{"state":4}).then(({ data }) => {
                             this.fightData=data.data
                       })
               }
