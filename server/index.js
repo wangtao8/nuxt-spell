@@ -4,7 +4,7 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 
-import api from './api'
+import api from './spell'
 
 const app = express()
 const host = process.env.HOST
@@ -25,8 +25,8 @@ app.use(session({
 app.set('port', port)
 
 // Import API Routes
-app.use('/api', api)
-
+app.use('/spell', api)
+// app.use('${config.router.base}spell', spell)
 // Start nuxt.js
 async function start () {
   // Import and Set Nuxt.js options

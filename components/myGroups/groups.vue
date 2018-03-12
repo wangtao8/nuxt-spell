@@ -20,12 +20,12 @@
     methods:{
       myGroups (){
         this.myAllSpell='1',
-          location.href = '/myGroups'
+          location.href = 'myGroups'
         this.$emit('myGroups',[this.myAllSpell]);
       },
       myOffered(){
         this.myAllSpell='2',
-          location.href = '/myOffered'
+          location.href = 'myOffered'
       }
     }
   }

@@ -136,7 +136,7 @@
     },
     async asyncData () {
       return axios.all([
-        axios.get('http://127.0.0.1:3222/api/getDetail?name=wangtao&password=1234')
+        axios.get('http://127.0.0.1:3222/spell/getDetail?name=wangtao&password=1234')
       ])
       .then(axios.spread(function (content) {
 //        console.log(content.data.date)
@@ -170,7 +170,7 @@
         this.$refs.loadmore.onTopLoaded()
         let self = this
 //        this.goodss[0].title.push(this.goodss[0].title)
-        axios.get('http://127.0.0.1:3222/api/getmsg')
+        axios.get('http://127.0.0.1:3222/spell/getmsg')
           .then(function (response) {
             self.goodss = response.data.cf
           })

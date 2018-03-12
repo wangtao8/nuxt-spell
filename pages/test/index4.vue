@@ -41,7 +41,7 @@
     },
     async asyncData () {
       return axios.all([
-        axios.get('http://192.168.79.12:3222/api/getRule')
+        axios.get('http://192.168.79.12:3222/spell/getRule')
       ])
         .then(axios.spread(function (rule) {
           return {

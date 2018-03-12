@@ -93,7 +93,7 @@
   import Btn from '../components/button'
   import Load from '../components/load'
   import filter from '../assets/js/filter'
-//  import request from '../static/api/request'
+//  import request from '../static/spell/request'
   import axios from 'axios'
   import { MessageBox } from 'mint-ui'
   export default {
@@ -141,8 +141,8 @@
       // 记得return 不然不会返回结果
       return axios.all([
         axios.post('http://172.30.3.40:9086/mockjsdata/5/spell/getSpellHomeInfo', gethead),
-        axios.post('http://127.0.0.1:3222/api/gettitle', gettitle),
-        axios.post('http://127.0.0.1:3222/api/getclass', getclass)
+        axios.post('http://172.30.3.40:3222/spell/gettitle', gettitle),
+        axios.post('http://172.30.3.40:3222/spell/getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
           if (gethead.data.state) {
@@ -282,9 +282,9 @@
           this.data1 = true
           this.data2 = true
         } else if (e.target.innerText === '参团') {
-          location.href = '/participate'
+          location.href = 'participate'
         } else {
-          location.href = '/myGroups'
+          location.href = 'myGroups'
         }
       },
       gotuan: function () { // 去开团按钮点击
@@ -310,7 +310,7 @@
             shopId: '123',
             storeId: '234'
           }
-          axios.post('/api/getclass', getclass)
+          axios.post('./getclass', getclass)
             .then(function (response) {
               // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
               let stext = document.getElementsByClassName('active')[0].innerText
@@ -345,7 +345,7 @@
             shopId: '123',
             storeId: '234'
           }
-          axios.post('/api/getclass', getclass)
+          axios.post('./getclass', getclass)
             .then(function (response) {
               // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
               let stext = document.getElementsByClassName('active')[0].innerText

@@ -84,7 +84,7 @@
         this.currentpageNum = 1
       },
       goDetail: function () {
-        location.href = '/groupDetails'
+        location.href = 'groupDetails'
       },
       loadTop: function () {
         // 下拉刷新
@@ -92,7 +92,7 @@
         this.currentpageNum = 1
         this.allLoaded = false
         setTimeout(() => {
-          axios.post('/api/getclass')
+          axios.post('/spell/getclass')
             .then(function (response) {
               // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
               let stext = document.getElementsByClassName('active')[0].innerText
@@ -117,7 +117,7 @@
 //        console.log('this.current1:', this.currentpageNum)
         let self = this
         setTimeout(() => {
-          axios.post('/api/getclass')
+          axios.post('/spell/getclass')
             .then(function (response) {
               // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
               let stext = document.getElementsByClassName('active')[0].innerText
@@ -220,8 +220,8 @@
       }
       return axios.all([
         axios.post('http://172.30.3.40:9086/mockjsdata/5/spell/getSpellHomeInfo', gethead),
-        axios.post('http://127.0.0.1:3222/api/gettitle', gettitle),
-        axios.post('http://127.0.0.1:3222/api/getclass', getclass)
+        axios.post('http://127.0.0.1:3222/spell/gettitle', gettitle),
+        axios.post('http://127.0.0.1:3222/spell/getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
           if (gethead.data.state) {

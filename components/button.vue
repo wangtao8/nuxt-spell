@@ -20,7 +20,7 @@
       }
     },
     mounted () {
-      console.log('222222222222:', this.show2)
+//      console.log('222222222222:', this.show2)
     }
   }
 </script>

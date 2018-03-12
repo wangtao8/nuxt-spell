@@ -76,13 +76,13 @@
         console.log(this.currentTab)
         //         if($index==1){
         // //           	拼团成功
-        //           api.get('/getspellListSucc').then(({ data }) => {
+        //           spell.get('/getspellListSucc').then(({ data }) => {
         //             console.log("this.fightData", data)
         //             this.fightData=data
         //           })
         //         }else if($index==2){
         // //           	拼团失败
-        //           api.get('/getspellListFail').then(({ data }) => {
+        //           spell.get('/getspellListFail').then(({ data }) => {
         //             console.log("this.fightData", data)
         //             this.fightData=data
         //           })

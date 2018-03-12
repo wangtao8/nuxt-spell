@@ -12,8 +12,7 @@ module.exports = {
       { hid: 'description', name: 'viewport', content: 'width=750,user-scalable=no,target-densitydpi=device-dpi' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://unpkg.com/element-ui/lib/theme-default/index.css' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
   build: {
@@ -27,6 +26,9 @@ module.exports = {
         })
       }
     }
+  },
+  router: {
+    base: '/spell/'
   },
   root: true,
   parser: 'babel-eslint',

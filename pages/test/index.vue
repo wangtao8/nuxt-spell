@@ -37,7 +37,7 @@
         this.currentpageNum++
         let self = this
         setTimeout(() => {
-          axios.get('/api/getclass')
+          axios.get('/spell/getclass')
             .then(function (response) {
               if (self.totalNum > self.currentpageNum) {
                 self.historylist.push(response.data.cf)

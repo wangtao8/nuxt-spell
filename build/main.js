@@ -88,7 +88,7 @@ module.exports = {
   head: {
     title: 'mynuxt',
     meta: [{ charset: 'utf-8' }, { hid: 'description', name: 'viewport', content: 'width=750,user-scalable=no,target-densitydpi=device-dpi' }],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }, { rel: 'stylesheet', href: 'https://unpkg.com/element-ui/lib/theme-default/index.css' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
   build: {
     extend: function extend(config, ctx) {
@@ -101,6 +101,9 @@ module.exports = {
         });
       }
     }
+  },
+  router: {
+    base: '/spell/'
   },
   root: true,
   parser: 'babel-eslint',
@@ -455,8 +458,8 @@ module.exports = require("request");
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_E_2_node_modules_babel_runtime_regenerator__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_E_2_node_modules_babel_runtime_regenerator___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_E_2_node_modules_babel_runtime_regenerator__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_E_IdeaProjects_nuxt_spell2_node_modules_babel_runtime_regenerator__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_E_IdeaProjects_nuxt_spell2_node_modules_babel_runtime_regenerator___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_E_IdeaProjects_nuxt_spell2_node_modules_babel_runtime_regenerator__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_nuxt__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_nuxt___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_nuxt__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_express__ = __webpack_require__(0);
@@ -467,14 +470,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_cookie_parser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_cookie_parser__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_express_session__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_express_session___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_express_session__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__api__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__spell__ = __webpack_require__(2);
 
 
+// app.use('${config.router.base}spell', spell)
 // Start nuxt.js
 var start = function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_E_2_node_modules_babel_runtime_regenerator___default.a.mark(function _callee() {
+  var _ref = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_E_IdeaProjects_nuxt_spell2_node_modules_babel_runtime_regenerator___default.a.mark(function _callee() {
     var config, nuxt;
-    return __WEBPACK_IMPORTED_MODULE_0_E_2_node_modules_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
+    return __WEBPACK_IMPORTED_MODULE_0_E_IdeaProjects_nuxt_spell2_node_modules_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -560,7 +564,7 @@ app.use(__WEBPACK_IMPORTED_MODULE_5_express_session___default()({
 app.set('port', port);
 
 // Import API Routes
-app.use('/api', __WEBPACK_IMPORTED_MODULE_6__api__["a" /* default */]);
+app.use('/spell', __WEBPACK_IMPORTED_MODULE_6__spell__["a" /* default */]);
 
 start();
 

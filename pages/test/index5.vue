@@ -16,7 +16,7 @@
     },
     async asyncData () {
       return axios.all([
-        axios.get('http://127.0.0.1:3222/api/gettest')
+        axios.get('http://127.0.0.1:3222/spell/gettest')
       ])
         .then(axios.spread(function (title) {
           console.log(title.data.data)

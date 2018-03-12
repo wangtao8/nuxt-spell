@@ -36,7 +36,7 @@
       }
     },
     async asyncData () {
-      let { data } = await axios.get('/api/goods')
+      let { data } = await axios.get('/spell/goods')
       console.log('data:', data)
       return {
         goodss: data.goods
