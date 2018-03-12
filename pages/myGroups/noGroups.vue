@@ -32,11 +32,12 @@
   }
 </script>
 
-<style>
+<style scoped>
   @import "../../assets/css/base.css";
-  #__nuxt, .warpPage, #wrap{
+   .warpPage, #wrap{
     width: 100%;
     height: 100%;
+    margin-bottom:0;
   }
   .content{
     width: 100%;
