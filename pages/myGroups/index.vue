@@ -25,7 +25,6 @@
     </div>
   </div>
 </template>
-
 <script>
   import { Loadmore } from 'mint-ui';
   import groups from '../../components/myGroups/groups'
