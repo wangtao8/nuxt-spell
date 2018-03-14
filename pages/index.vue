@@ -93,6 +93,7 @@
   import Btn from '../components/button'
   import Load from '../components/load'
   import filter from '../assets/js/filter'
+  import Wxt from '../assets/js/WXUtil'
 //  import request from '../static/spell/request'
   import axios from 'axios'
   import { MessageBox } from 'mint-ui'
@@ -196,6 +197,12 @@
       let win1lt = (window.innerWidth - 608) / 2
       let win1tp = (window.innerHeight - 828) / 2
       let win2tp = (window.innerHeight - 358) / 2
+
+      //微信鉴权
+      let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+      let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
+      Wxt.verify(storeId, shopId)
+
       for (var i = 0; i < lis.length; i++) {
         elWidth += lis[i].clientWidth
       }

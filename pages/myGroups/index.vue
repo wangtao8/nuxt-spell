@@ -32,6 +32,7 @@
   import fightSuccess from '../../components/myGroups/fightSuccess'
   import collageFailure from '../../components/myGroups/collageFailure'
   import collageFull from '../../components/myGroups/collageFull'
+  import Wxt from '../../assets/js/WXUtil'
    import axios from 'axios'
   export default {
     name: 'box',
@@ -63,6 +64,14 @@
         topStatus:"",
         bottomStatus:''
       }
+    },
+    mounted () {
+
+      //微信鉴权
+      let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+      let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
+      Wxt.verify(storeId, shopId)
+
     },
     async asyncData({ params }, callback) {
       axios.post('http://172.30.3.40:3222/spell/myGroups',{"state":1})

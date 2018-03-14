@@ -54,6 +54,7 @@
 </template>
 <script>
   import axios from 'axios'
+  import Wxt from '../../assets/js/WXUtil'
   import { MessageBox } from 'mint-ui'
   export default {
     data () {
@@ -156,6 +157,12 @@
       let self = this
       let elWidth = 0
       let lis = self.$refs.mybox.children
+
+      //微信鉴权
+      let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+      let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
+      Wxt.verify(storeId, shopId)
+
       for (var i = 0; i < lis.length; i++) {
         elWidth += lis[i].clientWidth
       }

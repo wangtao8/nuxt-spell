@@ -19,6 +19,7 @@
 </template>
 <script>
 //  import axios from 'axios'
+  import Wxt from '../../assets/js/WXUtil'
   import Load from '../../components/load'
   import filter from '../../assets/js/filter'
   export default {
@@ -36,6 +37,12 @@
     components: { Load },
     mounted () {
       let self = this
+
+      //微信鉴权
+      let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+      let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
+      Wxt.verify(storeId, shopId)
+
       // 加载动画
       setTimeout(function () {
         self.isShow = false

@@ -33,6 +33,7 @@
 </template>
 <script>
   import axios from 'axios'
+  import Wxt from '../../assets/js/WXUtil'
   export default {
     data () {
       return {
@@ -51,6 +52,12 @@
     },
     mounted () {
       console.log(this.rules)
+
+      //微信鉴权
+      let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+      let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
+      Wxt.verify(storeId, shopId)
+
     },
     methods: {
       Todetail: function () {
