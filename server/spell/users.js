@@ -257,6 +257,7 @@ router.post('/myGroups', (req, res, next) => {
 
 router.get('/activityDetail', (req, res, next) => {
   // 接收到数据后 请求活动首页接口
+
   var storeId = req.body.storeId;
   var activityId = req.body.activityId;
   console.log("storeId",storeId)
