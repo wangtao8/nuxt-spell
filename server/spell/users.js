@@ -262,7 +262,7 @@ router.post('/activityDetail', (req, res, next) => {
   console.log("storeId",storeId)
   console.log("activityId",activityId)
   request.get('http://172.30.3.40:9086/mockjsdata/5/spell/getSpellHomeInfo', function (error, response, body) {
-    res.send(body)
+       res.send(body)
   })
 })
 export default router
