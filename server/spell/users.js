@@ -255,14 +255,17 @@ router.post('/myGroups', (req, res, next) => {
   })
 })
 
-router.post('/activityDetail', (req, res, next) => {
+//活动首页head请求转发
+router.post('/activityDetails', (req, res, next) => {
   // 接收到数据后 请求活动首页接口
-  var storeId = req.body.storeId;
-  var activityId = req.body.activityId;
-  console.log("storeId",storeId)
-  console.log("activityId",activityId)
-  request.get('http://172.30.3.40:9086/mockjsdata/5/spell/getSpellHomeInfo', function (error, response, body) {
-       res.send(body)
+  let data = req.body
+  // request post请求带参写法
+  request.post('http://172.30.3.40:9086/mockjsdata/5/spell/getSpellHomeInfo',{json:{data: data}}, function (error, response, body) {
+    if (error) {
+      res.send('0')
+    } else {
+      res.send(body)
+    }
   })
 })
 export default router

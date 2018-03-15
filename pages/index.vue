@@ -118,33 +118,33 @@
         msg: ''// 请求错误提示消息
       }
     },
-    async asyncData (params) {
+    async asyncData (context) {
       // 获得头部
+      let activityId = context.query.activityId
+      let shopId = context.query.shopId
+      let storeId = context.query.storeId
       let gethead = {
-        activityId: '123',
-        shopId: '234',
-        storeId: '345'
+        activityId: activityId,
+        shopId: shopId,
+        storeId: storeId
       }
       // 获得标题
       let gettitle = {
-        shopId: '123',
-        storeId: '234'
+        shopId: shopId,
+        storeId: storeId
       }
       // 获得商品
       let getclass = {
-        activityId: '123',
+        activityId: activityId,
         categoryId: '234',
         pageIndex: 1,
         pageSize: 4,
-        shopId: '123',
-        storeId: '234'
+        shopId: shopId,
+        storeId: storeId
       }
       // 记得return 不然不会返回结果
-
-      let storeId=params.route.query.storeId
-      let activityId=params.route.query.activityId
       return axios.all([
-        axios.post('http://172.30.3.40:3222/spell/activityDetail', {"storeId":storeId,"activityId":activityId}),
+        axios.post('http://172.30.3.40:3222/spell/activityDetails', gethead),
         axios.post('http://172.30.3.40:3222/spell/gettitle', gettitle),
         axios.post('http://172.30.3.40:3222/spell/getclass', getclass)
       ])
