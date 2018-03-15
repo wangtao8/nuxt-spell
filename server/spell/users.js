@@ -256,7 +256,14 @@ router.post('/myGroups', (req, res, next) => {
 })
 
 router.get('/activityDetail', (req, res, next) => {
-  console.log('storeId:', req.query.storeId, 'shopId:', req.query.shopId, 'activityId:', req.query.activityId)
-res.send('2')
+  // 接收到数据后 请求活动首页接口
+  var storeId = req.body.storeId;
+  var activityId = req.body.activityId;
+  console.log("storeId",storeId)
+  console.log("activityId",activityId)
+  request.get('http://172.30.3.40:9086/mockjsdata/5/spell/getSpellHomeInfo', function (error, response, body) {
+    // res.location('http://172.30.3.40:3222')
+    res.send(body)
+  })
 })
 export default router

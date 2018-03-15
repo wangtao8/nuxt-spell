@@ -118,7 +118,7 @@
         msg: ''// 请求错误提示消息
       }
     },
-    async asyncData () {
+    async asyncData (params) {
       // 获得头部
       let gethead = {
         activityId: '123',
@@ -140,8 +140,10 @@
         storeId: '234'
       }
       // 记得return 不然不会返回结果
+      let storeId=params.route.query.storeId
+      let activityId=params.route.query.activityId
       return axios.all([
-        axios.post('http://172.30.3.40:9086/mockjsdata/5/spell/getSpellHomeInfo', gethead),
+        axios.post('http://172.30.3.40:3222/spell/activityDetail', {"storeId":storeId,"activityId":activityId}),
         axios.post('http://172.30.3.40:3222/spell/gettitle', gettitle),
         axios.post('http://172.30.3.40:3222/spell/getclass', getclass)
       ])
