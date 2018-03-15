@@ -140,6 +140,7 @@
         storeId: '234'
       }
       // 记得return 不然不会返回结果
+
       let storeId=params.route.query.storeId
       let activityId=params.route.query.activityId
       return axios.all([
