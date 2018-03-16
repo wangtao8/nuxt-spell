@@ -246,13 +246,21 @@ router.post('/posttest', (req, res, next) => {
 // 我的拼团
 router.post('/myGroups', (req, res, next) => {
   var state = req.body.state;
-  request.post({url:'http://172.30.3.40:9086/mockjsdata/5/spell/getMyJoin',state:state},function (error, response, body) {
+  request(
+    {
+      url:'http://172.30.3.40:9086/mockjsdata/5/spell/getMyJoin',
+      method: "POST",
+      json:true,
+      headers:{"Content-Type": "application/json;charset=UTF-8"},
+      body: {data:{state :state}}
+    },
+    function (error, response, data) {
         if (err) {
           return console.error(err);
         }else {
-          res.send(body)
+          res.send(data)
         }
-  })
+    })
 })
 
 //活动首页head请求转发
