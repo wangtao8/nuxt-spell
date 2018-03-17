@@ -255,8 +255,8 @@ router.post('/myGroups', (req, res, next) => {
       body: {data:{state :state}}
     },
     function (error, response, data) {
-        if (err) {
-          return console.error(err);
+        if (error) {
+          return console.error(error);
         }else {
           res.send(data)
         }
