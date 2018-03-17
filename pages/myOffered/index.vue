@@ -54,7 +54,7 @@
 
     },
     async asyncData() {
-          	let res = await axios.post('http://172.30.3.40:3222/spell/myGroups',{"state":1})
+          	let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/getMyJoin',{"state":1,	"buyerId":20180313002,	"pageIndex":1,	"pageSize":10,	"storeId":"070e6814-c1cc-4243-8e68-14c1cc624388",	"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534"})
 			    	return { fightData:res.data.data}
 
     },
@@ -63,15 +63,15 @@
                   this.currentTab = tab;
                   this.indexGroup = $index;
                   if($index==0){
-                            axios.post('../spell/myGroups',{"state":1}).then(({ data }) => {
+                            axios.post('../spell/myOffered',{"state":1,"buyerId":20180313002,	"pageIndex":1,	"pageSize":10,	"storeId":"070e6814-c1cc-4243-8e68-14c1cc624388",	"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534"}).then(({ data }) => {
                               this.fightData=data.data
                             })
                   }else if($index==1){
-                          axios.post('../spell/myGroups',{"state":2}).then(({ data }) => {
+                          axios.post('../spell/myOffered',{"state":2,"buyerId":20180313002,	"pageIndex":1,	"pageSize":10,	"storeId":"070e6814-c1cc-4243-8e68-14c1cc624388",	"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534"}).then(({ data }) => {
                             this.fightData=data.data
                           })
                   }else {
-                          axios.post('../spell/myGroups',{"state":3}).then(({ data }) => {
+                          axios.post('../spell/myOffered',{"state":3,"buyerId":20180313002,	"pageIndex":1,	"pageSize":10,	"storeId":"070e6814-c1cc-4243-8e68-14c1cc624388",	"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534"}).then(({ data }) => {
                             this.fightData=data.data
                           })
                   }

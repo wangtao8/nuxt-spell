@@ -261,7 +261,47 @@ router.post('/myGroups', (req, res, next) => {
           res.send(data)
         }
     })
-})
+});
+// 我的参团
+// router.post('/myOffered', (req, res, next) => {
+//   var state = req.body.state;
+//   var buyerld=req.body.buyerId;
+//   var pageSize=req.body.pageSize;
+//   var shopId=req.body.shopId;
+//   var storeId=req.body.storeId;
+//   request(
+//     {
+//       url:'http://emcs.quanyou.com.cn/spellapi/getMyJoin',
+//       method: "POST",
+//       json:true,
+//       headers:{"Content-Type": "application/json;charset=UTF-8"},
+//       body: {data:{state:state,buyerld:buyerld,pageSize:pageSize,shopId:shopId,storeId:storeId}}
+//     },
+//     function (error, response, data) {
+//       console.log(data);
+//       if (error) {
+//         return console.error(error);
+//       }else {
+//         res.send(data)
+//       }
+//     })
+// });
+router.post('/myOffered', (req, res, next) => {
+  let state = req.body.state;
+  let buyerId=req.body.buyerId;
+  let pageSize=req.body.pageSize;
+  let pageIndex=req.body.pageIndex;
+  let shopId=req.body.shopId;
+  let storeId=req.body.storeId;
+  request.post('http://emcs.quanyou.com.cn/spellapi/getMyJoin',{json:{state: state,buyerId:buyerId,pageSize:pageSize,pageIndex:pageIndex,shopId:shopId,storeId:storeId}}, function (error, response, body) {
+    console.log(body);
+    if (error) {
+      res.send('0')
+    } else {
+      res.send(body)
+    }
+  })
+});
 
 //活动首页head请求转发
 router.post('/activityDetails', (req, res, next) => {
