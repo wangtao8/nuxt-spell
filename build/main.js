@@ -431,7 +431,22 @@ router.post('/posttest', function (req, res, next) {
   // console.log('333333333333:', req.body)
   res.send('1');
 });
+// 我的拼团
+router.post('/myGroups', function (req, res, next) {
+  var state = req.body.state;
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post({ url: 'http://172.30.3.40:9086/mockjsdata/5/spell/getMyJoin', state: state }, function (error, response, body) {
+    if (err) {
+      return console.error(err);
+    } else {
+      res.send(body);
+    }
+  });
+});
 
+router.get('/activityDetail', function (req, res, next) {
+  console.log('storeId:', req.query.storeId, 'shopId:', req.query.shopId, 'activityId:', req.query.activityId);
+  res.send('2');
+});
 /* harmony default export */ exports["a"] = router;
 
 /***/ },

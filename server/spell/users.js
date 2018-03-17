@@ -21,114 +21,45 @@ router.get('/getmsg', (req, res, next) => {
 
 // 获得头部信息
 router.post('/gethead', (req, res, next) => {
-  let data = {
-    'data': {
-      'activityId': '',
-      'endTime': '2017-3-7 17:45:0',
-      'homeBannerUrl': 'http://imagecs.quanyou.com.cn/group1/M00/00/52/rB4DMFp0TliACzt-AAA2BCwZngQ318.jpg'
-    },
-    'msg': '获取活动首页基本信息失败！',
-    'state': 1
-  }
-  res.json(data)
+  let shopId = req.body.shopId
+  let storeId = req.body.storeId
+  let activityId = req.body.activityId
+  request.post('http://emcs.quanyou.com.cn/spellapi/getSpellHomeInfo',{json:{shopId:shopId, storeId:storeId, activityId:activityId}}, function (err, response, body) {
+    if (err) {
+      res.json(body)
+    } else {
+      res.json(body)
+    }
+  })
 })
 
 // 获得分类
 router.post('/gettitle', (req, res, next) => {
-  let data2 = Mock.mock({
-    'data': [
-      {
-        'categoryName': '全部',
-        'id': 'all'
-      }, {
-        'categoryName': '厨房',
-        'id': 'cf'
-      }, {
-        'categoryName': '餐厅',
-        'id': 'ct'
-      }, {
-        'categoryName': '阳台/卫生间',
-        'id': 'yt'
-      }, {
-        'categoryName': '浴室',
-        'id': 'ys'
-      }, {
-        'categoryName': '儿童房',
-        'id': 'et'
-      }, {
-        'categoryName': '书房',
-        'id': 'sf'
-      }
-    ],
-    msg: '失败o ！',
-    state: 1
+  // 接收到数据后 请求活动首页接口
+  let shopId = req.body.shopId
+  let storeId = req.body.storeId
+  request.post('http://emcs.quanyou.com.cn/spellapi/getSpellCategory',{json:{shopId:shopId, storeId:storeId}}, function (err, response, body) {
+    res.json(body)
   })
-  res.json(data2)
-  // console.log(data2)
 })
 
 // 获得商品
 router.post('/getclass', (req, res, next) => {
-  // console.log('activityId:', req.body.activityId, 'categoryId:', req.body.categoryId, 'pageIndex:', req.body.pageIndex)
-  let data = Mock.mock({
-    'data': ({
-      content: [{
-        'all|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 71,
-          'memberPrice|+1': 1,
-          'marketPrice|+1': 1,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'cf|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 1,
-          'memberPrice|+1': 1,
-          'marketPrice|+1': 1,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'ct|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 11,
-          'memberPrice|+1': 12,
-          'marketPrice|+1': 13,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'yt|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 21,
-          'memberPrice|+1': 22,
-          'marketPrice|+1': 23,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'ys|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 31,
-          'memberPrice|+1': 32,
-          'marketPrice|+1': 33,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'et|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 41,
-          'memberPrice|+1': 42,
-          'marketPrice|+1': 43,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'sf|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 51,
-          'memberPrice|+1': 52,
-          'marketPrice|+1': 53,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }]
-      }]
-    }),
-    msg: '成功！',
-    state: 1
+  let shopId = req.body.shopId
+  let storeId = req.body.storeId
+  let activityId = req.body.activityId
+  let categoryId = req.body.categoryId
+  let pageIndex = req.body.pageIndex
+  let pageSize = req.body.pageSize
+  request.post('http://emcs.quanyou.com.cn/spellapi/getSpellGoods',
+  {json:{shopId:shopId, storeId:storeId, activityId:activityId, categoryId:categoryId, pageIndex:pageIndex, pageSize:pageSize}},
+  function (err, response, body) {
+    if (err) {
+      res.json(body)
+    } else {
+      res.json(body)
+    }
   })
-  res.json(data)
-  // console.log(data)
 })
 
 // 商品详情页
