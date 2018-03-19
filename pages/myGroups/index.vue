@@ -66,7 +66,6 @@
       }
     },
     mounted () {
-
       //微信鉴权
       let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
       let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
