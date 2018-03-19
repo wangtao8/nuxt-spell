@@ -22,7 +22,7 @@
     <div class="main-body">
       <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" @bottom-status-change="handleBottomChange" :auto-fill="autoFill">
         <div id="goods">
-          <div v-for="(item, index) in goodss" class="el_goods" @click="goDetail">
+          <div v-for="(item, index) in goodss" class="el_goods" @click="goDetail(item.goodsId)">
             <div class="el_img">
               <img :src="item.pic" alt="">
             </div>
@@ -31,13 +31,13 @@
                 <li>{{ item.goodsName }}</li>
                 <li>团长价:
                   <span>￥</span>
-                  <span>{{ item.headPrice }}</span>
+                  <span>{{ item.headPrice / 100 }}</span>
                 </li>
                 <li>
                   团员价：
                   <span>￥</span>
-                  <span>{{ item.memberPrice }}</span>
-                  <span>市场价:<span>￥{{ item.marketPrice}}</span></span>
+                  <span>{{ item.memberPrice / 100 }}</span>
+                  <span>市场价:<span>￥{{ item.marketPrice / 100}}</span></span>
                 </li>
               </ul>
             </div>
@@ -117,29 +117,32 @@
         gethead: [], // 头部图片链接
         msg: '',// 请求错误提示消息
         bottomStatus: '',
-        last: ''
+        last: '',
+        activityId: '',
+        shopId: '',
+        storeId: ''
       }
     },
-    async asyncData () {
+    async asyncData (context) {
       // 获得头部
       let gethead = {
-        activityId: 'ac30b2e1-cbe2-41e9-b0b2-e1cbe2f1e9c4',
-        shopId: 'a7fce96a-0126-4b05-bce9-6a01268b0534',
-        storeId: 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+        activityId: context.query.activityId,
+        shopId: context.query.shopId,
+        storeId: context.query.storeId
       }
       // 获得标题
       let gettitle = {
-        shopId: 'a7fce96a-0126-4b05-bce9-6a01268b0534',
-        storeId: 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+        shopId: context.query.shopId,
+        storeId: context.query.storeId
       }
       // 获得商品
       let getclass = {
-        activityId: 'ac30b2e1-cbe2-41e9-b0b2-e1cbe2f1e9c4',
+        activityId: context.query.activityId,
         categoryId: '',
         pageIndex: 1,
         pageSize: 3,
-        shopId: 'a7fce96a-0126-4b05-bce9-6a01268b0534',
-        storeId: 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+        shopId: context.query.shopId,
+        storeId: context.query.storeId
       }
       // 记得return 不然不会返回结果
       return axios.all([
@@ -148,6 +151,7 @@
         axios.post('http://172.30.3.40:3222/spell/getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
+          console.log('gethead:', gethead)
           if (gethead.data.state) {
             if (gettitle.data.state) {
               if (getclass.data.state) {
@@ -161,7 +165,10 @@
                   goodss: getclass.data.data.content,
                   // 分类数据记录一下
                   alldata: getclass.data.data.content,
-                  last: getclass.data.data.last
+                  last: getclass.data.data.last,
+                  activityId: context.query.activityId,
+                  shopId: context.query.shopId,
+                  storeId: context.query.storeId
                 }
               } else {
                 return {
@@ -181,7 +188,7 @@
         }))
     },
     created () {
-//      console.log('clas:', this.alldata)
+//      console.log('clas:', this.goodss)
     },
     head () {
       return {
@@ -197,11 +204,15 @@
       let win1tp = (window.innerHeight - 828) / 2
       let win2tp = (window.innerHeight - 358) / 2
 
-      //微信鉴权
-      let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
-      let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
+      // 微信鉴权
+      let shopId = self.shopId
+      let storeId = self.storeId
       Wxt.verify(storeId, shopId)
 
+      // 存储各种有用信息
+      sessionStorage.setItem('shopId', self.shopId)
+      sessionStorage.setItem('storeId', self.storeId)
+      sessionStorage.setItem('activityId', self.activityId)
       for (var i = 0; i < lis.length; i++) {
         elWidth += lis[i].clientWidth
       }
@@ -239,7 +250,7 @@
       // 设置banner背景图片
       let backUrl = this.gethead.homeBannerUrl
       document.getElementsByClassName('el_banner')[0].style.backgroundImage = 'url(' + backUrl + ')'
-      console.log(self.gethead.endTime)
+      console.log('time：', self.gethead)
       // 时间格式拼接
       let DATE = new Date()
       let year = DATE.getFullYear()
@@ -272,12 +283,12 @@
         // 动态的属性名不能用点的，要data[att]这样调用！！！！！！坑！ 因为所有数据都已经请求过来了，所以直接用，不用再发请求!!!
 //        this.goodss = this.alldata[att]
         let getclass = {
-          activityId: 'ac30b2e1-cbe2-41e9-b0b2-e1cbe2f1e9c4',
+          activityId: self.activityId,
           categoryId: att,
           pageIndex: 1,
           pageSize: 3,
-          shopId: 'a7fce96a-0126-4b05-bce9-6a01268b0534',
-          storeId: 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+          shopId: self.shopId,
+          storeId: self.storeId
         }
         axios.post('./getclass', getclass)
           .then(function (response) {
@@ -302,7 +313,7 @@
           this.data1 = true
           this.data2 = true
         } else if (e.target.innerText === '参团') {
-          location.href = 'participate'
+          location.href = 'participate?buyerId=' + sessionStorage.getItem('buyerId') + '&activityId=' + sessionStorage.getItem('activityId') + '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
         } else {
           location.href = 'myGroups'
         }
@@ -311,10 +322,11 @@
         location.href = 'success'
       },
       cantuan: function () { // 参团按钮点击
-        location.href = 'participate'
+        location.href = 'participate?buyerId=' + sessionStorage.getItem('buyerId') + '&activityId=' + sessionStorage.getItem('activityId') + '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
       },
-      goDetail: function () { // 跳转到商品详情页
-        location.href = 'groupDetails'
+      goDetail: function (obj) { // 跳转到商品详情页
+//        console.log(obj)
+        location.href = 'https://emcs.quanyou.com.cn/emallwap/goodsdetail/info/' + this.storeId + '/' +obj
       },
       loadTop: function () { // 到顶部后的下拉刷新
         // 下拉刷新
@@ -323,17 +335,19 @@
         this.allLoaded = false
         setTimeout(() => {
           let getclass = {
-            activityId: 'ac30b2e1-cbe2-41e9-b0b2-e1cbe2f1e9c4',
             categoryId: document.getElementsByClassName('active')[0].getAttribute('data'),
             pageIndex: 1,
             pageSize: 3,
-            shopId: 'a7fce96a-0126-4b05-bce9-6a01268b0534',
-            storeId: 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+            activityId: self.activityId,
+            shopId: self.shopId,
+            storeId: self.storeId
           }
           axios.post('./getclass', getclass)
             .then(function (response) {
               // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
               self.goodss = response.data.data.content
+              // 实时更新是否最后一页有信息
+              self.last = response.data.data.last
               // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
               self.$refs.loadmore.onTopLoaded()
             })
@@ -349,12 +363,12 @@
         let self = this
         setTimeout(() => {
           let getclass = {
-            activityId: 'ac30b2e1-cbe2-41e9-b0b2-e1cbe2f1e9c4',
             categoryId: document.getElementsByClassName('active')[0].getAttribute('data'),
             pageIndex: this.currentpageNum,
             pageSize: 3,
-            shopId: 'a7fce96a-0126-4b05-bce9-6a01268b0534',
-            storeId: 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+            activityId: self.activityId,
+            shopId: self.shopId,
+            storeId: self.storeId
           }
           if (!self.last) {
             axios.post('./getclass', getclass)

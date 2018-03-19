@@ -18,13 +18,13 @@
     <div class="el_nav">
       <div class="el_navs">
         <ul class="clear" ref="mybox">
-          <li :class="{active: active == index}" @click="check(index, item.id)" v-for="(item, index) in clas" :key="index">{{ item.categoryName }}</li>
+          <li :class="{active: active == index}" @click="check(index, item.id)" :data="item.id" v-for="(item, index) in clas" :key="index">{{ item.categoryName }}</li>
         </ul>
       </div>
     </div>
     <div class="el_content">
       <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" @bottom-status-change="handleBottomChange" :auto-fill="autoFill">
-        <div class="el_goods" v-for="(item, index) in goodss" :key="index" @click="goDetail">
+        <div class="el_goods" v-for="(item, index) in goodss" :key="index" @click="goDetail(item.goodsId)">
           <div class="el_img">
             <img :src="item.pic" alt=""/>
           </div>
@@ -33,15 +33,15 @@
               <li>{{ item.goodsName }}</li>
               <li>团长价:
                 <span>￥</span>
-                <span>{{ item.headPrice }}</span>
+                <span>{{ item.headPrice / 100}}</span>
               </li>
               <li>
                 团员价：
                 <span>￥</span>
-                <span>{{ item.memberPrice }}</span>
+                <span>{{ item.memberPrice / 100}}</span>
                 <span>
                   市场价:
-                  <span>￥{{ item.marketPrice }}</span>
+                  <span>￥{{ item.marketPrice / 100}}</span>
               </span>
               </li>
             </ul>
@@ -77,34 +77,57 @@
         title: '拼团抢福利'
       }
     },
+    validate({ params, query }) {
+      return true // 如果参数有效
+      //return false // 参数无效，Nuxt.js 停止渲染当前页面并显示错误页面
+    },
     methods: {
-      check: function (e, attr) {
+      check: function (e, att) { // 顶部导航切换
+        let self = this
         this.active = e
-        this.goodss = this.alldata[attr]
+        // 动态的属性名不能用点的，要data[att]这样调用！！！！！！坑！ 因为所有数据都已经请求过来了，所以直接用，不用再发请求!!!
+//        this.goodss = this.alldata[att]
+        let getclass = {
+          activityId: self.activityId,
+          categoryId: att,
+          pageIndex: 1,
+          pageSize: 3,
+          shopId: self.shopId,
+          storeId: self.storeId
+        }
+        axios.post('./getclass', getclass)
+          .then(function (response) {
+            self.goodss = response.data.data.content
+            self.last = response.data.data.last
+          })
         this.allLoaded = false
         this.currentpageNum = 1
       },
-      goDetail: function () {
-        location.href = 'groupDetails'
+      goDetail: function (obj) {
+        location.href = 'https://emcs.quanyou.com.cn/emallwap/goodsdetail/info/' + this.storeId + '/' +obj
       },
-      loadTop: function () {
+      loadTop: function () { // 到顶部后的下拉刷新
         // 下拉刷新
         let self = this
         this.currentpageNum = 1
         this.allLoaded = false
         setTimeout(() => {
-          axios.post('/spell/getclass')
+          let getclass = {
+            categoryId: document.getElementsByClassName('active')[0].getAttribute('data'),
+            pageIndex: 1,
+            pageSize: 3,
+            activityId: self.activityId,
+            shopId: self.shopId,
+            storeId: self.storeId
+          }
+          axios.post('./getclass', getclass)
             .then(function (response) {
-              // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
-              let stext = document.getElementsByClassName('active')[0].innerText
-              let curtext = ''
-              for (let i = 0; i < self.clas.length; i++) {
-                if (self.clas[i].categoryName === stext) {
-                  curtext = self.clas[i].id
-                }
-              }
-              self.alldata = response.data.data.content[0]
-              self.goodss = response.data.data.content[0][curtext]
+              console.log('222222:', getclass)
+              // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
+              self.goodss = response.data.data.content
+              // 实时更新是否最后一页有信息
+              self.last = response.data.data.last
+              // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
               self.$refs.loadmore.onTopLoaded()
             })
             .catch(function (err) {
@@ -112,38 +135,38 @@
             })
         }, 500)
       },
-      loadBottom: function () {
+      loadBottom: function () { // 到底部后的上拉加载分页
         // 加载更多数据 加载完成时的事件
         this.currentpageNum++
 //        console.log('this.current1:', this.currentpageNum)
         let self = this
         setTimeout(() => {
-          axios.post('/spell/getclass')
-            .then(function (response) {
-              // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
-              let stext = document.getElementsByClassName('active')[0].innerText
-              let curtext = ''
-              if (self.totalNum >= self.currentpageNum) {
-                for (let i = 0; i < self.clas.length; i++) {
-                  if (self.clas[i].categoryName === stext) {
-                    curtext = self.clas[i].id
-                  }
-                }
-                for (let j = 0; j < response.data.data.content[0][curtext].length; j++) {
+          let getclass = {
+            categoryId: document.getElementsByClassName('active')[0].getAttribute('data'),
+            pageIndex: this.currentpageNum,
+            pageSize: 3,
+            activityId: self.activityId,
+            shopId: self.shopId,
+            storeId: self.storeId
+          }
+          if (!self.last) {
+            axios.post('./getclass', getclass)
+              .then(function (response) {
+                //需要每次都重新更新last的状态
+                self.last = response.data.data.last
+                // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
+                for (let j = 0; j < response.data.data.content.length; j++) {
                   // 将得到的数据循环后单个push到之前的数组中去
-                  self.goodss.push(response.data.data.content[0][curtext][j])
-//                  console.log(self.goodss)
+                  self.goodss.push(response.data.data.content[j])
                 }
-              } else {
-                self.allLoaded = true
-                MessageBox.alert('已经加载完全部内容', '')
-              }
-              // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
-              self.$refs.loadmore.onBottomLoaded()
-            })
-            .catch(function (err) {
-              console.log(err)
-            })
+                // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
+                self.$refs.loadmore.onBottomLoaded()
+              })
+          } else {
+            // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
+            self.$refs.loadmore.onBottomLoaded()
+            MessageBox.alert('已经加载完全部内容', '')
+          }
         }, 500)
       },
       handleBottomChange: function (status) {
@@ -162,6 +185,11 @@
       let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
       let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
       Wxt.verify(storeId, shopId)
+
+//      let urls = window.location.href
+//      let name = urls.split('?')[1].split('&')[0].split('=')[1]
+//      let age = urls.split('?')[1].split('&')[1].split('=')[1]
+//      console.log('name:', name, 'age:', age)
 
       for (var i = 0; i < lis.length; i++) {
         elWidth += lis[i].clientWidth
@@ -204,50 +232,51 @@
       // 开始倒计时
       this.start()
     },
-    async asyncData () {
+    async asyncData (context) {
       // 获得头部
       let gethead = {
-        activityId: '123',
-        shopId: '234',
-        storeId: '345'
+        activityId: context.query.activityId,
+        shopId: context.query.shopId,
+        storeId: context.query.storeId
       }
       // 获得标题
       let gettitle = {
-        shopId: '123',
-        storeId: '234'
+        shopId: context.query.shopId,
+        storeId: context.query.storeId
       }
       // 获得商品
       let getclass = {
-        activityId: '123',
-        categoryId: '234',
+        activityId: context.query.activityId,
+        categoryId: '',
         pageIndex: 1,
-        pageSize: 4,
-        shopId: '123',
-        storeId: '234'
+        pageSize: 3,
+        shopId: context.query.shopId,
+        storeId: context.query.storeId
       }
+      // 记得return 不然不会返回结果
       return axios.all([
-        axios.post('http://172.30.3.40:9086/mockjsdata/5/spell/getSpellHomeInfo', gethead),
-        axios.post('http://127.0.0.1:3222/spell/gettitle', gettitle),
-        axios.post('http://127.0.0.1:3222/spell/getclass', getclass)
+        axios.post('http://172.30.3.40:3222/spell/gethead', gethead),
+        axios.post('http://172.30.3.40:3222/spell/gettitle', gettitle),
+        axios.post('http://172.30.3.40:3222/spell/getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
           if (gethead.data.state) {
             if (gettitle.data.state) {
               if (getclass.data.state) {
-                let names = []
-                // 获得所有对象的名称
-                for (let i = 0; i < gettitle.data.data.length; i++) {
-                  names.push(gettitle.data.data[i].id)
-                }
+                gettitle.data.data.unshift({categoryName:"全部",id:"",isHaveGoods:0})
                 return {
                   // 头部信息
                   gethead: gethead.data.data,
                   // 头部导航内容
                   clas: gettitle.data.data,
                   // 取索引为1的对象默认展示
-                  goodss: getclass.data.data.content[0][names[0]],
+                  goodss: getclass.data.data.content,
                   // 分类数据记录一下
-                  alldata: getclass.data.data.content[0]
+                  alldata: getclass.data.data.content,
+                  last: getclass.data.data.last,
+                  activityId: context.query.activityId,
+                  shopId: context.query.shopId,
+                  storeId: context.query.storeId
                 }
               } else {
                 return {
@@ -265,7 +294,7 @@
             }
           }
         }))
-    }
+    },
   }
 </script>
 <style>

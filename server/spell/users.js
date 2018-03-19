@@ -62,6 +62,44 @@ router.post('/getclass', (req, res, next) => {
   })
 })
 
+// 获得已开团列表（除自己）
+router.post('/getHasBeenGroup', (req, res, next) => {
+  let shopId = req.body.shopId
+  let storeId = req.body.storeId
+  let activityId = req.body.activityId
+  let buyerId = req.body.buyerId
+  let pageIndex = req.body.pageIndex
+  let pageSize = req.body.pageSize
+  request.post('http://emcs.quanyou.com.cn/spellapi/getTeamList',
+  {json:{shopId:shopId, storeId:storeId, activityId:activityId, buyerId:buyerId, pageIndex:pageIndex, pageSize:pageSize}},
+  function (err, response, body) {
+    if (err) {
+      res.json(body)
+    } else {
+      res.json(body)
+    }
+  })
+})
+
+// 去开团
+router.post('/openGroup', (req, res, next) => {
+  let activityId = req.body.activityId
+  let buyerId = req.body.buyerId
+  let nickName = req.body.nickName
+  let photo = req.body.photo
+  let shopId = req.body.shopId
+  let storeId = req.body.storeId
+  request.post('http://emcs.quanyou.com.cn/spellapi/createSpellTeam',
+  {json:{activityId:activityId,buyerId:buyerId,nickName:nickName,photo:photo,shopId:shopId,storeId:storeId}},
+  function (err, response, body) {
+    if (err) {
+      res.json(body)
+    } else {
+      res.json(body)
+    }
+  })
+})
+
 // 商品详情页
 router.get('/getDetail', (req, res, next) => {
   // 存入session
