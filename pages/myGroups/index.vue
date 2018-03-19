@@ -74,9 +74,9 @@
 
     },
     async asyncData({ params }, callback) {
-      axios.post('http://172.30.3.40:3222/spell/myGroups',{"state":1})
+      axios.post('http://emcs.quanyou.com.cn/spellapi/getMyCreate',{"state":1,"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534","storeId":"070e6814-c1cc-4243-8e68-14c1cc624388","buyerId":"20180313001","pageIndex":"1","pageSize":"10"})
          .then((data) => {
-           let  res=data.data;
+            let  res=data.data;
             callback(null, { fightData:res.data })
 
          })
@@ -90,22 +90,23 @@
         this.indexGroup = $index;
             if($index==0){
 //拼团进行中
-                    axios.post('../spell/myGroups',{"state":1}).then(({ data }) => {
+                    axios.post('../spell/myGroups',{"state":1,"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534","storeId":"070e6814-c1cc-4243-8e68-14c1cc624388","buyerId":"20180313001","pageIndex":"1","pageSize":"10"}).then(({ data }) => {
                            this.fightData=data.data
+                           console.log("this.fightData::",this.fightData)
                      })
               }else if($index==1){
            //           	拼团成功
-                      axios.post('../spell/myGroups',{"state":2}).then(({ data }) => {
+                      axios.post('../spell/myGroups',{"state":1,"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534","storeId":"070e6814-c1cc-4243-8e68-14c1cc624388","buyerId":"20180313001","pageIndex":"1","pageSize":"10"}).then(({ data }) => {
                             this.fightData=data.data
                       })
               }else if($index==2){
                 //           	拼团失败
-                       axios.post('../spell/myGroups',{"state":3}).then(({ data }) => {
+                       axios.post('../spell/myGroups',{"state":1,"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534","storeId":"070e6814-c1cc-4243-8e68-14c1cc624388","buyerId":"20180313001","pageIndex":"1","pageSize":"10"}).then(({ data }) => {
                            this.fightData=data.data
                        })
               }else {
                 //           	拼团完成
-                      axios.post('../spell/myGroups',{"state":4}).then(({ data }) => {
+                      axios.post('../spell/myGroups',{"state":1,"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534","storeId":"070e6814-c1cc-4243-8e68-14c1cc624388","buyerId":"20180313001","pageIndex":"1","pageSize":"10"}).then(({ data }) => {
                             this.fightData=data.data
                       })
               }
@@ -113,11 +114,11 @@
       //			分页查询(加载更多)
       handleTopChange(status) {
         this.topStatus = status;
-        console.log("status", this.topStatus)
+
       },
       handleBottomChange(status){
         this.bottomStatus=status
-        console.log("status1",this.bottomStatus)
+
       },
       loadTop:function() { //组件提供的下拉触发方法
         //下拉加载

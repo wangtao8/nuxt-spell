@@ -176,23 +176,22 @@ router.post('/posttest', (req, res, next) => {
 })
 // 我的拼团
 router.post('/myGroups', (req, res, next) => {
-  var state = req.body.state;
+  let data={state :req.body.state,shopId:req.body.shopId,storeId:req.body.storeId,buyerId:req.body.buyerId,pageIndex:req.body.pageIndex,pageSize:req.body.pageSize}
   request(
     {
-      url:'http://172.30.3.40:9086/mockjsdata/5/spell/getMyJoin',
+      url:'http://emcs.quanyou.com.cn/spellapi/getMyCreate',
       method: "POST",
-      json:true,
-      headers:{"Content-Type": "application/json;charset=UTF-8"},
-      body: {data:{state :state}}
+      json:data
     },
-    function (error, response, data) {
+      function (error, response, body) {
         if (error) {
           return console.error(error);
         }else {
-          res.send(data)
+          res.send(body)
         }
-    })
-});
+      })
+
+})
 // 我的参团
 // router.post('/myOffered', (req, res, next) => {
 //   var state = req.body.state;
