@@ -17,8 +17,7 @@
               </li>
               <li>
                 <span>{{ item.joinNum }}人参团</span>
-                <span class="el_btn" @click="goct">去参团</span>
-                <input type="hidden" :value="item.activityId">
+                <span class="el_btn" @click="goct(item.activityId, item.photo, item.nickName)">去参团</span>
               </li>
             </ul>
           </div>
@@ -56,27 +55,35 @@
         autoFill: false, // 若为真，loadmore 会自动检测并撑满其容器
         currentpageNum: 1, // 当前页数
         totalNum: 3, // 总页数
-        photo: '',
-        nickName: ''
+        activityId: '',
+        buyerId: '',
+        storeId: '',
+        shopId: ''
       }
     },
-    async asyncData () {
+    async asyncData (content) {
       // 定义查询参数
       let params = {
-        activityId: 'SYM',
-        buyerId: '123',
+        activityId: content.query.activityId,
+        buyerId: content.query.buyerId,
+        storeId: content.query.storeId,
+        shopId: content.query.shopId,
         pageIndex: 1,
-        pageSize: 2
+        pageSize: 3
       }
 
       return axios({
         method: 'POST',
-        url: 'http://172.30.3.40:9086/mockjsdata/5/spell/getTeamList',
+        url: 'http://172.30.3.40:3222/spell/getHasBeenGroup',
         data: params
       })
         .then(function (response) {
           return {
-            goodss: response.data.data.content
+            goodss: response.data.data.content,
+            activityId: content.query.activityId,
+            buyerId: content.query.buyerId,
+            storeId: content.query.storeId,
+            shopId: content.query.shopId
           }
         })
         .catch(function (error) {
@@ -84,10 +91,11 @@
         })
     },
     methods: {
-      goct: function (e) {
+      goct: function (activityId, photo, nickName) {
         // 获取活动id 储存用于查询活动详情
-        let activityId = e.target.parentNode.childNodes[2].value
         sessionStorage.setItem('activityId', activityId)
+        sessionStorage.setItem('photo', photo)
+        sessionStorage.setItem('nickName', nickName)
         if (!this.data1) {
           this.data1 = true
         }
@@ -96,7 +104,7 @@
         this.data1 = false
       },
       gosee: function () {
-        location.href = 'boon'
+        location.href = 'boon?activityId=' + this.activityId + '&storeId=' + this.storeId + '&shopId=' + this.shopId
       },
       loadTop: function () { // 到顶部后的下拉刷新
         // 下拉刷新
@@ -106,16 +114,16 @@
         setTimeout(() => {
           // 定义查询参数
           let params = {
-            activityId: 'SYM',
-            buyerId: '123',
+            activityId: self.activityId,
+            buyerId: self.buyerId,
             pageIndex: 1,
-            pageSize: 2,
-            shopId: 'wqeq',
-            storeId: 'qwe'
+            pageSize: 3,
+            shopId: self.shopId,
+            storeId: self.storeId
           }
           axios({
             method: 'POST',
-            url: 'http://172.30.3.40:9086/mockjsdata/5/spell/getTeamList',
+            url: './getHasBeenGroup',
             data: params
           })
             .then(function (response) {
@@ -146,8 +154,10 @@
       let self = this
 
       //微信鉴权
-      let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
-      let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
+      let storeId = sessionStorage.getItem('storeId')
+      let shopId = sessionStorage.getItem('shopId')
+      let buyerId = sessionStorage.getItem('buyerId')
+      console.log('buyerId:', buyerId)
       Wxt.verify(storeId, shopId)
 
       this.$refs.dailog.style.left = elWidth + 'px'
@@ -157,9 +167,6 @@
         self.isShow = false
         filter.flter('participate')
       }, Math.random() * 50)
-      sessionStorage.setItem('photo', self.goodss[0].photo)
-      sessionStorage.setItem('nickName', self.goodss[0].nickName)
-      console.log('33333:', self.goodss[0].photo, self.goodss[0].nickName)// 还没完成
     },
     head () {
       return {
