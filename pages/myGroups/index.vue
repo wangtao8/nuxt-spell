@@ -28,7 +28,7 @@
 
                <p v-if='msgState'>您好，您目前没有{{msg}}活动</p>
                <p v-else>
-                  {{errMsg}}
+
                </p>
 
         </div>
@@ -37,6 +37,8 @@
 </template>
 <script>
   import { Loadmore } from 'mint-ui';
+  import { MessageBox } from 'mint-ui';
+  import { Toast } from 'mint-ui';
   import groups from '../../components/myGroups/groups'
   import underWay from '../../components/myGroups/underWay'
   import fightSuccess from '../../components/myGroups/fightSuccess'
@@ -60,7 +62,7 @@
         isB: false,
         hide:true,
         hideBtn:true,
-        noData:false,//没有数据为true
+        noData:false,//没有数据为false
         msgState:false,
         groupsData:[
           {"name":"拼团进行中","group":"underWay"},
@@ -71,6 +73,7 @@
         fightData:'',
         paging:{  //分页属性
           pageIndex:1,  //当前页
+          pageSize:10
         },
         allLoaded: false, //是否可以上拉属性，false可以上拉，true为禁止上拉，就是不让往上划加载数据了
         topStatus:"",
@@ -80,8 +83,8 @@
         shopId:'',
         storeId:'',
         buyerId:'',
-        msg:'拼团进行中',
-        errMsg:''
+        msg:'拼团进行中'
+
       }
     },
     mounted () {
@@ -90,7 +93,9 @@
       let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
       let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
       Wxt.verify(storeId, shopId)
-      console.log('shopId::',this.shopId )
+      this.shopId = sessionStorage.getItem('shopId')
+      this.storeId = sessionStorage.getItem('storeId')
+      this.buyerId= sessionStorage.getItem('buyerId')
     },
 
     async asyncData(params) {
@@ -98,34 +103,37 @@
               let storeId = params.query.storeId
               let buyerId= params.query.buyerId
           	let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/getMyCreate',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
-					   if(res.status==200 ){
+
                  if(res.data.state==1){
                     if(res.data.data.content.length<=0){
                        return{
-                         noData:false
+                         noData:false,
+                         msgState:true
                        }
                     }else{
                        return { fightData:res.data.data,
                                 state:1,
-                                shopId:shopId,
-                                storeId:storeId,
-                                buyerId:buyerId
+                                noData:true
                                }
                     }
                  }else{
 
                         return{
                               noData:false,
-                              errMsg:res.data.msg,
                               msgState:false
                         }
 
                  }
 
-					   }
+
+
 
     },
     methods: {
+     errorFrame(data){
+     MessageBox.alert(data, '错误提示');
+
+     },
       toggleTab(tab, $index) {
         this.currentTab = tab; // tab 为当前触发标签页的组件名
         this.indexGroup = $index;
@@ -133,71 +141,92 @@
              //拼团进行中
                     this.state=1;
                     this.paging.pageIndex=1;//初始化页数
-                    axios.post('../spell/myGroups',{"state":1,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":"1","pageSize":"10"}).then(({ data }) => {
-                            if(data.status==200){
-                                if( data.state==1){
-                                    if(data.data.content.length<=0){
-                                         this.msg='拼团进行中'
-                                         this.noData=false
+                    axios.post('../spell/myGroups',{"state":1,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+
+                                    if( data.state==1){
+                                              if(data.data.content.length<=0){
+
+                                                   this.msg='拼团进行中'
+                                                   this.noData=false
+                                                   this.msgState=true
+                                              }else{
+                                                    this.fightData=data.data
+                                                    this.noData=true
+                                                    this.msgState=false
+                                                   }
                                     }else{
-                                         this.fightData=data.data
-                                          this.noData=true
-                                         }
-                                }else{
-                                   noData=false
-                                   msgState=true
-                                   errMsg=res.data.msg
-
-                                }
-                           	}
-
+                                       this.noData=false
+                                       this.msgState=false
+                                       this.$options.methods.errorFrame(data.msg)
+                                    }
                      })
               }else if($index==1){
            //           	拼团成功
                       this.state=2;
                       this.paging.pageIndex=1;
-                      axios.post('../spell/myGroups',{"state":2,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":"1","pageSize":"10"}).then(({ data }) => {
+                      axios.post('../spell/myGroups',{"state":2,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
 
-                            if(data.status==200 && data.state==1){
-                                 if(data.data.content.length<=0){
-                                        this.msg='拼团成功'
-                                        this.noData=false
-                                 }else{
-                                         this.fightData=data.data
-                                          this.noData=true
-                                       }
-                                 }
+                            if( data.state==1){
+                                      if(data.data.content.length<=0){
+
+                                           this.msg='拼团成功'
+                                           this.noData=false
+                                           this.msgState=true
+                                      }else{
+                                            this.fightData=data.data
+                                            this.noData=true
+                                            this.msgState=false
+                                           }
+                            }else{
+                               this.noData=false
+                               this.msgState=false
+                               this.$options.methods.errorFrame(data.msg)
+                            }
                       })
               }else if($index==2){
                 //           	拼团失败
                        this.state=3;
                        this.paging.pageIndex=1;
-                       axios.post('../spell/myGroups',{"state":3,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":"1","pageSize":"10"}).then(({ data }) => {
-                           if(data.status==200 && data.state==1){
-                                  if(res.data.data.content.length<=0){
+                       axios.post('../spell/myGroups',{"state":3,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+                          if( data.state==1){
+                                    if(data.data.content.length<=0){
+
                                          this.msg='拼团失败'
                                          this.noData=false
-                                  }else{
-                                         this.fightData=data.data
-                                         this.noData=true
-                                        }
-                           }
+                                         this.msgState=true
+                                    }else{
+                                          this.fightData=data.data
+                                          this.noData=true
+                                          this.msgState=false
+                                         }
+                          }else{
+                             this.noData=false
+                             this.msgState=false
+                             this.$options.methods.errorFrame(data.msg)
+                          }
                        })
               }else {
                 //           	拼团完成
                 this.state=4;
                 this.paging.pageIndex=1;
-                      axios.post('../spell/myGroups',{"state":4,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":"1","pageSize":"10"}).then(({ res }) => {
-                            if(res.status==200 && res.data.state==1){
-                                 if(res.data.data.content.length<=0){
+                      axios.post('../spell/myGroups',{"state":4,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+                             if( data.state==1){
+                                     if(data.data.content.length<=0){
+
                                           this.msg='拼团完成'
                                           this.noData=false
-                                 }else{
-                                          this.fightData=data.data
-                                          this.noData=true
-                                       }
-                                 }
-                      })
+                                          this.msgState=true
+                                     }else{
+                                           this.fightData=data.data
+                                           this.noData=true
+                                           this.msgState=false
+                                          }
+                           }else{
+                              this.noData=false
+                              this.msgState=false
+                              this.$options.methods.errorFrame(data.msg)
+                           }
+                     })
               }
       },
       //			分页查询(加载更多)
@@ -223,13 +252,12 @@
       },
       loadPageList:function(pageIndex){
         this.paging.pageIndex=pageIndex;
-        axios.post('../spell/myGroups',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":"10"}).then(({ data }) => {
+        axios.post('../spell/myGroups',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":this.paging.pageSize}).then(({ data }) => {
           if(this.paging.pageIndex==1){
             this.fightData=data.data;
           }else{
 
             var data=data.data.content
-            console.log('data.length:',data.length)
             if(data.length<=0 || JSON.stringify(data[0])=='{}'){
               this.allLoaded = true; //数据已全部获取完毕
             }else{
