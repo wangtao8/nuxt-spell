@@ -75,6 +75,7 @@
         fightData:'',
         paging:{  //分页属性
           pageIndex:1,  //当前页
+          // autoFill: false,
           pageSize:10
         },
         allLoaded: false, //是否可以上拉属性，false可以上拉，true为禁止上拉，就是不让往上划加载数据了
@@ -248,7 +249,8 @@ console.log('data:',data)
           self.loadPageList(1);
         setTimeout(() => {
           self.$refs.loadmore.onTopLoaded();// 固定方法，查询完要调用一次，用于重新定位
-        }, 500);},
+        }, 500);
+        },
       loadBottom:function() {
        let self=this;
 
@@ -258,33 +260,36 @@ console.log('data:',data)
           self.loadPageList(self.paging.pageIndex);
         setTimeout(() => {
         self.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
-      }, 500);},
+      }, 500);
+        },
       loadPageList:function(pageIndex){
         this.paging.pageIndex=pageIndex;
+        this.$nextTick(function () {
         axios.post('../spell/myGroups',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":this.paging.pageSize}).then(({ data }) => {
-          if(this.paging.pageIndex==1){
-            this.fightData=data.data;
-          }else{
+          if (this.paging.pageIndex == 1) {
+            this.fightData = data.data;
+          } else {
 
-            var data=data.data.content
-            if(data.length<=0 || JSON.stringify(data[0])=='{}'){
+            var data = data.data.content
+            if (data.length <= 0 || JSON.stringify(data[0]) == '{}') {
               this.allLoaded = true; //数据已全部获取完毕
-            }else{
-              for(var value of data){
+            } else {
+              for (var value of data) {
                 this.fightData.content.push(value);
               }
             }
           }
+        })
         })
       }
     }
   }
 </script>
 
-<style scoped>
+<style>
   /*@import "../../assets/css/base.css";*/
   @import "../../assets/css/myGroups.css";
-  #__nuxt,.warpPage, #wrap{
+  #__nuxt,.bigBox, #wrap{
     width: 100%;
     height: 100%;
     margin-bottom:0;
@@ -292,13 +297,20 @@ console.log('data:',data)
     z-index: 1;
   }
   .headerFix{
-    height:180px;
+    height: 180px;
+    position: fixed;
+    top: 0;
+    background: #fff;
+    width: 100%;
+    z-index: 100;
   }
   .content{
-    /*height: calc(100% - 180px);*/
+    height: calc(100% - 180px);
     overflow-y: auto;
-    /*overflow:auto;*/
     -webkit-overflow-scrolling: touch;
+    position: absolute;
+    width: 100%;
+    top: 180px;
   }
 
 </style>
