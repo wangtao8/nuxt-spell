@@ -1,13 +1,15 @@
 <template>
   <div id="wrap">
+    <header class="headerFix">
     <groups :isA='isA' :isB='isB' />
     <section class="groups">
       <div class="everyGroups borderBox" v-for="(item,$index) in groupsData">
         <a class="borderBox" :class="{groupsCur: $index==indexGroup}"   @click="toggleTab(item.group, $index)" href="javascript:;">{{item.name}}</a>
       </div>
     </section>
+    </header>
     <div class="content" v-if="noData">
-      <mt-loadmore  :top-method="loadTop"  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false" ref="loadmore" @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange">
+      <mt-loadmore  :top-method="loadTop"  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false"  @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange" ref="loadmore">
         <div slot="top" class="mint-loadmore-top">
           <span v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">刷新</span>
           <span v-show="topStatus === 'loading'">加载中...</span>
@@ -102,8 +104,9 @@
               let shopId = params.query.shopId
               let storeId = params.query.storeId
               let buyerId= params.query.buyerId
+      console.log('shopId:',shopId);
           	let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/getMyCreate',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
-
+console.log('res:',res.data.data.content);
                  if(res.data.state==1){
                     if(res.data.data.content.length<=0){
                        return{
@@ -142,7 +145,7 @@
                     this.state=1;
                     this.paging.pageIndex=1;//初始化页数
                     axios.post('../spell/myGroups',{"state":1,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
-
+console.log('data:',data)
                                     if( data.state==1){
                                               if(data.data.content.length<=0){
 
@@ -239,17 +242,23 @@
 
       },
       loadTop:function() { //组件提供的下拉触发方法
+        let self=this;
+
         //下拉加载:返回到首页.刷新的意思
-        this.loadPageList(1);
-        this.$refs.loadmore.onTopLoaded();// 固定方法，查询完要调用一次，用于重新定位
-      },
+          self.loadPageList(1);
+        setTimeout(() => {
+          self.$refs.loadmore.onTopLoaded();// 固定方法，查询完要调用一次，用于重新定位
+        }, 500);},
       loadBottom:function() {
+       let self=this;
+
         // 上拉加载
         // 上拉触发的分页查询
-        this.paging.pageIndex=parseInt(this.paging.pageIndex)+1;
-        this.loadPageList(this.paging.pageIndex);
-        this.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
-      },
+          self.paging.pageIndex=parseInt(self.paging.pageIndex)+1;
+          self.loadPageList(self.paging.pageIndex);
+        setTimeout(() => {
+        self.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
+      }, 500);},
       loadPageList:function(pageIndex){
         this.paging.pageIndex=pageIndex;
         axios.post('../spell/myGroups',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":this.paging.pageSize}).then(({ data }) => {
@@ -273,6 +282,23 @@
 </script>
 
 <style scoped>
-  @import "../../assets/css/base.css";
+  /*@import "../../assets/css/base.css";*/
   @import "../../assets/css/myGroups.css";
+  #__nuxt,.warpPage, #wrap{
+    width: 100%;
+    height: 100%;
+    margin-bottom:0;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .headerFix{
+    height:180px;
+  }
+  .content{
+    height: calc(100% - 180px);
+    overflow-y: auto;
+    /*overflow:auto;*/
+    -webkit-overflow-scrolling: touch;
+  }
+
 </style>

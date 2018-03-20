@@ -71,10 +71,15 @@
       let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
       let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
       Wxt.verify(storeId, shopId)
-
+      this.shopId = sessionStorage.getItem('shopId')
+      this.storeId = sessionStorage.getItem('storeId')
+      this.buyerId= sessionStorage.getItem('buyerId')
     },
-    async asyncData() {
-      let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/getMyJoin',{"state":1,	"buyerId":20180313002,	"pageIndex":1,	"pageSize":10,	"storeId":"070e6814-c1cc-4243-8e68-14c1cc624388",	"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534"})
+    async asyncData(params) {
+      let shopId = params.query.shopId
+      let storeId = params.query.storeId
+      let buyerId= params.query.buyerId
+      let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/getMyJoin',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
       return { fightData:res.data.data}
       // if(res.status==200){
       //   return { fightData:res.data.data,state:1}

@@ -315,7 +315,7 @@
         } else if (e.target.innerText === '参团') {
           location.href = 'participate?buyerId=' + sessionStorage.getItem('buyerId') + '&activityId=' + sessionStorage.getItem('activityId') + '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
         } else {
-          location.href = 'myGroups'
+          location.href = 'myGroups?buyerId=' + sessionStorage.getItem('buyerId')+ '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
         }
       },
       gotuan: function () { // 去开团按钮点击

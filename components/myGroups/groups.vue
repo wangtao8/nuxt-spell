@@ -20,12 +20,12 @@
     methods:{
       myGroups (){
         this.myAllSpell='1',
-          location.href = 'myGroups'
+          location.href = 'myGroups?buyerId=' + sessionStorage.getItem('buyerId')+ '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
         this.$emit('myGroups',[this.myAllSpell]);
       },
       myOffered(){
         this.myAllSpell='2',
-          location.href = 'myOffered'
+          location.href = 'myOffered?buyerId=' + sessionStorage.getItem('buyerId') +  '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
       }
     }
   }
