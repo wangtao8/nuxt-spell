@@ -74,7 +74,7 @@
       }
       return axios({
         method: 'POST',
-        url: 'http://127.0.0.1:3222/spell/getHasBeenGroup',
+        url: 'http://172.30.3.40:3222/spell/getHasBeenGroup',
         data: params
       })
         .then(function (response) {
