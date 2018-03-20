@@ -17,7 +17,7 @@
               </li>
               <li>
                 <span>{{ item.joinNum }}人参团</span>
-                <span class="el_btn" @click="goct(item.activityId, item.photo, item.nickName)">去参团</span>
+                <span class="el_btn" @click="goct(item.activityId, item.photo, item.nickName, item.id)">去参团</span>
               </li>
             </ul>
           </div>
@@ -48,7 +48,7 @@
   export default {
     data () {
       return {
-        goodss: {},
+        goodss: [],
         data1: false,
         isShow: true,
         allLoaded: false, // true禁止下拉刷新
@@ -58,7 +58,8 @@
         activityId: '',
         buyerId: '',
         storeId: '',
-        shopId: ''
+        shopId: '',
+        last: ''
       }
     },
     async asyncData (content) {
@@ -71,19 +72,20 @@
         pageIndex: 1,
         pageSize: 3
       }
-
       return axios({
         method: 'POST',
-        url: 'http://172.30.3.40:3222/spell/getHasBeenGroup',
+        url: 'http://127.0.0.1:3222/spell/getHasBeenGroup',
         data: params
       })
         .then(function (response) {
+          console.log('222222222222:', response.data.data.content)
           return {
             goodss: response.data.data.content,
             activityId: content.query.activityId,
             buyerId: content.query.buyerId,
             storeId: content.query.storeId,
-            shopId: content.query.shopId
+            shopId: content.query.shopId,
+            last: response.data.data.last
           }
         })
         .catch(function (error) {
@@ -91,11 +93,24 @@
         })
     },
     methods: {
-      goct: function (activityId, photo, nickName) {
+      goct: function (activityId, photo, nickName, ids) {
         // 获取活动id 储存用于查询活动详情
         sessionStorage.setItem('activityId', activityId)
-        sessionStorage.setItem('photo', photo)
-        sessionStorage.setItem('nickName', nickName)
+        sessionStorage.setItem('headPhoto', photo)
+        sessionStorage.setItem('headNickName', nickName)
+        let goGroup = {
+          teamId: ids,
+          buyerId: sessionStorage.getItem('buyerId'),
+          storeId: sessionStorage.getItem('storeId'),
+          shopId: sessionStorage.getItem('shopId'),
+          nickName: sessionStorage.getItem('nickName'),
+          photo: sessionStorage.getItem('photo')
+        }
+        // 发送参团请求
+        axios.post('./goGroup', goGroup)
+          .then(function (response) {
+//            console.log('eeeeeeee:', response.data)
+          })
         if (!this.data1) {
           this.data1 = true
         }
@@ -127,7 +142,11 @@
             data: params
           })
             .then(function (response) {
-              self.goodss = response.data.data.content
+              if (response.data.state) {
+                self.goodss = response.data.data.content
+              } else {
+                alert(response.data.msg)
+              }
             })
             .catch(function (error) {
               console(error)
@@ -141,6 +160,32 @@
 //        console.log('this.current1:', this.currentpageNum)
         let self = this
         setTimeout(() => {
+          // 定义查询参数
+          let params = {
+            activityId: self.activityId,
+            buyerId: self.buyerId,
+            pageIndex: self.currentpageNum,
+            pageSize: 3,
+            shopId: self.shopId,
+            storeId: self.storeId
+          }
+          axios({
+            method: 'POST',
+            url: './getHasBeenGroup',
+            data: params
+          })
+            .then(function (response) {
+              if (response.data.state) {
+                for (let i = 0; i < response.data.data.content.length; i++) {
+                  self.goodss.push(response.data.data.content[i])
+                }
+              } else {
+                alert(response.data.msg)
+              }
+            })
+            .catch(function (error) {
+              console(error)
+            })
           self.$refs.loadmore.onBottomLoaded()
         }, 500)
       },

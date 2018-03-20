@@ -122,11 +122,14 @@
           }
           axios.post('./getclass', getclass)
             .then(function (response) {
-              console.log('222222:', getclass)
-              // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
-              self.goodss = response.data.data.content
-              // 实时更新是否最后一页有信息
-              self.last = response.data.data.last
+              if (response.data.state) {
+                // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
+                self.goodss = response.data.data.content
+                // 实时更新是否最后一页有信息
+                self.last = response.data.data.last
+              } else {
+                alert(response.data.msg)
+              }
               // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
               self.$refs.loadmore.onTopLoaded()
             })
@@ -152,12 +155,16 @@
           if (!self.last) {
             axios.post('./getclass', getclass)
               .then(function (response) {
-                //需要每次都重新更新last的状态
-                self.last = response.data.data.last
-                // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
-                for (let j = 0; j < response.data.data.content.length; j++) {
-                  // 将得到的数据循环后单个push到之前的数组中去
-                  self.goodss.push(response.data.data.content[j])
+                if (response.data.state) {
+                  //需要每次都重新更新last的状态
+                  self.last = response.data.data.last
+                  // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
+                  for (let j = 0; j < response.data.data.content.length; j++) {
+                    // 将得到的数据循环后单个push到之前的数组中去
+                    self.goodss.push(response.data.data.content[j])
+                  }
+                } else {
+                  alert(response.data.msg)
                 }
                 // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
                 self.$refs.loadmore.onBottomLoaded()
@@ -186,20 +193,23 @@
       let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
       Wxt.verify(storeId, shopId)
 
-//      let urls = window.location.href
-//      let name = urls.split('?')[1].split('&')[0].split('=')[1]
-//      let age = urls.split('?')[1].split('&')[1].split('=')[1]
-//      console.log('name:', name, 'age:', age)
-
       for (var i = 0; i < lis.length; i++) {
         elWidth += lis[i].clientWidth
       }
       // 得到活动id 用来查询活动详情
       self.$refs.mybox.style.width = elWidth + 30 + 'px'
-      let photo = sessionStorage.getItem('photo')
+
+      // 如果有失败的返回结果
+      if (self.msg) {
+        self.show2 = false
+        MessageBox.alert(self.msg, '')// 提示错误信息
+      } else {
+        self.show2 = true
+      }
 
       // 设置团长头像
-      self.nickName = sessionStorage.getItem('nickName')
+      self.nickName = sessionStorage.getItem('headNickName')
+      let photo = sessionStorage.getItem('headPhoto')
       document.getElementsByClassName('el_avatar')[0].style.backgroundImage = 'url(' + photo + ')'
 
       // 设置banner背景图片
