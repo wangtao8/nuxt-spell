@@ -230,30 +230,7 @@ router.post('/myGroups', (req, res, next) => {
       })
 
 })
-// 我的参团
-// router.post('/myOffered', (req, res, next) => {
-//   var state = req.body.state;
-//   var buyerld=req.body.buyerId;
-//   var pageSize=req.body.pageSize;
-//   var shopId=req.body.shopId;
-//   var storeId=req.body.storeId;
-//   request(
-//     {
-//       url:'http://emcs.quanyou.com.cn/spellapi/getMyJoin',
-//       method: "POST",
-//       json:true,
-//       headers:{"Content-Type": "application/json;charset=UTF-8"},
-//       body: {data:{state:state,buyerld:buyerld,pageSize:pageSize,shopId:shopId,storeId:storeId}}
-//     },
-//     function (error, response, data) {
-//       console.log(data);
-//       if (error) {
-//         return console.error(error);
-//       }else {
-//         res.send(data)
-//       }
-//     })
-// });
+
 router.post('/myOffered', (req, res, next) => {
   let state = req.body.state;
   let buyerId=req.body.buyerId;

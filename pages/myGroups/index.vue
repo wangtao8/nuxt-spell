@@ -295,7 +295,7 @@ console.log('data:',data)
     height:180px;
   }
   .content{
-    height: calc(100% - 180px);
+    /*height: calc(100% - 180px);*/
     overflow-y: auto;
     /*overflow:auto;*/
     -webkit-overflow-scrolling: touch;
