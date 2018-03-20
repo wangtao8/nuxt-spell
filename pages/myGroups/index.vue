@@ -73,6 +73,7 @@
         fightData:'',
         paging:{  //分页属性
           pageIndex:1,  //当前页
+          pageSize:10
         },
         allLoaded: false, //是否可以上拉属性，false可以上拉，true为禁止上拉，就是不让往上划加载数据了
         topStatus:"",
@@ -101,7 +102,6 @@
               let shopId = params.query.shopId
               let storeId = params.query.storeId
               let buyerId= params.query.buyerId
-               console.log('shopId22::',params.query.shopId)
           	let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/getMyCreate',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
 
                  if(res.data.state==1){
@@ -113,9 +113,6 @@
                     }else{
                        return { fightData:res.data.data,
                                 state:1,
-                                shopId:params.query.shopId,
-                                storeId:params.query.storeId,
-                                buyerId:params.query.buyerId,
                                 noData:true
                                }
                     }
@@ -144,8 +141,7 @@
              //拼团进行中
                     this.state=1;
                     this.paging.pageIndex=1;//初始化页数
-                      console.log('shopId::',this.shopId, this.storeId,this.buyerId)
-                    axios.post('../spell/myGroups',{"state":1,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":"1","pageSize":"10"}).then(({ data }) => {
+                    axios.post('../spell/myGroups',{"state":1,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
 
                                     if( data.state==1){
                                               if(data.data.content.length<=0){
@@ -168,7 +164,7 @@
            //           	拼团成功
                       this.state=2;
                       this.paging.pageIndex=1;
-                      axios.post('../spell/myGroups',{"state":2,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":"1","pageSize":"10"}).then(({ data }) => {
+                      axios.post('../spell/myGroups',{"state":2,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
 
                             if( data.state==1){
                                       if(data.data.content.length<=0){
@@ -191,7 +187,7 @@
                 //           	拼团失败
                        this.state=3;
                        this.paging.pageIndex=1;
-                       axios.post('../spell/myGroups',{"state":3,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":"1","pageSize":"10"}).then(({ data }) => {
+                       axios.post('../spell/myGroups',{"state":3,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
                           if( data.state==1){
                                     if(data.data.content.length<=0){
 
@@ -213,7 +209,7 @@
                 //           	拼团完成
                 this.state=4;
                 this.paging.pageIndex=1;
-                      axios.post('../spell/myGroups',{"state":4,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":"1","pageSize":"10"}).then(({ data }) => {
+                      axios.post('../spell/myGroups',{"state":4,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
                              if( data.state==1){
                                      if(data.data.content.length<=0){
 
@@ -256,13 +252,12 @@
       },
       loadPageList:function(pageIndex){
         this.paging.pageIndex=pageIndex;
-        axios.post('../spell/myGroups',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":"10"}).then(({ data }) => {
+        axios.post('../spell/myGroups',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":this.paging.pageSize}).then(({ data }) => {
           if(this.paging.pageIndex==1){
             this.fightData=data.data;
           }else{
 
             var data=data.data.content
-            console.log('data.length:',data.length)
             if(data.length<=0 || JSON.stringify(data[0])=='{}'){
               this.allLoaded = true; //数据已全部获取完毕
             }else{
