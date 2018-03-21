@@ -28,7 +28,12 @@
     <div class="content" v-else>
         <div class="noTxt">
 
-               <p v-if='msgState'>您好，您目前没有{{msg}}活动</p>
+               <p v-if='msgState'>您好，您目前没有{{msg}}活动
+               <span class="button" @click="botton">去开团</span>
+
+               </p>
+
+
                <p v-else>
 
                </p>
@@ -102,12 +107,21 @@
     },
 
     async asyncData(params) {
+      let taoken;
+      // let data=await axios.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken')
+      // console.log(data);
+      // axios.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken',{ }).then(({ data }) => {
+      //   if(data.state==1){
+      //     console.log('11');
+      //   }
+      // })
+
               let shopId = params.query.shopId
               let storeId = params.query.storeId
               let buyerId= params.query.buyerId
-      console.log('shopId:',shopId);
-          	let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/getMyCreate',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
-console.log('res:',res.data.data.content);
+      // console.log('shopId:',shopId);
+          	let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
+      // console.log('res:',res.data.data.content);
                  if(res.data.state==1){
                     if(res.data.data.content.length<=0){
                        return{
@@ -281,6 +295,9 @@ console.log('data:',data)
           }
         })
         })
+      },
+      botton:function () {
+        location.href="https://emcs.quanyou.com.cn/spell/?shopId=a7fce96a-0126-4b05-bce9-6a01268b0534&activityId=c4486574-d48f-4042-8865-74d48f6042aa&storeId=bd9164c8-aa81-4303-9164-c8aa817303a7";
       }
     }
   }
@@ -312,5 +329,24 @@ console.log('data:',data)
     width: 100%;
     top: 180px;
   }
-
+.noTxt{
+  height: 200px;
+  width: 80%;
+  background-color: #F0F0F0;
+  margin: 0 auto;
+  margin-top: 40%;
+}
+  .noTxt:first-child{
+    color:gray;
+    padding: 20px 100px;
+  }
+  .button{
+    display: block;
+    height: 60px;
+    width: 140px;
+    background-color: brown;
+    color: ghostwhite;
+    padding: 8px 26px;
+    margin: 50px 120px;
+  }
 </style>

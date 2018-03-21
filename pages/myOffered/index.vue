@@ -1,11 +1,13 @@
 <template>
-  <div>
+  <div id="wrap">
+    <header class="headerFix">
     <groups :isA='isA' :isB='isB' />
     <section class="groups">
       <div class="everyGroups borderBox" v-for="(item,$index) in groupsData">
         <a class="borderBox" :class="{groupsCur: $index==indexGroup}"   @click="toggleTab(item.group, $index)" href="javascript:;">{{item.name}}</a>
       </div>
     </section>
+    </header>
     <div class="content">
       <mt-loadmore  :top-method="loadTop"  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false" ref="loadmore" @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange">
         <div slot="top" class="mint-loadmore-top">
@@ -45,6 +47,10 @@
         isA: false,
         isB: true,
         currentTab: 'underWay',
+        hide:true,
+        hideBtn:true,
+        noData:false,//没有数据为false
+        msgState:false,
         groupsData:[
           {"name":"参团进行中","group":"underWay"},
           {"name":"参团成功","group":"offeredSuccess"},
@@ -54,15 +60,17 @@
         fightData:'',
         paging:{  //分页属性
           pageIndex:1,  //当前页
+          pageSize:10
         },
         allLoaded: false, //是否可以上拉属性，false可以上拉，true为禁止上拉，就是不让往上划加载数据了
         topStatus:"",
         bottomStatus:'',
         bottomText:'加载更多',
-        state:1,
+        state:'',
         shopId:'',
         storeId:'',
-        buyerId:''
+        buyerId:'',
+        msg:'参团进行中'
       }
     },
     mounted () {
@@ -79,12 +87,28 @@
       let shopId = params.query.shopId
       let storeId = params.query.storeId
       let buyerId= params.query.buyerId
-      let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/getMyJoin',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
-      return { fightData:res.data.data}
-      // if(res.status==200){
-      //   return { fightData:res.data.data,state:1}
-      //
-      // }
+      let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/spell/getMyJoin',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
+      console.log('res:',res.data.data.content);
+      if(res.data.state==1){
+        if(res.data.data.content.length<=0){
+          return{
+            noData:false,
+            msgState:true
+          }
+        }else{
+          return { fightData:res.data.data,
+            state:1,
+            noData:true
+          }
+        }
+      }else{
+
+        return{
+          noData:false,
+          msgState:false
+        }
+
+      }
     },
     methods: {
       toggleTab(tab, $index) {
@@ -93,20 +117,65 @@
         if($index==0){
           this.state=1;
           this.paging.pageIndex=1;//初始化页数
-          axios.post('../spell/myOffered',{"state":this.state,"buyerId":20180313002,	"pageIndex":1,	"pageSize":10,	"storeId":"070e6814-c1cc-4243-8e68-14c1cc624388",	"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534"}).then(({ data }) => {
-            this.fightData=data.data
+          axios.post('../spell/myOffered',{"state":1,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+            if( data.state==1){
+              if(data.data.content.length<=0){
+
+                this.msg='参团进行中'
+                this.noData=false
+                this.msgState=true
+              }else{
+                this.fightData=data.data
+                this.noData=true
+                this.msgState=false
+              }
+            }else{
+              this.noData=false
+              this.msgState=false
+              this.$options.methods.errorFrame(data.msg)
+            }
           })
         }else if($index==1){
           this.state=2;
           this.paging.pageIndex=1;//初始化页数
-          axios.post('../spell/myOffered',{"state":this.state,"buyerId":20180313002,	"pageIndex":1,	"pageSize":10,	"storeId":"070e6814-c1cc-4243-8e68-14c1cc624388",	"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534"}).then(({ data }) => {
-            this.fightData=data.data
+          axios.post('../spell/myOffered',{"state":2,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+            if( data.state==1){
+              if(data.data.content.length<=0){
+
+                this.msg='参团成功'
+                this.noData=false
+                this.msgState=true
+              }else{
+                this.fightData=data.data
+                this.noData=true
+                this.msgState=false
+              }
+            }else{
+              this.noData=false
+              this.msgState=false
+              this.$options.methods.errorFrame(data.msg)
+            }
           })
         }else {
           this.state=3;
           this.paging.pageIndex=1;//初始化页数
-          axios.post('../spell/myOffered',{"state":this.state,"buyerId":20180313002,	"pageIndex":1,	"pageSize":10,	"storeId":"070e6814-c1cc-4243-8e68-14c1cc624388",	"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534"}).then(({ data }) => {
-            this.fightData=data.data
+          axios.post('../spell/myOffered',{"state":3,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+            if( data.state==1){
+              if(data.data.content.length<=0){
+
+                this.msg='参团失败'
+                this.noData=false
+                this.msgState=true
+              }else{
+                this.fightData=data.data
+                this.noData=true
+                this.msgState=false
+              }
+            }else{
+              this.noData=false
+              this.msgState=false
+              this.$options.methods.errorFrame(data.msg)
+            }
           })
         }
       },
@@ -120,21 +189,41 @@
         this.bottomStatus=status
 
       },
+      // loadTop:function() { //组件提供的下拉触发方法
+      //   //下拉加载:返回到首页.刷新的意思
+      //   this.loadPageList(1);
+      //   this.$refs.loadmore.onTopLoaded();// 固定方法，查询完要调用一次，用于重新定位
+      // },
+      // loadBottom:function() {
+      //   // 上拉加载
+      //   // 上拉触发的分页查询
+      //   this.paging.pageIndex=parseInt(this.paging.pageIndex)+1;
+      //   this.loadPageList(this.paging.pageIndex);
+      //   this.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
+      // },
       loadTop:function() { //组件提供的下拉触发方法
+        let self=this;
+
         //下拉加载:返回到首页.刷新的意思
-        this.loadPageList(1);
-        this.$refs.loadmore.onTopLoaded();// 固定方法，查询完要调用一次，用于重新定位
+        self.loadPageList(1);
+        setTimeout(() => {
+          self.$refs.loadmore.onTopLoaded();// 固定方法，查询完要调用一次，用于重新定位
+        }, 500);
       },
       loadBottom:function() {
+        let self=this;
+
         // 上拉加载
         // 上拉触发的分页查询
-        this.paging.pageIndex=parseInt(this.paging.pageIndex)+1;
-        this.loadPageList(this.paging.pageIndex);
-        this.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
+        self.paging.pageIndex=parseInt(self.paging.pageIndex)+1;
+        self.loadPageList(self.paging.pageIndex);
+        setTimeout(() => {
+          self.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
+        }, 500);
       },
       loadPageList:function(pageIndex){
         this.paging.pageIndex=pageIndex;
-        axios.post('../spell/myOffered',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":"a7fce96a-0126-4b05-bce9-6a01268b0534","storeId":"070e6814-c1cc-4243-8e68-14c1cc624388","buyerId":"20180313002","pageSize":"10"}).then(({ data }) => {
+        axios.post('../spell/myOffered',{"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
           if(this.paging.pageIndex==1){
             this.fightData=data.data;
           }else{
@@ -157,5 +246,27 @@
 </script>
 
 <style>
-
+  #__nuxt,.bigBox, #wrap{
+    width: 100%;
+    height: 100%;
+    margin-bottom:0;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .headerFix{
+    height: 180px;
+    position: fixed;
+    top: 0;
+    background: #fff;
+    width: 100%;
+    z-index: 100;
+  }
+  .content{
+    height: calc(100% - 180px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: absolute;
+    width: 100%;
+    top: 180px;
+  }
 </style>
