@@ -84,7 +84,10 @@
       </ul>
       <nuxt/>
     </div>
-    <Btn :show2="show2"></Btn>
+    <!--<Btn :show2="show2"></Btn>-->
+    <div id="btn">
+      <div class="el_btn" @click="gotuan" v-show="show2">去开团</div>
+    </div>
     <Load v-show="isShow"></Load>
   </div>
 </template>
@@ -151,7 +154,6 @@
         axios.post('http://172.30.3.40:3222/spell/getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
-          console.log('gethead:', gethead)
           if (gethead.data.state) {
             if (gettitle.data.state) {
               if (getclass.data.state) {
@@ -275,6 +277,26 @@
       }
       // 开始倒计时
       this.start()
+
+      // 得到用户信息
+      if (sessionStorage.getItem('nickName')) {
+        console.log('我有值，不请求')
+      } else {
+        let getUserInfo = {
+          storeId : sessionStorage.getItem('storeId'),
+          shopId : sessionStorage.getItem('shopId'),
+          openId : sessionStorage.getItem('openId')
+        }
+        axios.post('./getUserInfo', getUserInfo)
+          .then(function (response) {
+            console.log('333333333333:', response.data)
+            sessionStorage.setItem('nickName', response.data.nick)
+            sessionStorage.setItem('photo', response.data.photo )
+            sessionStorage.setItem('attention', response.data.attention)
+            sessionStorage.setItem('hyId', response.data.hyId)
+            sessionStorage.setItem('buyerId', response.data.buyerId)
+          })
+      }
     },
     methods: {
       check: function (e, att) { // 顶部导航切换
@@ -319,7 +341,24 @@
         }
       },
       gotuan: function () { // 去开团按钮点击
-        location.href = 'success'
+        let openGroup = {
+          nickName : sessionStorage.getItem('nickName'),
+          photo : sessionStorage.getItem('photo'),
+          shopId: sessionStorage.getItem('shopId'),
+          storeId: sessionStorage.getItem('storeId'),
+          activityId: sessionStorage.getItem('activityId'),
+          buyerId: sessionStorage.getItem('buyerId')
+        }
+        console.log('openGroup:', openGroup)
+        axios.post('./openGroup', openGroup)
+          .then(function (response) {
+            console.log()
+            if (response.data.state) {
+              location.href = 'success'
+            } else {
+              MessageBox.alert(response.data.msg, '')
+            }
+          })
       },
       cantuan: function () { // 参团按钮点击
         location.href = 'participate?buyerId=' + sessionStorage.getItem('buyerId') + '&activityId=' + sessionStorage.getItem('activityId') + '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
@@ -344,12 +383,16 @@
           }
           axios.post('./getclass', getclass)
             .then(function (response) {
-              // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
-              self.goodss = response.data.data.content
-              // 实时更新是否最后一页有信息
-              self.last = response.data.data.last
-              // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
-              self.$refs.loadmore.onTopLoaded()
+              if (response.data.state) {
+                // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
+                self.goodss = response.data.data.content
+                // 实时更新是否最后一页有信息
+                self.last = response.data.data.last
+                // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
+                self.$refs.loadmore.onTopLoaded()
+              } else {
+                MessageBox.alert(response.data.msg, '')
+              }
             })
             .catch(function (err) {
               console.log(err)
@@ -373,13 +416,17 @@
           if (!self.last) {
             axios.post('./getclass', getclass)
               .then(function (response) {
-                //需要每次都重新更新last的状态
-                self.last = response.data.data.last
-                // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
+                if (response.data.state) {
+                  //需要每次都重新更新last的状态
+                  self.last = response.data.data.last
+                  // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
                   for (let j = 0; j < response.data.data.content.length; j++) {
                     // 将得到的数据循环后单个push到之前的数组中去
                     self.goodss.push(response.data.data.content[j])
                   }
+                } else {
+                  MessageBox.alert(response.data.msg, '')
+                }
                 // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
                 self.$refs.loadmore.onBottomLoaded()
               })
