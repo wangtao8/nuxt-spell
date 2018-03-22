@@ -107,7 +107,7 @@
     },
 
     async asyncData(params) {
-      let taoken;
+      // let taoken;
       // let data=await axios.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken')
       // console.log(data);
       // axios.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken',{ }).then(({ data }) => {
@@ -278,7 +278,7 @@ console.log('data:',data)
         },
       loadPageList:function(pageIndex){
         this.paging.pageIndex=pageIndex;
-        this.$nextTick(function () {
+        // this.$nextTick(function () {
         axios.post('../spell/myGroups',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":this.paging.pageSize}).then(({ data }) => {
           if (this.paging.pageIndex == 1) {
             this.fightData = data.data;
@@ -294,7 +294,7 @@ console.log('data:',data)
             }
           }
         })
-        })
+        // })
       },
       botton:function () {
         location.href="https://emcs.quanyou.com.cn/spell/?shopId=a7fce96a-0126-4b05-bce9-6a01268b0534&activityId=c4486574-d48f-4042-8865-74d48f6042aa&storeId=bd9164c8-aa81-4303-9164-c8aa817303a7";
@@ -338,7 +338,7 @@ console.log('data:',data)
 }
   .noTxt:first-child{
     color:gray;
-    padding: 20px 100px;
+    padding: 3% 12%;
   }
   .button{
     display: block;
@@ -347,6 +347,6 @@ console.log('data:',data)
     background-color: brown;
     color: ghostwhite;
     padding: 8px 26px;
-    margin: 50px 120px;
+    margin:  10% 30%;
   }
 </style>

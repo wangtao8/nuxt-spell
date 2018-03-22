@@ -15,7 +15,7 @@
             </p>
             <p class="groupPrice" v-if="hide">
               <!--此处是判断拼团的条件是人还是钱-->
-              <span v-if=" item.spellRule. headConditionWay==1">
+              <span v-if=" item.spellRule.headConditionWay==1">
                                         <i class="g-red">{{item.payCount}}</i>人已支付
                                 </span>
               <span v-else>

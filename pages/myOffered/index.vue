@@ -1,21 +1,21 @@
 <template>
   <div id="wrap">
     <header class="headerFix">
-    <groups :isA='isA' :isB='isB' />
-    <section class="groups">
-      <div class="everyGroups borderBox" v-for="(item,$index) in groupsData">
-        <a class="borderBox" :class="{groupsCur: $index==indexGroup}"   @click="toggleTab(item.group, $index)" href="javascript:;">{{item.name}}</a>
-      </div>
-    </section>
+      <groups :isA='isA' :isB='isB' />
+      <section class="groups">
+        <div class="everyGroups borderBox" v-for="(item,$index) in groupsData">
+          <a class="borderBox" :class="{groupsCur: $index==indexGroup}"   @click="toggleTab(item.group, $index)" href="javascript:;">{{item.name}}</a>
+        </div>
+      </section>
     </header>
-    <div class="content">
+    <div class="content" v-if="noData">
       <mt-loadmore  :top-method="loadTop"  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false" ref="loadmore" @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange">
         <div slot="top" class="mint-loadmore-top">
           <span v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">刷新</span>
           <span v-show="topStatus === 'loading'">加载中...</span>
         </div>
 
-        <underWay :is="currentTab"  :fightData='fightData' keep-alive></underWay>
+        <underWay :is="currentTab"  :fightData='fightData' :hideBtn='hideBtn' keep-alive></underWay>
         <div slot="bottom" class="mint-loadmore-bottom">
           <span v-show="bottomStatus === 'loading'">加载中...</span>
           <span class="mint-loadmore-text">{{ bottomText }}</span>
@@ -23,11 +23,27 @@
       </mt-loadmore>
 
     </div>
+    <div class="content" v-else>
+      <div class="noTxt">
+
+        <p v-if='msgState'>您好，您目前没有{{msg}}活动
+          <span class="button" @click="botton">去开团</span>
+
+        </p>
+
+
+        <p v-else>
+
+        </p>
+
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   import Wxt from '../../assets/js/WXUtil'
+  import { MessageBox } from 'mint-ui'
   import groups from '../../components/myGroups/groups'
   import underWay from '../../components/myGroups/underWay'
   import offeredSuccess from '../../components/myGroups/offeredSuccess'
@@ -88,7 +104,7 @@
       let storeId = params.query.storeId
       let buyerId= params.query.buyerId
       let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/spell/getMyJoin',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
-      console.log('res:',res.data.data.content);
+      // console.log('res:',res.data.data.content);
       if(res.data.state==1){
         if(res.data.data.content.length<=0){
           return{
@@ -111,6 +127,10 @@
       }
     },
     methods: {
+      errorFrame(data){
+        MessageBox.alert(data, '错误提示');
+
+      },
       toggleTab(tab, $index) {
         this.currentTab = tab;
         this.indexGroup = $index;
@@ -239,6 +259,9 @@
             }
           }
         })
+      },
+      botton:function () {
+        location.href="https://emcs.quanyou.com.cn/spell/?shopId=a7fce96a-0126-4b05-bce9-6a01268b0534&activityId=c4486574-d48f-4042-8865-74d48f6042aa&storeId=bd9164c8-aa81-4303-9164-c8aa817303a7";
       }
     }
 
@@ -268,5 +291,25 @@
     position: absolute;
     width: 100%;
     top: 180px;
+  }
+  .noTxt{
+    height: 200px;
+    width: 80%;
+    background-color: #F0F0F0;
+    margin: 0 auto;
+    margin-top: 40%;
+  }
+  .noTxt:first-child{
+    color:gray;
+    padding: 3% 12%;
+  }
+  .button{
+    display: block;
+    height: 60px;
+    width: 140px;
+    background-color: brown;
+    color: ghostwhite;
+    padding: 8px 26px;
+    margin:  10% 30%;
   }
 </style>
