@@ -36,13 +36,13 @@
         <div class="itemPerson borderBox clean" v-if="hide"  data-test="item.memberPay" v-for="(itemPerson,$index) in item.memberPay">
           <div class="leftPerson _left">
             <img class="personImg" :src=" itemPerson.photo" alt="头像"/>
-            <span class="groupName">{{itemPerson.nickName}}</span>
+            <span class="groupName">{{itemPerson.buyerName}}</span>
           </div>
-          <div class="rightPrice _right">
+          <div class="rightPrice _right" >
             <!--此处是判断是否是支付了-->
             <em class="color999 payState" v-if="itemPerson.isPayed==0" state="itemPerson.isPayed">未支付</em>
             <em class="color999 payState" v-else>已支付</em>
-            <i class="g-red">￥{{itemPerson.amount}}</i>
+            <i class="g-red">￥{{itemPerson.payAmount}}</i>
           </div>
         </div>
 
