@@ -91,6 +91,7 @@
         shopId:'',
         storeId:'',
         buyerId:'',
+        activityId:'',
         msg:'拼团进行中'
 
       }
@@ -104,21 +105,15 @@
       this.shopId = sessionStorage.getItem('shopId')
       this.storeId = sessionStorage.getItem('storeId')
       this.buyerId= sessionStorage.getItem('buyerId')
+      this.activityId=sessionStorage.getItem('activityId')
     },
 
     async asyncData(params) {
-      // let taoken;
-      // let data=await axios.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken')
-      // console.log(data);
-      // axios.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken',{ }).then(({ data }) => {
-      //   if(data.state==1){
-      //     console.log('11');
-      //   }
-      // })
 
               let shopId = params.query.shopId
               let storeId = params.query.storeId
               let buyerId= params.query.buyerId
+
       // console.log('shopId:',shopId);
           	let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
       // console.log('res:',res.data.data.content);
@@ -296,8 +291,10 @@ console.log('data:',data)
         })
         // })
       },
+
       botton:function () {
-        location.href="https://emcs.quanyou.com.cn/spell/?shopId=a7fce96a-0126-4b05-bce9-6a01268b0534&activityId=c4486574-d48f-4042-8865-74d48f6042aa&storeId=bd9164c8-aa81-4303-9164-c8aa817303a7";
+        location.href="https://emcs.quanyou.com.cn/spell/?shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId;
+        // console.log(this.shopId,this.storeId,this.activityId);
       }
     }
   }

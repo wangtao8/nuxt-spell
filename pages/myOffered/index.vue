@@ -86,6 +86,7 @@
         shopId:'',
         storeId:'',
         buyerId:'',
+        activityId:'',
         msg:'参团进行中'
       }
     },
@@ -98,6 +99,7 @@
       this.shopId = sessionStorage.getItem('shopId')
       this.storeId = sessionStorage.getItem('storeId')
       this.buyerId= sessionStorage.getItem('buyerId')
+      this.activityId=sessionStorage.getItem('activityId')
     },
     async asyncData(params) {
       let shopId = params.query.shopId
@@ -261,7 +263,7 @@
         })
       },
       botton:function () {
-        location.href="https://emcs.quanyou.com.cn/spell/?shopId=a7fce96a-0126-4b05-bce9-6a01268b0534&activityId=c4486574-d48f-4042-8865-74d48f6042aa&storeId=bd9164c8-aa81-4303-9164-c8aa817303a7";
+        location.href="https://emcs.quanyou.com.cn/spell/?shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId;
       }
     }
 
