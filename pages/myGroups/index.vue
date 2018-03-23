@@ -28,7 +28,12 @@
     <div class="content" v-else>
         <div class="noTxt">
 
-               <p v-if='msgState'>您好，您目前没有{{msg}}活动</p>
+               <p v-if='msgState'>您好，您目前没有{{msg}}活动
+               <span class="button" @click="botton">去开团</span>
+
+               </p>
+
+
                <p v-else>
 
                </p>
@@ -75,6 +80,7 @@
         fightData:'',
         paging:{  //分页属性
           pageIndex:1,  //当前页
+          // autoFill: false,
           pageSize:10
         },
         allLoaded: false, //是否可以上拉属性，false可以上拉，true为禁止上拉，就是不让往上划加载数据了
@@ -85,6 +91,7 @@
         shopId:'',
         storeId:'',
         buyerId:'',
+        activityId:'',
         msg:'拼团进行中'
 
       }
@@ -98,15 +105,18 @@
       this.shopId = sessionStorage.getItem('shopId')
       this.storeId = sessionStorage.getItem('storeId')
       this.buyerId= sessionStorage.getItem('buyerId')
+      this.activityId=sessionStorage.getItem('activityId')
     },
 
     async asyncData(params) {
+
               let shopId = params.query.shopId
               let storeId = params.query.storeId
               let buyerId= params.query.buyerId
-      console.log('shopId:',shopId);
-          	let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/getMyCreate',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
-console.log('res:',res.data.data.content);
+
+      // console.log('shopId:',shopId);
+          	let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
+      // console.log('res:',res.data.data.content);
                  if(res.data.state==1){
                     if(res.data.data.content.length<=0){
                        return{
@@ -248,7 +258,8 @@ console.log('data:',data)
           self.loadPageList(1);
         setTimeout(() => {
           self.$refs.loadmore.onTopLoaded();// 固定方法，查询完要调用一次，用于重新定位
-        }, 500);},
+        }, 500);
+        },
       loadBottom:function() {
        let self=this;
 
@@ -258,33 +269,41 @@ console.log('data:',data)
           self.loadPageList(self.paging.pageIndex);
         setTimeout(() => {
         self.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
-      }, 500);},
+      }, 500);
+        },
       loadPageList:function(pageIndex){
         this.paging.pageIndex=pageIndex;
+        // this.$nextTick(function () {
         axios.post('../spell/myGroups',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":this.paging.pageSize}).then(({ data }) => {
-          if(this.paging.pageIndex==1){
-            this.fightData=data.data;
-          }else{
+          if (this.paging.pageIndex == 1) {
+            this.fightData = data.data;
+          } else {
 
-            var data=data.data.content
-            if(data.length<=0 || JSON.stringify(data[0])=='{}'){
+            var data = data.data.content
+            if (data.length <= 0 || JSON.stringify(data[0]) == '{}') {
               this.allLoaded = true; //数据已全部获取完毕
-            }else{
-              for(var value of data){
+            } else {
+              for (var value of data) {
                 this.fightData.content.push(value);
               }
             }
           }
         })
+        // })
+      },
+
+      botton:function () {
+        location.href="https://emcs.quanyou.com.cn/spell/?shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId;
+        // console.log(this.shopId,this.storeId,this.activityId);
       }
     }
   }
 </script>
 
-<style scoped>
+<style>
   /*@import "../../assets/css/base.css";*/
   @import "../../assets/css/myGroups.css";
-  #__nuxt,.warpPage, #wrap{
+  #__nuxt,.bigBox, #wrap{
     width: 100%;
     height: 100%;
     margin-bottom:0;
@@ -292,13 +311,39 @@ console.log('data:',data)
     z-index: 1;
   }
   .headerFix{
-    height:180px;
+    height: 180px;
+    position: fixed;
+    top: 0;
+    background: #fff;
+    width: 100%;
+    z-index: 100;
   }
   .content{
     height: calc(100% - 180px);
     overflow-y: auto;
-    /*overflow:auto;*/
     -webkit-overflow-scrolling: touch;
+    position: absolute;
+    width: 100%;
+    top: 180px;
   }
-
+.noTxt{
+  height: 200px;
+  width: 80%;
+  background-color: #F0F0F0;
+  margin: 0 auto;
+  margin-top: 40%;
+}
+  .noTxt:first-child{
+    color:gray;
+    padding: 3% 12%;
+  }
+  .button{
+    display: block;
+    height: 60px;
+    width: 140px;
+    background-color: brown;
+    color: ghostwhite;
+    padding: 8px 26px;
+    margin:  10% 30%;
+  }
 </style>

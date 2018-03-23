@@ -26,6 +26,7 @@
       myOffered(){
         this.myAllSpell='2',
           location.href = 'myOffered?buyerId=' + sessionStorage.getItem('buyerId') +  '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
+        this.$emit('myOffered',[this.myAllSpell]);
       }
     }
   }
