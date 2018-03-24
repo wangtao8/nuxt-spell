@@ -92,6 +92,9 @@
         storeId:'',
         buyerId:'',
         activityId:'',
+        token:'',
+        timestamp:'',
+        lastime:'',
         msg:'拼团进行中'
 
       }
@@ -106,39 +109,56 @@
       this.storeId = sessionStorage.getItem('storeId')
       this.buyerId= sessionStorage.getItem('buyerId')
       this.activityId=sessionStorage.getItem('activityId')
+
+      console.log('1230172398712931238912:', this.token,this.timestamp,this.lastime)
     },
 
     async asyncData(params) {
+      return axios.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken', {"userName":"ApiActivity_2018", "password":"qy_api_#365!2018"}
+      )
+        .then(function (token2) {
+          // console.log('222222222222222:', token.data.data)
+          // let shopId = params.query.shopId
+          // let storeId = params.query.storeId
+          // let buyerId= params.query.buyerId
+          // let that=this;
+          let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+          let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
+          let buyerId= 10057
+          let token = token2.data.data.token
+          let timestamp = (new Date()).getTime()
+          let lastime = token2.data.data.invalidDate
+          // that.token=token2.data.data.token
+          // that.timestamp=(new Date()).getTime()
+          console.log('hh:',token2);
+          // console.log('token:', token, timestamp)
+          return axios.post('http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate?token=' +token + '&timestamp=' +timestamp,{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
+            .then(function (res) {
+              if(res.data.state==1){
+                if(res.data.data.content.length<=0){
+                  return{
+                    noData:false,
+                    msgState:true,
+                    token: token2.data.data.token,
+                    timestamp:(new Date()).getTime(),
+                    lastime:token2.data.data.invalidDate
+                  }
+                }else{
+                  return { fightData:res.data.data,
+                    state:1,
+                    noData:true
+                  }
+                }
+              }else{
 
-              let shopId = params.query.shopId
-              let storeId = params.query.storeId
-              let buyerId= params.query.buyerId
+                return{
+                  noData:false,
+                  msgState:false
+                }
 
-      // console.log('shopId:',shopId);
-          	let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
-      // console.log('res:',res.data.data.content);
-                 if(res.data.state==1){
-                    if(res.data.data.content.length<=0){
-                       return{
-                         noData:false,
-                         msgState:true
-                       }
-                    }else{
-                       return { fightData:res.data.data,
-                                state:1,
-                                noData:true
-                               }
-                    }
-                 }else{
-
-                        return{
-                              noData:false,
-                              msgState:false
-                        }
-
-                 }
-
-
+              }
+            })
+        })
 
 
     },
@@ -148,14 +168,17 @@
 
      },
       toggleTab(tab, $index) {
+
         this.currentTab = tab; // tab 为当前触发标签页的组件名
         this.indexGroup = $index;
             if($index==0){
              //拼团进行中
                     this.state=1;
                     this.paging.pageIndex=1;//初始化页数
-                    axios.post('../spell/myGroups',{"state":1,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
-console.log('data:',data)
+              console.log('11111:',this.timestamp)
+               axios.post('../spell/myGroups?token=' +this.token + '&timestamp=' + this.timestamp,{"state":1,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize})
+                 .then(function (data)  {
+                    console.log('data:',data)
                                     if( data.state==1){
                                               if(data.data.content.length<=0){
 
@@ -172,12 +195,16 @@ console.log('data:',data)
                                        this.msgState=false
                                        this.$options.methods.errorFrame(data.msg)
                                     }
-                     })
-              }else if($index==1){
+                })
+            }
+
+
+
+              else if($index==1){
            //           	拼团成功
                       this.state=2;
                       this.paging.pageIndex=1;
-                      axios.post('../spell/myGroups',{"state":2,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+                      axios.post('../spell/myGroups?token=' +this.token + '&timestamp=' + this.timestamp,{"state":2,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
 
                             if( data.state==1){
                                       if(data.data.content.length<=0){
@@ -196,11 +223,14 @@ console.log('data:',data)
                                this.$options.methods.errorFrame(data.msg)
                             }
                       })
-              }else if($index==2){
+              }
+
+
+              else if($index==2){
                 //           	拼团失败
                        this.state=3;
                        this.paging.pageIndex=1;
-                       axios.post('../spell/myGroups',{"state":3,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+                       axios.post('../spell/myGroups?token=' +this.token + '&timestamp=' + this.timestamp,{"state":3,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
                           if( data.state==1){
                                     if(data.data.content.length<=0){
 
@@ -218,11 +248,13 @@ console.log('data:',data)
                              this.$options.methods.errorFrame(data.msg)
                           }
                        })
-              }else {
+              }
+
+              else {
                 //           	拼团完成
                 this.state=4;
                 this.paging.pageIndex=1;
-                      axios.post('../spell/myGroups',{"state":4,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+                      axios.post('../spell/myGroups?token=' +this.token + '&timestamp=' + this.timestamp,{"state":4,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
                              if( data.state==1){
                                      if(data.data.content.length<=0){
 
@@ -273,8 +305,7 @@ console.log('data:',data)
         },
       loadPageList:function(pageIndex){
         this.paging.pageIndex=pageIndex;
-        // this.$nextTick(function () {
-        axios.post('../spell/myGroups',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":this.paging.pageSize}).then(({ data }) => {
+        axios.post('../spell/myGroups?token=' +this.token + '&timestamp=' + this.timestamp,{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":this.paging.pageSize}).then(({ data }) => {
           if (this.paging.pageIndex == 1) {
             this.fightData = data.data;
           } else {
@@ -289,7 +320,6 @@ console.log('data:',data)
             }
           }
         })
-        // })
       },
 
       botton:function () {
