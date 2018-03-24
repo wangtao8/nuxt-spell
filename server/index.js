@@ -51,7 +51,7 @@ async function start () {
 }
 
 //引入token管理
-var tokenManager = require('./tokenManager');
+import tokenManager from './tokenManager'
 tokenManager.init();
 
 start()

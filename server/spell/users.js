@@ -9,7 +9,7 @@ let Random = Mock.Random
 // let tslist = nuxtSchema.tslist
 
 let router = Router()
-var tokenManager = require('../tokenManager');
+import tokenManager from '../tokenManager'
 
 // 接口转发测试
 router.get('/getmsg', (req, res, next) => {
@@ -153,9 +153,9 @@ router.post('/getToken', (req, res, next) => {
 
 // 商品详情页
 router.get('/getDetail', (req, res, next) => {
-  var token = tokenManager.getToken();
-console.log("token:"+token);
-  // 存入session
+  let token = tokenManager.getToken()
+  console.log('查询到的token:', token)
+ // 存入session
   req.session.name = req.query.name
 req.session.password = req.query.password
 let url = []
@@ -274,7 +274,7 @@ router.post('/myGroups', (req, res, next) => {
   let timestamp=req.query.timestamp
   request(
     {
-      url:'http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate?token='+token+'&timestamp'+timestamp,
+      url:'http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate?token='+token+'&timestamp='+timestamp,
       method: "POST",
       json:data
     },
