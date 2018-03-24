@@ -50,4 +50,8 @@ async function start () {
   console.log('Server listening on 192.168.79.12:3222') // eslint-disable-line no-console
 }
 
+//引入token管理
+var tokenManager = require('./tokenManager');
+tokenManager.init();
+
 start()
