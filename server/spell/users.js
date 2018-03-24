@@ -9,6 +9,7 @@ let Random = Mock.Random
 // let tslist = nuxtSchema.tslist
 
 let router = Router()
+var tokenManager = require('../tokenManager');
 
 // 接口转发测试
 router.get('/getmsg', (req, res, next) => {
@@ -152,6 +153,8 @@ router.post('/getToken', (req, res, next) => {
 
 // 商品详情页
 router.get('/getDetail', (req, res, next) => {
+  var token = tokenManager.getToken();
+console.log("token:"+token);
   // 存入session
   req.session.name = req.query.name
 req.session.password = req.query.password
