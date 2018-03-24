@@ -78,7 +78,6 @@
         data: params
       })
         .then(function (response) {
-          console.log('222222222222:', response.data.data.content)
           return {
             goodss: response.data.data.content,
             activityId: content.query.activityId,
