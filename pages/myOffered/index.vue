@@ -104,30 +104,39 @@
     async asyncData(params) {
       let shopId = params.query.shopId
       let storeId = params.query.storeId
-      let buyerId= params.query.buyerId
-      let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/spell/getMyJoin',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
-      // console.log('res:',res.data.data.content);
-      if(res.data.state==1){
-        if(res.data.data.content.length<=0){
-          return{
-            noData:false,
-            msgState:true
-          }
-        }else{
-          return { fightData:res.data.data,
-            state:1,
-            noData:true
-          }
-        }
-      }else{
+      let buyerId = params.query.buyerId
+      return axios.post('http://emcs.quanyou.com.cn/spell/myOffered', {
+        "state": 1,
+        "shopId": shopId,
+        "storeId": storeId,
+        "buyerId": buyerId,
+        "pageIndex": "1",
+        "pageSize": "10"
+      })
+        .then(function (res) {
+          if (res.data.state == 1) {
+            if (res.data.data.content.length <= 0) {
+              return {
+                noData: false,
+                msgState: true
+              }
+            } else {
+              return {
+                fightData: res.data.data,
+                state: 1,
+                noData: true
+              }
+            }
+          } else {
 
-        return{
-          noData:false,
-          msgState:false
-        }
+            return {
+              noData: false,
+              msgState: false
+            }
 
-      }
-    },
+          }
+        })
+    }   ,
     methods: {
       errorFrame(data){
         MessageBox.alert(data, '错误提示');

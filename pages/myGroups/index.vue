@@ -1,12 +1,12 @@
 <template>
   <div id="wrap">
     <header class="headerFix">
-    <groups :isA='isA' :isB='isB' />
-    <section class="groups">
-      <div class="everyGroups borderBox" v-for="(item,$index) in groupsData">
-        <a class="borderBox" :class="{groupsCur: $index==indexGroup}"   @click="toggleTab(item.group, $index)" href="javascript:;">{{item.name}}</a>
-      </div>
-    </section>
+      <groups :isA='isA' :isB='isB' />
+      <section class="groups">
+        <div class="everyGroups borderBox" v-for="(item,$index) in groupsData">
+          <a class="borderBox" :class="{groupsCur: $index==indexGroup}"   @click="toggleTab(item.group, $index)" href="javascript:;">{{item.name}}</a>
+        </div>
+      </section>
     </header>
     <div class="content" v-if="noData">
       <mt-loadmore  :top-method="loadTop"  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false"  @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange" ref="loadmore">
@@ -20,25 +20,25 @@
         <!--拼团成功-->
         <!--<fightSuccess/>-->
         <div slot="bottom" class="mint-loadmore-bottom">
-           <span v-show="bottomStatus === 'loading'">加载中...</span>
-           <span class="mint-loadmore-text">{{ bottomText }}</span>
+          <span v-show="bottomStatus === 'loading'">加载中...</span>
+          <span class="mint-loadmore-text">{{ bottomText }}</span>
         </div>
       </mt-loadmore>
     </div>
     <div class="content" v-else>
-        <div class="noTxt">
+      <div class="noTxt">
 
-               <p v-if='msgState'>您好，您目前没有{{msg}}活动
-               <span class="button" @click="botton">去开团</span>
+        <p v-if='msgState'>您好，您目前没有{{msg}}活动
+          <span class="button" @click="botton">去开团</span>
 
-               </p>
+        </p>
 
 
-               <p v-else>
+        <p v-else>
 
-               </p>
+        </p>
 
-        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -52,7 +52,8 @@
   import collageFailure from '../../components/myGroups/collageFailure'
   import collageFull from '../../components/myGroups/collageFull'
   import Wxt from '../../assets/js/WXUtil'
-   import axios from 'axios'
+  import axios from 'axios'
+  // import takeManager from '../../server/tokenManager'
   export default {
     name: 'box',
     components: {
@@ -92,9 +93,6 @@
         storeId:'',
         buyerId:'',
         activityId:'',
-        token:'',
-        timestamp:'',
-        lastime:'',
         msg:'拼团进行中'
 
       }
@@ -109,170 +107,147 @@
       this.storeId = sessionStorage.getItem('storeId')
       this.buyerId= sessionStorage.getItem('buyerId')
       this.activityId=sessionStorage.getItem('activityId')
-
-      console.log('1230172398712931238912:', this.token,this.timestamp,this.lastime)
+      console.log('this参数:',this.shopId,this,storeId,this.buyerId)
     },
 
     async asyncData(params) {
-      return axios.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken', {"userName":"ApiActivity_2018", "password":"qy_api_#365!2018"}
-      )
-        .then(function (token2) {
-          // console.log('222222222222222:', token.data.data)
-          // let shopId = params.query.shopId
-          // let storeId = params.query.storeId
-          // let buyerId= params.query.buyerId
-          // let that=this;
-          let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
-          let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
-          let buyerId= 10057
-          let token = token2.data.data.token
-          let timestamp = (new Date()).getTime()
-          let lastime = token2.data.data.invalidDate
-          // that.token=token2.data.data.token
-          // that.timestamp=(new Date()).getTime()
-          console.log('hh:',token2);
-          // console.log('token:', token, timestamp)
-          return axios.post('http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate?token=' +token + '&timestamp=' +timestamp,{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
-            .then(function (res) {
-              if(res.data.state==1){
-                if(res.data.data.content.length<=0){
-                  return{
-                    noData:false,
-                    msgState:true,
-                    token: token2.data.data.token,
-                    timestamp:(new Date()).getTime(),
-                    lastime:token2.data.data.invalidDate
-                  }
-                }else{
-                  return { fightData:res.data.data,
-                    state:1,
-                    noData:true
-                  }
-                }
-              }else{
 
-                return{
-                  noData:false,
-                  msgState:false
-                }
+      let shopId = params.query.shopId
+      let storeId = params.query.storeId
+      let buyerId= params.query.buyerId
+      // let token = takeManager.getToken()
+      // let timestamp = (new Date()).getTime()
+     console.log('参数：',shopId,storeId,buyerId)
 
+      return  axios.post('http://emcs.quanyou.com.cn/spell/myGroups',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
+
+        .then(function (res) {
+          if(res.data.state==1){
+            if(res.data.data.content.length<=0){
+              return{
+                noData:false,
+                msgState:true
               }
-            })
-        })
+            }else{
+              return { fightData:res.data.data,
+                state:1,
+                noData:true
+              }
+            }
+          }else{
 
-
-    },
-    methods: {
-     errorFrame(data){
-     MessageBox.alert(data, '错误提示');
-
-     },
-      toggleTab(tab, $index) {
-
-        this.currentTab = tab; // tab 为当前触发标签页的组件名
-        this.indexGroup = $index;
-            if($index==0){
-             //拼团进行中
-                    this.state=1;
-                    this.paging.pageIndex=1;//初始化页数
-              console.log('11111:',this.timestamp)
-               axios.post('../spell/myGroups?token=' +this.token + '&timestamp=' + this.timestamp,{"state":1,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize})
-                 .then(function (data)  {
-                    console.log('data:',data)
-                                    if( data.state==1){
-                                              if(data.data.content.length<=0){
-
-                                                   this.msg='拼团进行中'
-                                                   this.noData=false
-                                                   this.msgState=true
-                                              }else{
-                                                    this.fightData=data.data
-                                                    this.noData=true
-                                                    this.msgState=false
-                                                   }
-                                    }else{
-                                       this.noData=false
-                                       this.msgState=false
-                                       this.$options.methods.errorFrame(data.msg)
-                                    }
-                })
+            return{
+              noData:false,
+              msgState:false
             }
 
+          }
+        })
 
+      // console.log('shopId:',shopId);
+      // let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate?token='+token+'&timestamp='+timestamp,{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
+      // console.log('res:',res.data.data.content);
+    },
+    methods: {
+      errorFrame(data){
+        MessageBox.alert(data, '错误提示');
 
-              else if($index==1){
-           //           	拼团成功
-                      this.state=2;
-                      this.paging.pageIndex=1;
-                      axios.post('../spell/myGroups?token=' +this.token + '&timestamp=' + this.timestamp,{"state":2,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+      },
+      toggleTab(tab, $index) {
+        this.currentTab = tab; // tab 为当前触发标签页的组件名
+        this.indexGroup = $index;
+        if($index==0){
+          //拼团进行中
+          this.state=1;
+          this.paging.pageIndex=1;//初始化页数
+          console.log('this参数:',this.shopId,this.storeId,this.buyerId)
+          axios.post('../spell/myGroups',{"state":1,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+            console.log('data:',data)
+            if( data.state==1){
+              if(data.data.content.length<=0){
 
-                            if( data.state==1){
-                                      if(data.data.content.length<=0){
-
-                                           this.msg='拼团成功'
-                                           this.noData=false
-                                           this.msgState=true
-                                      }else{
-                                            this.fightData=data.data
-                                            this.noData=true
-                                            this.msgState=false
-                                           }
-                            }else{
-                               this.noData=false
-                               this.msgState=false
-                               this.$options.methods.errorFrame(data.msg)
-                            }
-                      })
+                this.msg='拼团进行中'
+                this.noData=false
+                this.msgState=true
+              }else{
+                this.fightData=data.data
+                this.noData=true
+                this.msgState=false
               }
+            }else{
+              this.noData=false
+              this.msgState=false
+              this.$options.methods.errorFrame(data.msg)
+            }
+          })
+        }else if($index==1){
+          //           	拼团成功
+          this.state=2;
+          this.paging.pageIndex=1;
+          axios.post('../spell/myGroups',{"state":2,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
 
+            if( data.state==1){
+              if(data.data.content.length<=0){
 
-              else if($index==2){
-                //           	拼团失败
-                       this.state=3;
-                       this.paging.pageIndex=1;
-                       axios.post('../spell/myGroups?token=' +this.token + '&timestamp=' + this.timestamp,{"state":3,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
-                          if( data.state==1){
-                                    if(data.data.content.length<=0){
-
-                                         this.msg='拼团失败'
-                                         this.noData=false
-                                         this.msgState=true
-                                    }else{
-                                          this.fightData=data.data
-                                          this.noData=true
-                                          this.msgState=false
-                                         }
-                          }else{
-                             this.noData=false
-                             this.msgState=false
-                             this.$options.methods.errorFrame(data.msg)
-                          }
-                       })
+                this.msg='拼团成功'
+                this.noData=false
+                this.msgState=true
+              }else{
+                this.fightData=data.data
+                this.noData=true
+                this.msgState=false
               }
+            }else{
+              this.noData=false
+              this.msgState=false
+              this.$options.methods.errorFrame(data.msg)
+            }
+          })
+        }else if($index==2){
+          //           	拼团失败
+          this.state=3;
+          this.paging.pageIndex=1;
+          axios.post('../spell/myGroups',{"state":3,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+            if( data.state==1){
+              if(data.data.content.length<=0){
 
-              else {
-                //           	拼团完成
-                this.state=4;
-                this.paging.pageIndex=1;
-                      axios.post('../spell/myGroups?token=' +this.token + '&timestamp=' + this.timestamp,{"state":4,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
-                             if( data.state==1){
-                                     if(data.data.content.length<=0){
-
-                                          this.msg='拼团完成'
-                                          this.noData=false
-                                          this.msgState=true
-                                     }else{
-                                           this.fightData=data.data
-                                           this.noData=true
-                                           this.msgState=false
-                                          }
-                           }else{
-                              this.noData=false
-                              this.msgState=false
-                              this.$options.methods.errorFrame(data.msg)
-                           }
-                     })
+                this.msg='拼团失败'
+                this.noData=false
+                this.msgState=true
+              }else{
+                this.fightData=data.data
+                this.noData=true
+                this.msgState=false
               }
+            }else{
+              this.noData=false
+              this.msgState=false
+              this.$options.methods.errorFrame(data.msg)
+            }
+          })
+        }else {
+          //           	拼团完成
+          this.state=4;
+          this.paging.pageIndex=1;
+          axios.post('../spell/myGroups',{"state":4,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+            if( data.state==1){
+              if(data.data.content.length<=0){
+
+                this.msg='拼团完成'
+                this.noData=false
+                this.msgState=true
+              }else{
+                this.fightData=data.data
+                this.noData=true
+                this.msgState=false
+              }
+            }else{
+              this.noData=false
+              this.msgState=false
+              this.$options.methods.errorFrame(data.msg)
+            }
+          })
+        }
       },
       //			分页查询(加载更多)
       handleTopChange(status) {
@@ -287,27 +262,29 @@
         let self=this;
 
         //下拉加载:返回到首页.刷新的意思
-          self.loadPageList(1);
+        self.loadPageList(1);
         setTimeout(() => {
           self.$refs.loadmore.onTopLoaded();// 固定方法，查询完要调用一次，用于重新定位
         }, 500);
-        },
+      },
       loadBottom:function() {
-       let self=this;
+        let self=this;
 
         // 上拉加载
         // 上拉触发的分页查询
-          self.paging.pageIndex=parseInt(self.paging.pageIndex)+1;
-          self.loadPageList(self.paging.pageIndex);
+        self.paging.pageIndex=parseInt(self.paging.pageIndex)+1;
+        self.loadPageList(self.paging.pageIndex);
         setTimeout(() => {
-        self.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
-      }, 500);
-        },
+          self.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
+        }, 500);
+      },
       loadPageList:function(pageIndex){
         this.paging.pageIndex=pageIndex;
-        axios.post('../spell/myGroups?token=' +this.token + '&timestamp=' + this.timestamp,{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":this.paging.pageSize}).then(({ data }) => {
+        // this.$nextTick(function () {
+        axios.post('../spell/myGroups',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":this.paging.pageSize}).then(({ data }) => {
           if (this.paging.pageIndex == 1) {
             this.fightData = data.data;
+            console.log("fightdata:",this.fightData)
           } else {
 
             var data = data.data.content
@@ -320,6 +297,7 @@
             }
           }
         })
+        // })
       },
 
       botton:function () {
@@ -356,13 +334,13 @@
     width: 100%;
     top: 180px;
   }
-.noTxt{
-  height: 200px;
-  width: 80%;
-  background-color: #F0F0F0;
-  margin: 0 auto;
-  margin-top: 40%;
-}
+  .noTxt{
+    height: 200px;
+    width: 80%;
+    background-color: #F0F0F0;
+    margin: 0 auto;
+    margin-top: 40%;
+  }
   .noTxt:first-child{
     color:gray;
     padding: 3% 12%;
