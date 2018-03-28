@@ -17,8 +17,7 @@
         <!--子组件，显示不同的 tab   is 特性动态绑定子组件    keep-alive 将切换出去的组件保留在内存中-->
         <!--拼团进行中-->
         <underWay :is="currentTab" :fightData='fightData' :hide='hide' :hideBtn='hideBtn' keep-alive></underWay>
-        <!--拼团成功-->
-        <!--<fightSuccess/>-->
+
         <div slot="bottom" class="mint-loadmore-bottom">
           <span v-show="bottomStatus === 'loading'">加载中...</span>
           <span class="mint-loadmore-text">{{ bottomText }}</span>
@@ -162,7 +161,7 @@
           this.paging.pageIndex=1;//初始化页数
           console.log('this参数:',this.shopId,this.storeId,this.buyerId)
           axios.post('../spell/myGroups',{"state":1,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
-            console.log('data:',data)
+            console.log('data:',data.data.content)
             if( data.state==1){
               if(data.data.content.length<=0){
 
@@ -185,13 +184,16 @@
           this.state=2;
           this.paging.pageIndex=1;
           axios.post('../spell/myGroups',{"state":2,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
-
+            console.log('拼团成功数据:',data.data)
+            // this.amountCount=data.data.content[0].amountCount.toFixed(2)/100
+            // console.log('金额：',this.amountCount)
             if( data.state==1){
               if(data.data.content.length<=0){
-
                 this.msg='拼团成功'
                 this.noData=false
                 this.msgState=true
+
+
               }else{
                 this.fightData=data.data
                 this.noData=true
@@ -284,7 +286,7 @@
         axios.post('../spell/myGroups',{"pageIndex":this.paging.pageIndex,"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageSize":this.paging.pageSize}).then(({ data }) => {
           if (this.paging.pageIndex == 1) {
             this.fightData = data.data;
-            console.log("fightdata:",this.fightData)
+            console.log("fightdata:",this.fightData.content.amountCount)
           } else {
 
             var data = data.data.content

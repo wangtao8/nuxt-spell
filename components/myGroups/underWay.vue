@@ -19,7 +19,7 @@
                                         <i class="g-red">{{item.payCount}}</i>人已支付
                                 </span>
               <span v-else>
-                                                                        已消费 <i class="g-red">{{item.amountCount}}</i>
+                                                                        已消费 <i class="g-red">{{item.amountCount/100}}</i>
                                 </span>
             </p>
             <p class="groupHead" v-else>
@@ -42,7 +42,7 @@
             <!--此处是判断是否是支付了-->
             <em class="color999 payState" v-if="itemPerson.isPayed==0" state="itemPerson.isPayed">未支付</em>
             <em class="color999 payState" v-else>已支付</em>
-            <i class="g-red">￥{{itemPerson.payAmount}}</i>
+            <i class="g-red">￥{{itemPerson.payAmount/100}}</i>
           </div>
         </div>
 
@@ -64,9 +64,29 @@
     },
     data () {
       return {
-        endTime:' '
+        endTime:' ',
+        // amountcount:'',
+
+        // bb:[]
+
       }
+    },
+    mounted: function () {
+      // this.amountcount=this.fightData.content[0].amountCount.toFixed(2)/100
+      // console.log("拼团进行中数据：",this.fightData.content[0].memberPay)
+      // let data=this.fightData.content[0].memberPay
+      //
+      // for(var i=0;i<=data.length-1;i++){
+      //   let aa={}
+      //   aa.payAmount=data[i].payAmount.toFixed(2)/100
+      //   this.bb.push(aa)
+      //
+      // }
+      // console.log("金额1：",this.bb)
+
+      // debugger
     }
+
 
   }
 </script>

@@ -12,7 +12,7 @@
                     <div class="rightText _left">
                         <p class="groupTitle">{{item.title}}</p>
                         <p class="groupPrice">
-                            <i class="g-red">￥{{item.amount}}</i>
+                            <i class="g-red">￥{{item.amount/100}}</i>
                         </p>
                     </div>
                 </div>
@@ -28,6 +28,7 @@
     props:["fightData"],
     data () {
       return {
+        amountcount:''
       }
     }
 

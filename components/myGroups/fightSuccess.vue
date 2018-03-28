@@ -19,7 +19,8 @@
                                                 <i class="g-red">{{item.payCount}}</i>人已支付
                                         </span>
                                   <span v-else>
-                                                已消费 <i class="g-red">{{item.amountCount}}</i>
+                                                已消费 <i class="g-red">{{item.amountCount/100}}</i>
+
                                    </span>
                         </p>
                     </div>
@@ -41,12 +42,13 @@
 
   export default {
     name: 'fightSuccess',
-    props:["fightData"],
+    props:["fightData","amountCount"],
     components:{
       'counter':counter
     },
     data () {
       return {
+       amountcount:this.amountCount
       }
     }
 
