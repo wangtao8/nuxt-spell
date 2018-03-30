@@ -1,7 +1,7 @@
 <template>
   <!--拼团进行中-->
   <div>
-    <div class="everyGroup groupsOne " v-for="(item,$index) in fightData.content">
+    <div class="everyGroup groupsOne " v-for="(item,$index) in fightData.content" @click="botton">
       <section class="itemGroup">
         <div class="groupMsg clean">
           <div class="leftImg _left">
@@ -65,13 +65,16 @@
     data () {
       return {
         endTime:' ',
+        shopId:'',
+        storeId:'',
+        activityId:'',
         // amountcount:'',
 
         // bb:[]
 
       }
     },
-    mounted: function () {
+    mounted () {
       // this.amountcount=this.fightData.content[0].amountCount.toFixed(2)/100
       // console.log("拼团进行中数据：",this.fightData.content[0].memberPay)
       // let data=this.fightData.content[0].memberPay
@@ -83,10 +86,17 @@
       //
       // }
       // console.log("金额1：",this.bb)
-
-      // debugger
+      this.shopId = sessionStorage.getItem('shopId')
+      this.storeId = sessionStorage.getItem('storeId')
+      this.activityId=sessionStorage.getItem('activityId')
+      // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
+    },
+    methods: {
+      botton:function () {
+        location.href="https://emcs.quanyou.com.cn/spell/boon?shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId
+        // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
+      }
     }
-
 
   }
 </script>

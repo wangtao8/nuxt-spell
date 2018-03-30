@@ -1,6 +1,6 @@
 <template>
 	  <div class="everyGroup">
-            <section class="itemGroup" v-for="(item,$index) in fightData.content" >
+            <section class="itemGroup" v-for="(item,$index) in fightData.content" @click="botton">
                   <div class="groupMsg clean">
                       <div class="leftImg _left">
                           <img :src="item.smPic " alt="商品"/>
@@ -9,7 +9,7 @@
                           <p class="groupTitle">{{item.title}}</p>
                           <p class="groupTime">时间：{{item.startTime | timeFilters}} - {{item.endTime | timeFilters}}</p>
                           <p class="groupPrice">
-                              <i class="g-red">活动到期</i>
+                              <i class="g-red">{{dataDate}}</i>
                           </p>
                       </div>
                   </div>
@@ -26,9 +26,51 @@
 		  props:["hideBtn","fightData"],
 		  data () {
 		      return {
-
+            shopId:'',
+            storeId:'',
+            activityId:'',
+            dataDate:''
 		      }
 		  },
+    mounted (){
+      this.shopId = sessionStorage.getItem('shopId')
+      this.storeId = sessionStorage.getItem('storeId')
+      this.activityId=sessionStorage.getItem('activityId')
+      // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
+      Date.prototype.format =function(format)
+      {
+        var o = {
+          "M+" : this.getMonth()+1, //month
+          "d+" : this.getDate(), //day
+          "h+" : this.getHours(), //hour
+          "m+" : this.getMinutes(), //minute
+          "s+" : this.getSeconds(), //second
+          "q+" : Math.floor((this.getMonth()+3)/3), //quarter
+          "S" : this.getMilliseconds() //millisecond
+        }
+        if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+          (this.getFullYear()+"").substr(4- RegExp.$1.length));
+        for(var k in o)if(new RegExp("("+ k +")").test(format))
+          format = format.replace(RegExp.$1,
+            RegExp.$1.length==1? o[k] :
+              ("00"+ o[k]).substr((""+ o[k]).length));
+        return format;
+      }
+
+      let datadate=this.fightData.content[0].endTime
+      for(var i=0;i<=datadate.length-1;i++){
+        let newdate = new Date().format("yyyy-MM-dd hh:mm:ss");
+         if(newdate<datadate){
+           // console.log("111")
+           this.dataDate='活动停用';
+         }else{
+           this.dataDate='活动到期';
+         }
+
+        // console.log("活动时间：",datadate)
+        // console.log("当前时间：",newdate)
+      }
+    },
       filters: {
               timeFilters: function (time) {
                         let date  =new Date(time);
@@ -41,6 +83,10 @@
               }
       },
 		    methods:{
+          botton:function () {
+            location.href="https://emcs.quanyou.com.cn/spell/boon?shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId
+            // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
+          }
 
         }
 

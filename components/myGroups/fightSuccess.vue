@@ -1,6 +1,6 @@
 <template>
 	<div>
-		 <div class="everyGroup groupsTwo" v-for="(item,$index) in fightData.content">
+		 <div class="everyGroup groupsTwo" v-for="(item,$index) in fightData.content" @click="botton">
             <section class="itemGroup">
                 <div class="groupMsg clean">
                     <div class="leftImg _left">
@@ -48,7 +48,22 @@
     },
     data () {
       return {
-       amountcount:this.amountCount
+        amountcount:this.amountCount,
+        shopId:'',
+        storeId:'',
+        activityId:''
+      }
+    },
+    mounted (){
+      this.shopId = sessionStorage.getItem('shopId')
+      this.storeId = sessionStorage.getItem('storeId')
+      this.activityId=sessionStorage.getItem('activityId')
+      // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
+    },
+    methods:{
+      botton:function () {
+        location.href="https://emcs.quanyou.com.cn/spell/boon?shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId
+        // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
       }
     }
 
