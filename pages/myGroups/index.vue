@@ -50,9 +50,8 @@
   import fightSuccess from '../../components/myGroups/fightSuccess'
   import collageFailure from '../../components/myGroups/collageFailure'
   import collageFull from '../../components/myGroups/collageFull'
-  import Wxt from '../../assets/js/WXUtil'
   import axios from 'axios'
-  // import takeManager from '../../server/tokenManager'
+
   export default {
     name: 'box',
     components: {
@@ -97,16 +96,11 @@
       }
     },
     mounted () {
-
-      //微信鉴权
-      let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
-      let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
-      Wxt.verify(storeId, shopId)
       this.shopId = sessionStorage.getItem('shopId')
       this.storeId = sessionStorage.getItem('storeId')
       this.buyerId= sessionStorage.getItem('buyerId')
       this.activityId=sessionStorage.getItem('activityId')
-      console.log('this参数:',this.shopId,this,storeId,this.buyerId)
+
     },
 
     async asyncData(params) {
@@ -114,11 +108,8 @@
       let shopId = params.query.shopId
       let storeId = params.query.storeId
       let buyerId= params.query.buyerId
-      // let token = takeManager.getToken()
-      // let timestamp = (new Date()).getTime()
-     console.log('参数：',shopId,storeId,buyerId)
 
-      return  axios.post('http://emcs.quanyou.com.cn/spell/myGroups',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
+      return  axios.post('http://172.30.3.40:3222/spell/myGroups',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
 
         .then(function (res) {
           if(res.data.state==1){
@@ -192,7 +183,6 @@
                 this.msg='拼团成功'
                 this.noData=false
                 this.msgState=true
-
 
               }else{
                 this.fightData=data.data

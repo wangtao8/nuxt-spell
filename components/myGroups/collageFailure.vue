@@ -15,9 +15,9 @@
                   </div>
                   <div class="height18"></div>
             </section>
-            <div class="payment clean" v-if="hideBtn">
-                <a class="payBtn _right" href="javascript:;">继续拼团</a>
-            </div>
+            <!--<div class="payment clean" v-if="hideBtn">-->
+                <!--<a class="payBtn _right" href="javascript:;">继续拼团</a>-->
+            <!--</div>-->
         </div>
 </template>
 <script>

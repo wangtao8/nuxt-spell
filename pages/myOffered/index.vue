@@ -42,7 +42,7 @@
 </template>
 
 <script>
-  import Wxt from '../../assets/js/WXUtil'
+  // import Wxt from '../../assets/js/WXUtil'
   import { MessageBox } from 'mint-ui'
   import groups from '../../components/myGroups/groups'
   import underWay from '../../components/myGroups/underWay'
@@ -92,10 +92,10 @@
     },
     mounted () {
 
-      //微信鉴权
-      let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
-      let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
-      Wxt.verify(storeId, shopId)
+      // //微信鉴权
+      // let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
+      // let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
+      // Wxt.verify(storeId, shopId)
       this.shopId = sessionStorage.getItem('shopId')
       this.storeId = sessionStorage.getItem('storeId')
       this.buyerId= sessionStorage.getItem('buyerId')
@@ -105,7 +105,7 @@
       let shopId = params.query.shopId
       let storeId = params.query.storeId
       let buyerId = params.query.buyerId
-      return axios.post('http://emcs.quanyou.com.cn/spell/myOffered', {
+      return axios.post('http://172.30.3.40:3222/spell/myOffered', {
         "state": 1,
         "shopId": shopId,
         "storeId": storeId,
