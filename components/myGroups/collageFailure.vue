@@ -84,8 +84,17 @@
       },
 		    methods:{
           botton:function () {
-            location.href="https://emcs.quanyou.com.cn/spell/boon?shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId
-            // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
+            let test=this.fightData.content
+            for(var i=0;i<=test.length-1;i++){
+              let aa={}
+              aa=test[i].teamId
+              this.teamId=aa
+
+            }
+
+            console.log("teameid的值：", this.teamId)
+            console.log("teameid传值：",this.teamId)
+            location.href="https://emcs.quanyou.com.cn/spell/boon?teamId="+this.teamId+"&shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId
           }
 
         }

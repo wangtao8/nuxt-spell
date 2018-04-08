@@ -55,7 +55,8 @@
   </div>
 </template>
 <script>
-  import counter from './counter.vue';
+  import counter from './counter.vue'
+  import axios from 'axios'
   export default {
     name: 'underWay',
     props:["hide","fightData"],
@@ -68,10 +69,9 @@
         shopId:'',
         storeId:'',
         activityId:'',
-        // amountcount:'',
-
-        // bb:[]
-
+        state:'',
+        teamId:'',
+        bb:[]
       }
     },
     mounted () {
@@ -93,9 +93,30 @@
     },
     methods: {
       botton:function () {
-        location.href="https://emcs.quanyou.com.cn/spell/boon?shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId
+        let test=this.fightData.content
+        // let bb=[]
+        for(var i=0;i<=test.length-1;i++){
+          let aa={}
+           aa=test[i].teamId
+          this.teamId=aa
+          // console.log("teameid的值：", this.teamId)
+
+          // let aa={}
+          // aa=test[i].teamId
+          // this.bb.push(aa)
+
+          // for(var i=0;i<=this.bb.length-1;i++){
+          //   this.teamId=this.bb[i]
+          // }
+        }
+
+        console.log("teameid的值：", this.teamId)
+        // this.teamId=this.fightData.content[0].teamId
+        // console.log("teameid传值：",this.teamId)
+        location.href="https://emcs.quanyou.com.cn/spell/boon?teamId="+this.teamId+"&shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId
         // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
       }
+
     }
 
   }

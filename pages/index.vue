@@ -97,7 +97,6 @@
   import Btn from '../components/button'
   import Load from '../components/load'
   import filter from '../assets/js/filter'
-  import Wxt from '../assets/js/WXUtil'
   //  import request from '../static/spell/request'
   import axios from 'axios'
   import { MessageBox } from 'mint-ui'
@@ -125,12 +124,13 @@
         activityId: '',
         shopId: '',
         storeId: '',
-        token: '',
-        invalidDate: ''
+        appId: '',
+        dataEx: {}
       }
     },
     async asyncData (context) {
       // 获得头部
+//      console.log('打印的东西xxxxxxxxxxxxxx:', context.query)
       let gethead = {
         activityId: context.query.activityId,
         shopId: context.query.shopId,
@@ -151,53 +151,49 @@
         storeId: context.query.storeId
       }
       // 记得return 不然不会返回结果
-      return axios.post('http://172.30.3.40:3222/spell/getToken')
-        .then(function (token) {
-          let tokens = token.data.data.token
-          let timestamp = (new Date()).getTime()
-          return axios.all([
-            axios.post('http://172.30.3.40:3222/spell/gethead?token=' + tokens + '&timestamp=' + timestamp, gethead),
-            axios.post('http://172.30.3.40:3222/spell/gettitle?token=' + tokens + '&timestamp=' + timestamp, gettitle),
-            axios.post('http://172.30.3.40:3222/spell/getclass?token=' + tokens + '&timestamp=' + timestamp, getclass)
-          ])
-            .then(axios.spread(function (gethead, gettitle, getclass) {
-              if (gethead.data.state) {
-                if (gettitle.data.state) {
-                  if (getclass.data.state) {
-                    gettitle.data.data.unshift({categoryName:"全部",id:"",isHaveGoods:0})
-                    return {
-                      // 头部信息
-                      gethead: gethead.data.data,
-                      // 头部导航内容
-                      clas: gettitle.data.data,
-                      // 取索引为1的对象默认展示
-                      goodss: getclass.data.data.content,
-                      // 分类数据记录一下
-                      alldata: getclass.data.data.content,
-                      last: getclass.data.data.last,
-                      activityId: context.query.activityId,
-                      shopId: context.query.shopId,
-                      storeId: context.query.storeId,
-                      token: token.data.data.token,
-                      invalidDate: token.data.data.invalidDate
-                    }
-                  } else {
-                    return {
-                      msg: getclass.data.msg
-                    }
-                  }
-                } else {
-                  return {
-                    msg: gettitle.data.msg
-                  }
-                }
-              } else {
+      return axios.all([
+        axios.post('http://172.30.3.40:3222/spell/gethead?appId='+context.query.appId, gethead),
+        axios.post('http://172.30.3.40:3222/spell/gettitle', gettitle),
+        axios.post('http://172.30.3.40:3222/spell/getclass', getclass)
+      ])
+        .then(axios.spread(function (gethead, gettitle, getclass) {
+          console.log('gethead:', gethead.data.dataEx)
+          if(gethead.data.state === 1) {
+            if (gettitle.data.state) {
+              if (getclass.data.state) {
+                gettitle.data.data.unshift({categoryName:"全部",id:"",isHaveGoods:0})
                 return {
-                  msg: gethead.data.msg
+                  // 头部信息
+                  gethead: gethead.data.data,
+                  // 头部导航内容
+                  clas: gettitle.data.data,
+                  // 取索引为1的对象默认展示
+                  goodss: getclass.data.data.content,
+                  // 分类数据记录一下
+                  alldata: getclass.data.data.content,
+                  last: getclass.data.data.last,
+                  activityId: context.query.activityId,
+                  shopId: context.query.shopId,
+                  storeId: context.query.storeId,
+                  appId: context.query.appId,
+                  dataEx: gethead.data.dataEx
+                }
+              }else {
+                return {
+                  msg: getclass.data.msg
                 }
               }
-            }))
-        })
+            }else {
+              return {
+                msg: gettitle.data.msg
+              }
+            }
+          } else {
+            return {
+              msg: gethead.data.msg
+            }
+          }
+      }))
     },
     created () {
 //      console.log('clas:', this.goodss)
@@ -209,6 +205,50 @@
     },
     components: { Banner, Btn, Load },
     mounted () {
+
+
+      let _this = this
+      // 分享配置
+      console.log('process.BROWSER_BUILD:', process.BROWSER_BUILD)
+      if (process.BROWSER_BUILD) {
+        let wx = require('weixin-js-sdk')
+        let appId = _this.dataEx.appId
+        let timestamp = _this.dataEx.timestamp
+        let nonceStr = _this.dataEx.nonceStr
+        let signature = _this.dataEx.signature
+        console.log('dataEx:', this.dataEx)
+        wx.config({
+          debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+          appId: appId, // 必填，公众号的唯一标识
+          timestamp: timestamp, // 必填，生成签名的时间戳
+          nonceStr: nonceStr, // 必填，生成签名的随机串
+          signature: signature,// 必填，签名
+          jsApiList: ['onMenuShareTimeline'] // 必填，需要使用的JS接口列表
+        })
+
+        wx.ready(function () {
+          wx.onMenuShareTimeline({
+            title: '123123123', // 分享标题
+            link: 'http://172.0.0.1:3222/spell/success', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: 'http://bmcs.quanyou.com.cn/resources/images/linke-logo.png', // 分享图标
+            success () {
+              alert('分享朋友圈成功')
+              // 用户确认分享后执行的回调函数
+            },
+            cancel () {
+              // 用户取消分享后执行的回调函数
+            }
+          })
+        })
+        console.log('客户端:', wx)
+      }
+
+      if (location.href.length < 100) {
+        location.href = sessionStorage.getItem('myhref')
+      } else {
+        sessionStorage.setItem('myhref', location.href)
+      }
+
       let self = this
       let elWidth = 0
       let lis = self.$refs.mybox.children
@@ -216,10 +256,12 @@
       let win1tp = (window.innerHeight - 828) / 2
       let win2tp = (window.innerHeight - 358) / 2
 
-      // 微信鉴权
-      let shopId = self.shopId
-      let storeId = self.storeId
-      Wxt.verify(storeId, shopId)
+      if (document.getElementsByClassName('main-body').length){
+//        alert(1)
+      } else {
+        console.log(self.storeId, self.activityId, self.shopId)
+//        location.href = 'https://emcs.quanyou.com.cn/spell/test/toAuth?storeId=' + self.storeId + '&activityId=' + self.activityId + '&shopId='+ self.shopId
+      }
 
       // 存储各种有用信息
       sessionStorage.setItem('shopId', self.shopId)
@@ -242,10 +284,11 @@
       filter.flter('box', true)
       self.isShow = true
 
+      sessionStorage.setItem('myhref', location.href)
       // 如果有失败的返回结果
       if (self.msg) {
-        self.show2 = false
-        MessageBox.alert(self.msg, '')// 提示错误信息
+//        self.show2 = false
+//        MessageBox.alert(self.msg, '')// 提示错误信息
 
         setTimeout(function () {
           self.isShow = false
@@ -306,10 +349,6 @@
             sessionStorage.setItem('buyerId', response.data.buyerId)
           })
       }
-
-      // 判断本地token是否已经过期
-      sessionStorage.setItem('token',this.token)
-      sessionStorage.setItem('invalidDate',this.invalidDate)
     },
     methods: {
       check: function (e, att) { // 顶部导航切换
@@ -325,34 +364,13 @@
           shopId: self.shopId,
           storeId: self.storeId
         }
-        if ((new Date()).getTime() > sessionStorage.getItem('invalidDate')) {
-          axios.post('./getToken')
-            .then((response) => {
-              sessionStorage.setItem('token',response.data.data.token)
-              sessionStorage.setItem('invalidDate',response.data.data.invalidDate)
-              let token = response.data.data.token
-              let timestamp = (new Date()).getTime()
-              axios.post('./getclass?token='+token+'&timestamp='+timestamp, getclass)
-                .then(function (response) {
-                  self.goodss = response.data.data.content
-                  self.last = response.data.data.last
-                })
-              this.allLoaded = false
-              this.currentpageNum = 1
-            }).catch((error) => {
-            console.log(error)
+        axios.post('./getclass', getclass)
+          .then(function (response) {
+            self.goodss = response.data.data.content
+            self.last = response.data.data.last
           })
-        } else {
-          let token = sessionStorage.getItem('token')
-          let timestamp = (new Date()).getTime()
-          axios.post('./getclass?token='+token+'&timestamp='+timestamp, getclass)
-            .then(function (response) {
-              self.goodss = response.data.data.content
-              self.last = response.data.data.last
-            })
-          this.allLoaded = false
-          this.currentpageNum = 1
-        }
+        this.allLoaded = false
+        this.currentpageNum = 1
       },
       seeinform: function () { // 活动规则与模态框显示
         this.data1 = true
@@ -382,39 +400,16 @@
           activityId: sessionStorage.getItem('activityId'),
           buyerId: sessionStorage.getItem('buyerId')
         }
-        // 如果当前请求时间大于过期时间那么重新请求
-        if ((new Date()).getTime() > sessionStorage.getItem('invalidDate')) {
-          console.log('我在取服务器token')
-          axios.post('./getToken')
-            .then((response) => {
-              sessionStorage.setItem('token',response.data.data.token)
-              sessionStorage.setItem('invalidDate',response.data.data.invalidDate)
-              let token = response.data.data.token
-              let timestamp = (new Date()).getTime()
-              axios.post('./openGroup?token='+token+'&timestamp='+timestamp, openGroup)
-                .then(function (response) {
-                  if (response.data.state) {
-                    location.href = 'success'
-                  } else {
-                    MessageBox.alert(response.data.msg, '')
-                  }
-                })
-            }).catch((error) => {
+        axios.post('./openGroup', openGroup)
+          .then(function (response) {
+            if (response.data.state) {
+              location.href = 'success'
+            } else {
+              MessageBox.alert(response.data.msg, '')
+            }
+          }).catch((error) => {
             console.log(error)
           })
-        } else { // 如果当前发起请求时间小于过期时间 那么从本地取token
-          console.log('我在取本地token')
-          let token = sessionStorage.getItem('token')
-          let timestamp = (new Date()).getTime()
-          axios.post('./openGroup?token='+token+'&timestamp='+timestamp, openGroup)
-            .then(function (response) {
-              if (response.data.state) {
-                location.href = 'success'
-              } else {
-                MessageBox.alert(response.data.msg, '')
-              }
-            })
-        }
       },
       cantuan: function () { // 参团按钮点击
         location.href = 'participate?buyerId=' + sessionStorage.getItem('buyerId') + '&activityId=' + sessionStorage.getItem('activityId') + '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
@@ -436,53 +431,22 @@
             shopId: self.shopId,
             storeId: self.storeId
           }
-          // 如果当前请求时间大于过期时间 那么重新发起请求
-          if ((new Date()).getTime() > sessionStorage.getItem('invalidDate')) {
-            axios.post('./getToken')
-              .then((response) => {
-                sessionStorage.setItem('token',response.data.data.token)
-                sessionStorage.setItem('invalidDate',response.data.data.invalidDate)
-                let token = response.data.data.token
-                let timestamp = (new Date()).getTime()
-                axios.post('./getclass?token='+token+'&timestamp='+timestamp, getclass)
-                  .then(function (response) {
-                    if (response.data.state) {
-                      // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
-                      self.goodss = response.data.data.content
-                      // 实时更新是否最后一页有信息
-                      self.last = response.data.data.last
-                      // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
-                      self.$refs.loadmore.onTopLoaded()
-                    } else {
-                      MessageBox.alert(response.data.msg, '')
-                    }
-                  })
-                  .catch(function (err) {
-                    console.log(err)
-                  })
-              }).catch((error) => {
-              console.log(error)
+          axios.post('./getclass', getclass)
+            .then(function (response) {
+              if (response.data.state) {
+                // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
+                self.goodss = response.data.data.content
+                // 实时更新是否最后一页有信息
+                self.last = response.data.data.last
+                // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
+                self.$refs.loadmore.onTopLoaded()
+              } else {
+                MessageBox.alert(response.data.msg, '')
+              }
             })
-          } else { // 如果当前请求时间小于过期时间 那么拿本地token
-            let token = sessionStorage.getItem('token')
-            let timestamp = (new Date()).getTime()
-            axios.post('./getclass?token='+token+'&timestamp='+timestamp, getclass)
-              .then(function (response) {
-                if (response.data.state) {
-                  // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
-                  self.goodss = response.data.data.content
-                  // 实时更新是否最后一页有信息
-                  self.last = response.data.data.last
-                  // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
-                  self.$refs.loadmore.onTopLoaded()
-                } else {
-                  MessageBox.alert(response.data.msg, '')
-                }
-              })
-              .catch(function (err) {
-                console.log(err)
-              })
-          }
+            .catch(function (err) {
+              console.log(err)
+            })
         }, 500)
       },
       loadBottom: function () { // 到底部后的上拉加载分页
@@ -499,53 +463,22 @@
             storeId: self.storeId
           }
           if (!self.last) {
-            // 如果当前请求时间大于过期时间  那么重新发起请求获得token
-            if ((new Date()).getTime() > sessionStorage.getItem('invalidDate')) {
-              axios.post('./getToken')
-                .then((response) => {
-                  sessionStorage.setItem('token',response.data.data.token)
-                  sessionStorage.setItem('invalidDate',response.data.data.invalidDate)
-                  let token = response.data.data.token
-                  let timestamp = (new Date()).getTime()
-                  axios.post('./getclass?token='+token+'&timestamp='+timestamp, getclass)
-                    .then(function (response) {
-                      if (response.data.state) {
-                        //需要每次都重新更新last的状态
-                        self.last = response.data.data.last
-                        // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
-                        for (let j = 0; j < response.data.data.content.length; j++) {
-                          // 将得到的数据循环后单个push到之前的数组中去
-                          self.goodss.push(response.data.data.content[j])
-                        }
-                      } else {
-                        MessageBox.alert(response.data.msg, '')
-                      }
-                      // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
-                      self.$refs.loadmore.onBottomLoaded()
-                    })
-                }).catch((error) => {
-                console.log(error)
-              })
-            } else { // 如果当前请求时间小于过期时间  那么取本地token
-              let token = sessionStorage.getItem('token')
-              let timestamp = (new Date()).getTime()
-              axios.post('./getclass?token='+token+'&timestamp='+timestamp, getclass)
-                .then(function (response) {
-                  if (response.data.state) {
-                    //需要每次都重新更新last的状态
-                    self.last = response.data.data.last
-                    // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
-                    for (let j = 0; j < response.data.data.content.length; j++) {
-                      // 将得到的数据循环后单个push到之前的数组中去
-                      self.goodss.push(response.data.data.content[j])
-                    }
-                  } else {
-                    MessageBox.alert(response.data.msg, '')
+            axios.post('./getclass', getclass)
+              .then(function (response) {
+                if (response.data.state) {
+                  //需要每次都重新更新last的状态
+                  self.last = response.data.data.last
+                  // 让当前被选中的导航 在下拉刷新后一样的呈现出当前导航对应的内容
+                  for (let j = 0; j < response.data.data.content.length; j++) {
+                    // 将得到的数据循环后单个push到之前的数组中去
+                    self.goodss.push(response.data.data.content[j])
                   }
-                  // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
-                  self.$refs.loadmore.onBottomLoaded()
-                })
-            }
+                } else {
+                  MessageBox.alert(response.data.msg, '')
+                }
+                // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
+                self.$refs.loadmore.onBottomLoaded()
+              })
           } else {
             // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
             self.$refs.loadmore.onBottomLoaded()

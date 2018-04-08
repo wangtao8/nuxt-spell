@@ -48,13 +48,14 @@
           </div>
         </div>
       </mt-loadmore>
-
+    </div>
+    <div id="btn">
+      <div class="el_btn" @click="goct" v-show="true">去参团</div>
     </div>
   </div>
 </template>
 <script>
   import axios from 'axios'
-  import Wxt from '../../assets/js/WXUtil'
   import { MessageBox } from 'mint-ui'
   export default {
     data () {
@@ -69,7 +70,12 @@
         totalNum: 5, // 总页数,
         nickName: '',
         gethead: [], // 头部图片链接
-        msg: ''// 请求错误提示消息
+        msg: '', // 请求错误提示消息
+        teamId: '',
+        activityId: '',
+        shopId: '',
+        storeId: '',
+        buyerId: ''
       }
     },
     head () {
@@ -104,7 +110,29 @@
         this.currentpageNum = 1
       },
       goDetail: function (obj) {
-        location.href = 'https://emcs.quanyou.com.cn/emallwap/goodsdetail/info/' + this.storeId + '/' +obj
+        location.href = 'https://emcs.quanyou.com.cn/emallwap/spellGoodsdetail/' + this.storeId + '/' +obj
+      },
+      goct: function (activityId, photo, nickName, ids) { // 去参团
+        // 获取活动id 储存用于查询活动详情
+        sessionStorage.setItem('activityId', activityId)
+        sessionStorage.setItem('headPhoto', photo)
+        sessionStorage.setItem('headNickName', nickName)
+        let goGroup = {
+          teamId: ids,
+          buyerId: sessionStorage.getItem('buyerId'),
+          storeId: sessionStorage.getItem('storeId'),
+          shopId: sessionStorage.getItem('shopId'),
+          nickName: sessionStorage.getItem('nickName'),
+          photo: sessionStorage.getItem('photo')
+        }
+        // 发送参团请求
+        axios.post('./goGroup', goGroup)
+          .then(function (response) {
+//            console.log('eeeeeeee:', response.data)
+          })
+        if (!this.data1) {
+          this.data1 = true
+        }
       },
       loadTop: function () { // 到顶部后的下拉刷新
         // 下拉刷新
@@ -188,10 +216,15 @@
       let elWidth = 0
       let lis = self.$refs.mybox.children
 
-      //微信鉴权
-      let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
-      let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
-      Wxt.verify(storeId, shopId)
+      self.buyerId = sessionStorage.getItem('buyerId')
+
+//      if (process.BROWSER_BUILD) {
+//        let Wxt = require('~assets/js/WXUtil')
+//        //微信鉴权
+//        let storeId = sessionStorage.getItem('storeId')
+//        let shopId = sessionStorage.getItem('shopId')
+//        Wxt.default.verify(storeId, shopId)
+//      }
 
       for (var i = 0; i < lis.length; i++) {
         elWidth += lis[i].clientWidth
@@ -207,7 +240,18 @@
         self.show2 = true
       }
 
-      // 设置团长头像
+      // 设置团长头像  及显示团长昵称
+      let getGroupInfo = {
+         shopId : this.shopId,
+         storeId : this.storeId,
+         activityId : this.activityId,
+         buyerId : sessionStorage.getItem('buyerId'),
+         teamId : this.teamId
+      }
+      axios.post('./getGroupInfo', getGroupInfo)
+        .then(function (response) {
+          console.log('232323232:', response)
+        })
       self.nickName = sessionStorage.getItem('headNickName')
       let photo = sessionStorage.getItem('headPhoto')
       document.getElementsByClassName('el_avatar')[0].style.backgroundImage = 'url(' + photo + ')'
@@ -286,7 +330,8 @@
                   last: getclass.data.data.last,
                   activityId: context.query.activityId,
                   shopId: context.query.shopId,
-                  storeId: context.query.storeId
+                  storeId: context.query.storeId,
+                  teamId: context.query.teamId
                 }
               } else {
                 return {
@@ -308,5 +353,5 @@
   }
 </script>
 <style>
-    @import "~assets/css/boon.css"
+    @import "~assets/css/boon.css?v=1"
 </style>

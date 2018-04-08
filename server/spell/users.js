@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import request from 'request'
-import axios from 'axios'
+import takeManager from '../tokenManager'
 // import nuxtSchema from '../../db/nuxtserrver'
 import Mock from 'mockjs'
 
@@ -9,8 +9,6 @@ let Random = Mock.Random
 // let tslist = nuxtSchema.tslist
 
 let router = Router()
-import tokenManager from '../tokenManager'
-
 // 接口转发测试
 router.get('/getmsg', (req, res, next) => {
   request('http://10.10.1.191:3666/getall', function (error, response, body) {
@@ -26,13 +24,13 @@ router.post('/gethead', (req, res, next) => {
   let shopId = req.body.shopId
   let storeId = req.body.storeId
   let activityId = req.body.activityId
-  let token = req.query.token
-  let timestamp = req.query.timestamp
-  request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellHomeInfo?token=' + token + '&timestamp=' + timestamp,{json:{shopId:shopId, storeId:storeId, activityId:activityId}}, function (err, response, body) {
+  let token = takeManager.getToken()
+  let timestamp = (new Date()).getTime()
+  let appId = req.query.appId
+  request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellHomeInfo?token=' + token + '&timestamp=' + timestamp + '&appId=' + appId,{json:{shopId:shopId, storeId:storeId, activityId:activityId}}, function (err, response, body) {
     if (err) {
       res.json(body)
     } else {
-      // console.log('head:', body)
       res.json(body)
     }
   })
@@ -43,10 +41,10 @@ router.post('/gettitle', (req, res, next) => {
   // 接收到数据后 请求活动首页接口
   let shopId = req.body.shopId
   let storeId = req.body.storeId
-  let token = req.query.token
-  let timestamp = req.query.timestamp
+  let token = takeManager.getToken()
+  let timestamp = (new Date()).getTime()
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellCategory?token=' + token + '&timestamp=' + timestamp,{json:{shopId:shopId, storeId:storeId}}, function (err, response, body) {
-    // console.log('title:', body)
+    // console.log('我在打印body信息tttttttttttttttttttttttt:', body)
     res.json(body)
   })
 })
@@ -59,18 +57,35 @@ router.post('/getclass', (req, res, next) => {
   let categoryId = req.body.categoryId
   let pageIndex = req.body.pageIndex
   let pageSize = req.body.pageSize
-  let token = req.query.token
-  let timestamp = req.query.timestamp
+  let token = takeManager.getToken()
+  let timestamp = (new Date()).getTime()
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellGoods?token=' + token + '&timestamp=' + timestamp,
-  {json:{shopId:shopId, storeId:storeId, activityId:activityId, categoryId:categoryId, pageIndex:pageIndex, pageSize:pageSize}},
-  function (err, response, body) {
-    if (err) {
+    {json:{shopId:shopId, storeId:storeId, activityId:activityId, categoryId:categoryId, pageIndex:pageIndex, pageSize:pageSize}},
+    function (err, response, body) {
+      if (err) {
+        res.json(body)
+      } else {
+        // console.log('class:', body)
+        console.log('我在打印body信息wwwwwwwwwwwwwwwwwwwwwwwww:', body)
+        res.json(body)
+      }
+    })
+})
+
+// 我的团信息获取
+router.post('/getGroupInfo', (req, res, next) => {
+  let shopId = req.body.shopId
+  let storeId = req.body.storeId
+  let activityId = req.body.activityId
+  let buyerId = req.body.buyerId
+  let teamId = req.body.teamId
+  let token = takeManager.getToken()
+  let timestamp = (new Date()).getTime()
+  request.post('http://192.168.79.8:9090/spellapi/spell/getTeamInfo?token='+token+'&timestamp='+timestamp,
+    {json: {shopId: shopId, storeId: storeId, activityId: activityId, buyerId: buyerId, teamId: teamId}},
+    function (err, response, body) {
       res.json(body)
-    } else {
-      // console.log('class:', body)
-      res.json(body)
-    }
-  })
+    })
 })
 
 // 获得已开团列表（除自己）
@@ -81,15 +96,17 @@ router.post('/getHasBeenGroup', (req, res, next) => {
   let buyerId = req.body.buyerId
   let pageIndex = req.body.pageIndex
   let pageSize = req.body.pageSize
-  request.post('http://emcs.quanyou.com.cn/spellapi/spell/getTeamList',
-  {json:{shopId:shopId, storeId:storeId, activityId:activityId, buyerId:buyerId, pageIndex:pageIndex, pageSize:pageSize}},
-  function (err, response, body) {
-    if (err) {
-      res.json(body)
-    } else {
-      res.json(body)
-    }
-  })
+  let token = takeManager.getToken()
+  let timestamp = (new Date()).getTime()
+  request.post('http://emcs.quanyou.com.cn/spellapi/spell/getTeamList?token='+token+'&timestamp='+timestamp,
+    {json:{shopId:shopId, storeId:storeId, activityId:activityId, buyerId:buyerId, pageIndex:pageIndex, pageSize:pageSize}},
+    function (err, response, body) {
+      if (err) {
+        res.json(body)
+      } else {
+        res.json(body)
+      }
+    })
 })
 
 // 去开团
@@ -100,16 +117,33 @@ router.post('/openGroup', (req, res, next) => {
   let photo = req.body.photo
   let shopId = req.body.shopId
   let storeId = req.body.storeId
-  let token = req.query.token
-  let timestamp = req.query.timestamp
+  let token = takeManager.getToken()
+  let timestamp = (new Date()).getTime()
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/createSpellTeam?token='+token+'&timestamp='+timestamp,
-  {json:{activityId:activityId,buyerId:buyerId,nickName:nickName,photo:photo,shopId:shopId,storeId:storeId}},
-  function (err, response, body) {
-    if (err) {
-      res.json(body)
-    } else {
-      res.json(body)
-    }
+    {json:{activityId:activityId,buyerId:buyerId,nickName:nickName,photo:photo,shopId:shopId,storeId:storeId}},
+    function (err, response, body) {
+      if (err) {
+        res.json(body)
+      } else {
+        res.json(body)
+      }
+    })
+})
+
+router.post('/toAuth', (req, res, next) => {
+  req.session.sessionInfo = req.body
+
+  res.send("1")
+})
+
+router.get('/testss', (req, res, next) => {
+  request.get('http://192.168.79.8:9090/spellapi/spell/getTest',{},function (err, response, body) {
+    // 对象中包含特殊符号的取值办法response.headers['set-cookie']
+    // response.headers['cookie'] = response.headers['set-cookie']
+    // req.headers['cookie'] = response.headers['set-cookie']
+    // response.headers['set-cookie'] = response.headers['set-cookie']
+    // console.log(response.headers['set-cookie'][0])
+    res.send("2222")
   })
 })
 
@@ -121,15 +155,17 @@ router.post('/goGroup', (req, res, next) => {
   let photo = req.body.photo
   let shopId = req.body.shopId
   let storeId = req.body.storeId
-  request.post('http://emcs.quanyou.com.cn/spellapi/spell/joinTeam',
-  {json:{teamId:teamId,buyerId:buyerId,nickName:nickName,photo:photo,shopId:shopId,storeId:storeId}},
-  function (err, response, body) {
-    if (err) {
-      res.send(body)
-    } else {
-      res.send(body)
-    }
-  })
+  let token = takeManager.getToken()
+  let timestamp = (new Date()).getTime()
+  request.post('http://emcs.quanyou.com.cn/spellapi/spell/joinTeam?token='+token+'&timestamp='+timestamp,
+    {json:{teamId:teamId,buyerId:buyerId,nickName:nickName,photo:photo,shopId:shopId,storeId:storeId}},
+    function (err, response, body) {
+      if (err) {
+        res.send(body)
+      } else {
+        res.send(body)
+      }
+    })
 })
 
 // 获取用户信息
@@ -142,58 +178,55 @@ router.post('/getUserInfo', (req, res, next) => {
   })
 })
 
-// 获得用户token
+// 获得用户token  没用
 router.post('/getToken', (req, res, next) => {
   request.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken',{json:{"userName":"ApiActivity_2018", "password":"qy_api_#365!2018"}},
-  function (err, response, body) {
-    res.send(body)
-  })
+    function (err, response, body) {
+      res.send(body)
+    })
 })
 
 
 // 商品详情页
 router.get('/getDetail', (req, res, next) => {
-  let token = tokenManager.getToken()
-  console.log('查询到的token:', token)
- // 存入session
-  req.session.name = req.query.name
-req.session.password = req.query.password
-let url = []
-let timeId = setInterval(function () {
-  let aa = Random.image('750x750', Random.color(), '#FFF', 'png', 'heheda')
-  url.push(aa)
-  if (url.length > 10) {
-    clearInterval(timeId)
-    // 第一个参数是数据  第二个不知道  第三个代表缩进多少
-    url = JSON.stringify(url, null, 1)
-    let data = Mock.mock({
-      'date': [{
-        'contentsPic': url,
-        'goodsDetail': {
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice': 100, // 团长价
-          'marketPrice': 300, // 市场价
-          'pics': Random.ctitle(3, 10),
-          'spellPrice': 200 // 拼团价
-        },
-        'isShowBuy': false,
-        'showAttributeList': [{
-          'attributeName': '颜色',
-          'attributeOptionList': ['一', '二', '三']
-        }, {
-          'attributeName': '抽屉',
-          'attributeOptionList': ['一', '二', '三']
-        }, {
-          'attributeName': '品牌',
-          'attributeOptionList': ['一', '二', '三']
-        }]
-      }],
-      'msg': '请求成功！',
-      'state': 1
-    })
-    res.json(data)
-  }
-}, 50)
+  // req.session.name = req.qeury.name
+  console.log('req.session.name:', req.session)
+  let url = []
+  let timeId = setInterval(function () {
+    let aa = Random.image('750x750', Random.color(), '#FFF', 'png', 'heheda')
+    url.push(aa)
+    if (url.length > 10) {
+      clearInterval(timeId)
+      // 第一个参数是数据  第二个不知道  第三个代表缩进多少
+      url = JSON.stringify(url, null, 1)
+      let data = Mock.mock({
+        'date': [{
+          'contentsPic': url,
+          'goodsDetail': {
+            'goodsName': Random.ctitle(3, 30),
+            'headPrice': 100, // 团长价
+            'marketPrice': 300, // 市场价
+            'pics': Random.ctitle(3, 10),
+            'spellPrice': 200 // 拼团价
+          },
+          'isShowBuy': false,
+          'showAttributeList': [{
+            'attributeName': '颜色',
+            'attributeOptionList': ['一', '二', '三']
+          }, {
+            'attributeName': '抽屉',
+            'attributeOptionList': ['一', '二', '三']
+          }, {
+            'attributeName': '品牌',
+            'attributeOptionList': ['一', '二', '三']
+          }]
+        }],
+        'msg': '请求成功！',
+        'state': 1
+      })
+      res.json(data)
+    }
+  }, 50)
 
 })
 
@@ -226,6 +259,8 @@ router.get('/getRule', (req, res, next) => {
 
 // 获取参团列表
 router.get('/getGroupList', (req, res, next) => {
+
+  console.log('4444444:', req.session)
   let data = Mock.mock({
     'data|1-5': [
       {
@@ -244,6 +279,7 @@ router.get('/getGroupList', (req, res, next) => {
 })
 
 router.post('/gettest', (req, res, next) => {
+  console.log('222222:', req.session)
   let token = req.query.token
   let nowTime = req.query.nowTime
   let endTime = req.query.endTime
@@ -262,6 +298,9 @@ router.post('/gettest', (req, res, next) => {
 })
 
 router.post('/posttest', (req, res, next) => {
+  req.session.name = req.body.name
+  req.session.password = req.body.password
+  console.log('333333:', req.session)
   // req.headers['content-type'] = "application/x-www-form-urlencoded"
   res.send('1')
 })
@@ -270,21 +309,22 @@ router.post('/posttest', (req, res, next) => {
 // 我的拼团
 router.post('/myGroups', (req, res, next) => {
   let data={state :req.body.state,shopId:req.body.shopId,storeId:req.body.storeId,buyerId:req.body.buyerId,pageIndex:req.body.pageIndex,pageSize:req.body.pageSize}
-  let token = req.query.token
-  let timestamp=req.query.timestamp
+  let token = takeManager.getToken()
+  let timestamp = (new Date()).getTime()
   request(
     {
       url:'http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate?token='+token+'&timestamp='+timestamp,
       method: "POST",
       json:data
     },
-      function (error, response, body) {
-        if (error) {
-          return console.error(error);
-        }else {
-          res.send(body)
-        }
-      })
+    function (error, response, body) {
+      if (error) {
+        return console.error(error);
+      }else {
+        res.send(body)
+
+      }
+    })
 
 })
 
@@ -296,19 +336,21 @@ router.post('/myOffered', (req, res, next) => {
   let buyerId = req.body.buyerId
   let pageIndex = req.body.pageIndex
   let pageSize = req.body.pageSize
+  let token = takeManager.getToken()
+  let timestamp = (new Date()).getTime()
   request(
     {
-      url:'http://emcs.quanyou.com.cn/spellapi/spell/getMyJoin',
+      url:'http://emcs.quanyou.com.cn/spellapi/spell/getMyJoin?token='+token+'&timestamp='+timestamp,
       method: "POST",
       json:{state:state, shopId:shopId, storeId:storeId, buyerId:buyerId, pageIndex:pageIndex, pageSize:pageSize}
     },
-      function (error, response, body) {
-        if (error) {
-          return console.error(error);
-        }else {
-          res.send(body)
-        }
-      })
+    function (error, response, body) {
+      if (error) {
+        return console.error(error);
+      }else {
+        res.send(body)
+      }
+    })
 
 })
 

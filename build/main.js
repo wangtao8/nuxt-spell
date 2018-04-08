@@ -65,7 +65,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 15);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -76,6 +76,66 @@ module.exports = require("express");
 
 /***/ },
 /* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_node_schedule__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_node_schedule___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_node_schedule__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_axios__);
+
+
+var rule = new __WEBPACK_IMPORTED_MODULE_0_node_schedule___default.a.RecurrenceRule();
+// rule.hour(时)  rule.minute(分)  rule.second(秒)
+rule.hour = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23];
+rule.minute = 0;
+rule.second = 0;
+var token = "";
+var invalidDate = "";
+//初始化token invalidDate
+var init = function init() {
+  __WEBPACK_IMPORTED_MODULE_1_axios___default.a.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken', { "userName": "ApiActivity_2018", "password": "qy_api_#365!2018" }).then(function (response) {
+    console.log('查询token:', response.data.data);
+    token = response.data.data.token;
+    invalidDate = response.data.data.invalidDate;
+  });
+
+  // 定时器查询token是否失效
+  __WEBPACK_IMPORTED_MODULE_0_node_schedule___default.a.scheduleJob(rule, function () {
+    var nowTime = new Date().getTime();
+    console.log(new Date());
+    console.log('时间对比：', nowTime, invalidDate);
+    if (nowTime > invalidDate) {
+      __WEBPACK_IMPORTED_MODULE_1_axios___default.a.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken', { "userName": "ApiActivity_2018", "password": "qy_api_#365!2018" }).then(function (response) {
+        console.log('查询token:', response.data.data);
+        token = response.data.data.token;
+        invalidDate = response.data.data.invalidDate;
+      });
+    } else {
+      console.log('token暂未失效，继续使用');
+    }
+  });
+};
+
+// 返回当前token
+var getToken = function getToken() {
+  return token;
+};
+
+// 导出方法
+/* harmony default export */ exports["a"] = {
+  init: init,
+  getToken: getToken
+};
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+module.exports = require("axios");
+
+/***/ },
+/* 3 */
 /***/ function(module, exports) {
 
 module.exports = {
@@ -132,13 +192,13 @@ module.exports = {
 };
 
 /***/ },
-/* 2 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_express__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_express___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_express__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__users__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__users__ = __webpack_require__(10);
 
 
 
@@ -151,58 +211,59 @@ router.use(__WEBPACK_IMPORTED_MODULE_1__users__["a" /* default */]);
 /* harmony default export */ exports["a"] = router;
 
 /***/ },
-/* 3 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(10);
+module.exports = __webpack_require__(13);
 
-
-/***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-module.exports = require("body-parser");
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-module.exports = require("cookie-parser");
 
 /***/ },
 /* 6 */
 /***/ function(module, exports) {
 
-module.exports = require("express-session");
+module.exports = require("body-parser");
 
 /***/ },
 /* 7 */
 /***/ function(module, exports) {
 
-module.exports = require("nuxt");
+module.exports = require("cookie-parser");
 
 /***/ },
 /* 8 */
+/***/ function(module, exports) {
+
+module.exports = require("express-session");
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+module.exports = require("nuxt");
+
+/***/ },
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_express__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_express___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_express__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_request__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_request__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_request___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_request__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_mockjs__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_mockjs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_mockjs__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tokenManager__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_mockjs__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_mockjs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_mockjs__);
+
 
 
 // import nuxtSchema from '../../db/nuxtserrver'
 
 
-var Random = __WEBPACK_IMPORTED_MODULE_2_mockjs___default.a.Random;
+var Random = __WEBPACK_IMPORTED_MODULE_3_mockjs___default.a.Random;
 // let nuxtlist = nuxtSchema.nuxtlist
 // let tslist = nuxtSchema.tslist
 
 var router = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_express__["Router"])();
-
 // 接口转发测试
 router.get('/getmsg', function (req, res, next) {
   __WEBPACK_IMPORTED_MODULE_1_request___default()('http://10.10.1.191:3666/getall', function (error, response, body) {
@@ -215,120 +276,164 @@ router.get('/getmsg', function (req, res, next) {
 
 // 获得头部信息
 router.post('/gethead', function (req, res, next) {
-  var data = {
-    'data': {
-      'activityId': '',
-      'endTime': '2017-3-7 17:45:0',
-      'homeBannerUrl': 'http://imagecs.quanyou.com.cn/group1/M00/00/52/rB4DMFp0TliACzt-AAA2BCwZngQ318.jpg'
-    },
-    'msg': '获取活动首页基本信息失败！',
-    'state': 1
-  };
-  res.json(data);
+  var shopId = req.body.shopId;
+  var storeId = req.body.storeId;
+  var activityId = req.body.activityId;
+  var token = __WEBPACK_IMPORTED_MODULE_2__tokenManager__["a" /* default */].getToken();
+  var timestamp = new Date().getTime();
+  var appId = req.query.appId;
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellHomeInfo?token=' + token + '&timestamp=' + timestamp + '&appId=' + appId, { json: { shopId: shopId, storeId: storeId, activityId: activityId } }, function (err, response, body) {
+    if (err) {
+      res.json(body);
+    } else {
+      res.json(body);
+    }
+  });
 });
 
 // 获得分类
 router.post('/gettitle', function (req, res, next) {
-  var data2 = __WEBPACK_IMPORTED_MODULE_2_mockjs___default.a.mock({
-    'data': [{
-      'categoryName': '全部',
-      'id': 'all'
-    }, {
-      'categoryName': '厨房',
-      'id': 'cf'
-    }, {
-      'categoryName': '餐厅',
-      'id': 'ct'
-    }, {
-      'categoryName': '阳台/卫生间',
-      'id': 'yt'
-    }, {
-      'categoryName': '浴室',
-      'id': 'ys'
-    }, {
-      'categoryName': '儿童房',
-      'id': 'et'
-    }, {
-      'categoryName': '书房',
-      'id': 'sf'
-    }],
-    msg: '失败o ！',
-    state: 1
+  // 接收到数据后 请求活动首页接口
+  var shopId = req.body.shopId;
+  var storeId = req.body.storeId;
+  var token = __WEBPACK_IMPORTED_MODULE_2__tokenManager__["a" /* default */].getToken();
+  var timestamp = new Date().getTime();
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellCategory?token=' + token + '&timestamp=' + timestamp, { json: { shopId: shopId, storeId: storeId } }, function (err, response, body) {
+    // console.log('我在打印body信息tttttttttttttttttttttttt:', body)
+    res.json(body);
   });
-  res.json(data2);
-  // console.log(data2)
 });
 
 // 获得商品
 router.post('/getclass', function (req, res, next) {
-  // console.log('activityId:', req.body.activityId, 'categoryId:', req.body.categoryId, 'pageIndex:', req.body.pageIndex)
-  var data = __WEBPACK_IMPORTED_MODULE_2_mockjs___default.a.mock({
-    'data': {
-      content: [{
-        'all|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 71,
-          'memberPrice|+1': 1,
-          'marketPrice|+1': 1,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'cf|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 1,
-          'memberPrice|+1': 1,
-          'marketPrice|+1': 1,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'ct|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 11,
-          'memberPrice|+1': 12,
-          'marketPrice|+1': 13,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'yt|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 21,
-          'memberPrice|+1': 22,
-          'marketPrice|+1': 23,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'ys|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 31,
-          'memberPrice|+1': 32,
-          'marketPrice|+1': 33,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'et|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 41,
-          'memberPrice|+1': 42,
-          'marketPrice|+1': 43,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }],
-        'sf|3': [{
-          'goodsName': Random.ctitle(3, 30),
-          'headPrice|+1': 51,
-          'memberPrice|+1': 52,
-          'marketPrice|+1': 53,
-          'pic': Random.image('180x180', Random.color(), '#FFF', 'png', 'heheda')
-        }]
-      }]
-    },
-    msg: '成功！',
-    state: 1
+  var shopId = req.body.shopId;
+  var storeId = req.body.storeId;
+  var activityId = req.body.activityId;
+  var categoryId = req.body.categoryId;
+  var pageIndex = req.body.pageIndex;
+  var pageSize = req.body.pageSize;
+  var token = __WEBPACK_IMPORTED_MODULE_2__tokenManager__["a" /* default */].getToken();
+  var timestamp = new Date().getTime();
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellGoods?token=' + token + '&timestamp=' + timestamp, { json: { shopId: shopId, storeId: storeId, activityId: activityId, categoryId: categoryId, pageIndex: pageIndex, pageSize: pageSize } }, function (err, response, body) {
+    if (err) {
+      res.json(body);
+    } else {
+      // console.log('class:', body)
+      console.log('我在打印body信息wwwwwwwwwwwwwwwwwwwwwwwww:', body);
+      res.json(body);
+    }
   });
-  res.json(data);
-  // console.log(data)
+});
+
+// 我的团信息获取
+router.post('/getGroupInfo', function (req, res, next) {
+  var shopId = req.body.shopId;
+  var storeId = req.body.storeId;
+  var activityId = req.body.activityId;
+  var buyerId = req.body.buyerId;
+  var teamId = req.body.teamId;
+  var token = __WEBPACK_IMPORTED_MODULE_2__tokenManager__["a" /* default */].getToken();
+  var timestamp = new Date().getTime();
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://192.168.79.8:9090/spellapi/spell/getTeamInfo?token=' + token + '&timestamp=' + timestamp, { json: { shopId: shopId, storeId: storeId, activityId: activityId, buyerId: buyerId, teamId: teamId } }, function (err, response, body) {
+    res.json(body);
+  });
+});
+
+// 获得已开团列表（除自己）
+router.post('/getHasBeenGroup', function (req, res, next) {
+  var shopId = req.body.shopId;
+  var storeId = req.body.storeId;
+  var activityId = req.body.activityId;
+  var buyerId = req.body.buyerId;
+  var pageIndex = req.body.pageIndex;
+  var pageSize = req.body.pageSize;
+  var token = __WEBPACK_IMPORTED_MODULE_2__tokenManager__["a" /* default */].getToken();
+  var timestamp = new Date().getTime();
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://emcs.quanyou.com.cn/spellapi/spell/getTeamList?token=' + token + '&timestamp=' + timestamp, { json: { shopId: shopId, storeId: storeId, activityId: activityId, buyerId: buyerId, pageIndex: pageIndex, pageSize: pageSize } }, function (err, response, body) {
+    if (err) {
+      res.json(body);
+    } else {
+      res.json(body);
+    }
+  });
+});
+
+// 去开团
+router.post('/openGroup', function (req, res, next) {
+  var activityId = req.body.activityId;
+  var buyerId = req.body.buyerId;
+  var nickName = req.body.nickName;
+  var photo = req.body.photo;
+  var shopId = req.body.shopId;
+  var storeId = req.body.storeId;
+  var token = __WEBPACK_IMPORTED_MODULE_2__tokenManager__["a" /* default */].getToken();
+  var timestamp = new Date().getTime();
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://emcs.quanyou.com.cn/spellapi/spell/createSpellTeam?token=' + token + '&timestamp=' + timestamp, { json: { activityId: activityId, buyerId: buyerId, nickName: nickName, photo: photo, shopId: shopId, storeId: storeId } }, function (err, response, body) {
+    if (err) {
+      res.json(body);
+    } else {
+      res.json(body);
+    }
+  });
+});
+
+router.post('/toAuth', function (req, res, next) {
+  req.session.sessionInfo = req.body;
+
+  res.send("1");
+});
+
+router.get('/testss', function (req, res, next) {
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.get('http://192.168.79.8:9090/spellapi/spell/getTest', {}, function (err, response, body) {
+    // 对象中包含特殊符号的取值办法response.headers['set-cookie']
+    // response.headers['cookie'] = response.headers['set-cookie']
+    // req.headers['cookie'] = response.headers['set-cookie']
+    // response.headers['set-cookie'] = response.headers['set-cookie']
+    // console.log(response.headers['set-cookie'][0])
+    res.send("2222");
+  });
+});
+
+//去参团
+router.post('/goGroup', function (req, res, next) {
+  var teamId = req.body.teamId;
+  var buyerId = req.body.buyerId;
+  var nickName = req.body.nickName;
+  var photo = req.body.photo;
+  var shopId = req.body.shopId;
+  var storeId = req.body.storeId;
+  var token = __WEBPACK_IMPORTED_MODULE_2__tokenManager__["a" /* default */].getToken();
+  var timestamp = new Date().getTime();
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://emcs.quanyou.com.cn/spellapi/spell/joinTeam?token=' + token + '&timestamp=' + timestamp, { json: { teamId: teamId, buyerId: buyerId, nickName: nickName, photo: photo, shopId: shopId, storeId: storeId } }, function (err, response, body) {
+    if (err) {
+      res.send(body);
+    } else {
+      res.send(body);
+    }
+  });
+});
+
+// 获取用户信息
+router.post('/getUserInfo', function (req, res, next) {
+  var shopId = req.body.shopId;
+  var storeId = req.body.storeId;
+  var openId = req.body.openId;
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('https://emcs.quanyou.com.cn/emallwap/buyer/auth/' + storeId + '/' + shopId + '/' + openId, function (err, response, body) {
+    res.send(body);
+  });
+});
+
+// 获得用户token  没用
+router.post('/getToken', function (req, res, next) {
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken', { json: { "userName": "ApiActivity_2018", "password": "qy_api_#365!2018" } }, function (err, response, body) {
+    res.send(body);
+  });
 });
 
 // 商品详情页
 router.get('/getDetail', function (req, res, next) {
-  // 存入session
-  req.session.name = req.query.name;
-  req.session.password = req.query.password;
-  // console.log('name:', req.session)
+  // req.session.name = req.qeury.name
+  console.log('req.session.name:', req.session);
   var url = [];
   var timeId = setInterval(function () {
     var aa = Random.image('750x750', Random.color(), '#FFF', 'png', 'heheda');
@@ -337,7 +442,7 @@ router.get('/getDetail', function (req, res, next) {
       clearInterval(timeId);
       // 第一个参数是数据  第二个不知道  第三个代表缩进多少
       url = JSON.stringify(url, null, 1);
-      var data = __WEBPACK_IMPORTED_MODULE_2_mockjs___default.a.mock({
+      var data = __WEBPACK_IMPORTED_MODULE_3_mockjs___default.a.mock({
         'date': [{
           'contentsPic': url,
           'goodsDetail': {
@@ -365,13 +470,11 @@ router.get('/getDetail', function (req, res, next) {
       res.json(data);
     }
   }, 50);
-
-  // console.log(JSON.stringify(data))
 });
 
 // 运费规则
 router.get('/getRule', function (req, res, next) {
-  var data = __WEBPACK_IMPORTED_MODULE_2_mockjs___default.a.mock({
+  var data = __WEBPACK_IMPORTED_MODULE_3_mockjs___default.a.mock({
     'date': {
       'deliveryFreight': [{
         'deliveryArea': '四川省-成都市-青羊区:东坡街道,光华街道',
@@ -396,7 +499,9 @@ router.get('/getRule', function (req, res, next) {
 
 // 获取参团列表
 router.get('/getGroupList', function (req, res, next) {
-  var data = __WEBPACK_IMPORTED_MODULE_2_mockjs___default.a.mock({
+
+  console.log('4444444:', req.session);
+  var data = __WEBPACK_IMPORTED_MODULE_3_mockjs___default.a.mock({
     'data|1-5': [{
       'activityId': '测试内容o71t', // 活动id
       'headName': '测试内容42hd', // 团长名
@@ -411,8 +516,12 @@ router.get('/getGroupList', function (req, res, next) {
   res.json(data);
 });
 
-router.get('/gettest', function (req, res, next) {
-  var data = __WEBPACK_IMPORTED_MODULE_2_mockjs___default.a.mock({
+router.post('/gettest', function (req, res, next) {
+  console.log('222222:', req.session);
+  var token = req.query.token;
+  var nowTime = req.query.nowTime;
+  var endTime = req.query.endTime;
+  var data = __WEBPACK_IMPORTED_MODULE_3_mockjs___default.a.mock({
     'data': [{
       'title': Random.ctitle(3, 30)
     }, {
@@ -427,78 +536,170 @@ router.get('/gettest', function (req, res, next) {
 });
 
 router.post('/posttest', function (req, res, next) {
+  req.session.name = req.body.name;
+  req.session.password = req.body.password;
+  console.log('333333:', req.session);
   // req.headers['content-type'] = "application/x-www-form-urlencoded"
-  // console.log('333333333333:', req.body)
   res.send('1');
 });
+
 // 我的拼团
 router.post('/myGroups', function (req, res, next) {
-  var state = req.body.state;
-  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post({ url: 'http://172.30.3.40:9086/mockjsdata/5/spell/getMyJoin', state: state }, function (error, response, body) {
-    if (err) {
-      return console.error(err);
+  var data = { state: req.body.state, shopId: req.body.shopId, storeId: req.body.storeId, buyerId: req.body.buyerId, pageIndex: req.body.pageIndex, pageSize: req.body.pageSize };
+  var token = __WEBPACK_IMPORTED_MODULE_2__tokenManager__["a" /* default */].getToken();
+  var timestamp = new Date().getTime();
+  __WEBPACK_IMPORTED_MODULE_1_request___default()({
+    url: 'http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate?token=' + token + '&timestamp=' + timestamp,
+    method: "POST",
+    json: data
+  }, function (error, response, body) {
+    if (error) {
+      return console.error(error);
     } else {
       res.send(body);
     }
   });
 });
 
-router.get('/activityDetail', function (req, res, next) {
-  console.log('storeId:', req.query.storeId, 'shopId:', req.query.shopId, 'activityId:', req.query.activityId);
-  res.send('2');
+// 我的参团
+router.post('/myOffered', function (req, res, next) {
+  var state = req.body.state;
+  var shopId = req.body.shopId;
+  var storeId = req.body.storeId;
+  var buyerId = req.body.buyerId;
+  var pageIndex = req.body.pageIndex;
+  var pageSize = req.body.pageSize;
+  var token = __WEBPACK_IMPORTED_MODULE_2__tokenManager__["a" /* default */].getToken();
+  var timestamp = new Date().getTime();
+  __WEBPACK_IMPORTED_MODULE_1_request___default()({
+    url: 'http://emcs.quanyou.com.cn/spellapi/spell/getMyJoin?token=' + token + '&timestamp=' + timestamp,
+    method: "POST",
+    json: { state: state, shopId: shopId, storeId: storeId, buyerId: buyerId, pageIndex: pageIndex, pageSize: pageSize }
+  }, function (error, response, body) {
+    if (error) {
+      return console.error(error);
+    } else {
+      res.send(body);
+    }
+  });
 });
+
+//活动首页head请求转发
+router.post('/activityDetails', function (req, res, next) {
+  // 接收到数据后 请求活动首页接口
+  var shopId = req.body.shopId;
+  var storeId = req.body.storeId;
+  // request post请求带参写法
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://172.30.3.40:9086/mockjsdata/5/spell/getSpellCategory', { json: { shopId: shopId, storeId: storeId } }, function (error, response, body) {
+    if (error) {
+      res.send('0');
+    } else {
+      res.send(body);
+    }
+  });
+});
+
+//用于测试request  post转发过来的参数是否为空的接口  地址为http://127.0.0.1:3222/spell/testgg
+router.post('/testgg', function (req, res, next) {
+  res.send('222');
+});
+
+router.get('/postTest', function (req, res, next) {
+  var shopId = req.query.shopId;
+  var storeId = req.query.storeId;
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://172.30.3.40:9090/spellapi/getSpellCategory', { json: { shopId: shopId, storeId: storeId } }, function (err, response, body) {
+    res.send(body);
+  });
+});
+
+//是否关注
+router.post('/isAttention', function (req, res, next) {
+  // console.log('我正在查询是否关注')
+  var Inquire = req.body;
+  // console.log(Inquire)
+  // request.post('http://emcs.quanyou.com.cn/emall/wxBuyer/isAttention',{json:{data: Inquire}}, function (err, response, body) {
+  //   if (err) {
+  //     res.send(err)
+  //   } else {
+  //     res.send(body)
+  //   }
+  // })
+  res.send(Inquire);
+});
+
+//是否有顾问
+router.post('/consultant', function (req, res, next) {
+  // console.log('我正在查询是否有导购')
+  var Inquire = req.body;
+  // console.log(Inquire)
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://emcs.quanyou.com.cn/emall/wxBuyer/haveGuWen', { json: { data: Inquire } }, function (err, response, body) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(body);
+    }
+  });
+});
+
 /* harmony default export */ exports["a"] = router;
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-module.exports = require("mockjs");
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-module.exports = require("regenerator-runtime");
 
 /***/ },
 /* 11 */
 /***/ function(module, exports) {
 
-module.exports = require("request");
+module.exports = require("mockjs");
 
 /***/ },
 /* 12 */
+/***/ function(module, exports) {
+
+module.exports = require("node-schedule");
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+module.exports = require("regenerator-runtime");
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+module.exports = require("request");
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_E_IdeaProjects_nuxt_spell2_node_modules_babel_runtime_regenerator__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_E_IdeaProjects_nuxt_spell2_node_modules_babel_runtime_regenerator___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_E_IdeaProjects_nuxt_spell2_node_modules_babel_runtime_regenerator__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_nuxt__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_F_ptg_nuxt_spell_node_modules_babel_runtime_regenerator__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_F_ptg_nuxt_spell_node_modules_babel_runtime_regenerator___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_F_ptg_nuxt_spell_node_modules_babel_runtime_regenerator__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_nuxt__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_nuxt___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_nuxt__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_express__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_express___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_express__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_body_parser__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_body_parser__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_body_parser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_body_parser__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_cookie_parser__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_cookie_parser__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_cookie_parser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_cookie_parser__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_express_session__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_express_session__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_express_session___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_express_session__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__spell__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__spell__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__tokenManager__ = __webpack_require__(1);
 
 
 // app.use('${config.router.base}spell', spell)
 // Start nuxt.js
 var start = function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_E_IdeaProjects_nuxt_spell2_node_modules_babel_runtime_regenerator___default.a.mark(function _callee() {
+  var _ref = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_F_ptg_nuxt_spell_node_modules_babel_runtime_regenerator___default.a.mark(function _callee() {
     var config, nuxt;
-    return __WEBPACK_IMPORTED_MODULE_0_E_IdeaProjects_nuxt_spell2_node_modules_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
+    return __WEBPACK_IMPORTED_MODULE_0_F_ptg_nuxt_spell_node_modules_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             // Import and Set Nuxt.js options
-            config = __webpack_require__(1);
+            config = __webpack_require__(3);
 
             config.dev = !("development" === 'production');
             // Instanciate nuxt.js
@@ -570,16 +771,41 @@ app.use(__WEBPACK_IMPORTED_MODULE_3_body_parser___default.a.json());
 app.use(__WEBPACK_IMPORTED_MODULE_4_cookie_parser___default()());
 
 app.use(__WEBPACK_IMPORTED_MODULE_5_express_session___default()({
-  secret: '12345',
-  cookie: { maxAge: 60000 },
-  resave: false,
-  saveUninitialized: true
+  secret: '88888',
+  cookie: { maxAge: 1 * 60 * 60 * 1000 },
+  resave: true,
+  saveUninitialized: false
 }));
+
+app.use(function (req, res, next) {
+  var url = req.url;
+  var baseUrl = 'https://emcs.quanyou.com.cn';
+  // let baseUrl = 'http://127.0.0.1:3222'
+  // console.log(url,url.indexOf('/spell/test/toAuth'))
+  if (url.indexOf('/spell/getHasBeenGroup') >= 0 || url.indexOf('/spell/myOffered') >= 0 || url.indexOf('/spell/myGroups') >= 0 || url.indexOf('/spell/gethead') >= 0 || url.indexOf('/spell/gettitle') >= 0 || url.indexOf('/spell/getclass') >= 0 || url.indexOf('/spell/test/toAuth') >= 0 || url.indexOf('/spell/_nuxt/') >= 0 || url.indexOf('__webpack_hmr') >= 0 || url.indexOf('/spell/toAuth') >= 0 || url.length == 1) {
+    next();
+  } else {
+    console.log('我在这里面来了');
+    // sessionInfo  用户信息
+    var sessionInfo = req.session.sessionInfo;
+    if (sessionInfo !== "" && sessionInfo !== undefined && sessionInfo !== 'undefined') {
+      next();
+    } else {
+      console.log('并且我到这里了');
+      // let storeId = url.split('storeId=')[1].split('&')[0]
+      // console.log('服务器里面的storeId:', 'https://emcs.quanyou.com.cn/spell/test/toAuth?&url=' + baseUrl + url)
+      return res.redirect(baseUrl + '/spell/test/toAuth?url=' + baseUrl + url);
+    }
+  }
+});
 
 app.set('port', port);
 
 // Import API Routes
 app.use('/spell', __WEBPACK_IMPORTED_MODULE_6__spell__["a" /* default */]);
+
+
+__WEBPACK_IMPORTED_MODULE_7__tokenManager__["a" /* default */].init();
 
 start();
 

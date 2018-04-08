@@ -18,10 +18,11 @@
   </div>
 </template>
 <script>
-//  import axios from 'axios'
-  import Wxt from '../../assets/js/WXUtil'
+//  import Wxt from '../../assets/js/WXUtil'
   import Load from '../../components/load'
   import filter from '../../assets/js/filter'
+//  import wx from '../../assets/js/jweixin-1.2.0'
+  import axios from 'axios'
   export default {
     data () {
       return {
@@ -37,12 +38,6 @@
     components: { Load },
     mounted () {
       let self = this
-
-      //微信鉴权
-      let storeId = sessionStorage.getItem('storeId')
-      let shopId = sessionStorage.getItem('shopId')
-      Wxt.verify(storeId, shopId)
-
       // 加载动画
       setTimeout(function () {
         self.isShow = false

@@ -27,7 +27,7 @@
       <div class="noTxt">
 
         <p v-if='msgState'>您好，您目前没有{{msg}}活动
-          <span class="button" @click="botton">去开团</span>
+          <span class="button" @click="botton">去参团</span>
 
         </p>
 

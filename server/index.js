@@ -16,11 +16,33 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 
 app.use(session({
-  secret: '12345',
-  cookie: {maxAge: 60000},
-  resave: false,
-  saveUninitialized: true
+  secret: '88888',
+  cookie: {maxAge: 1*60*60*1000},
+  resave: true,
+  saveUninitialized: false
 }))
+
+app.use(function (req, res, next) {
+  let url = req.url
+  let baseUrl = 'https://emcs.quanyou.com.cn'
+  // let baseUrl = 'http://127.0.0.1:3222'
+  // console.log(url,url.indexOf('/spell/test/toAuth'))
+  if (url.indexOf('/spell/getHasBeenGroup') >= 0 || url.indexOf('/spell/myOffered') >= 0 || url.indexOf('/spell/myGroups') >= 0 || url.indexOf('/spell/gethead') >= 0 || url.indexOf('/spell/gettitle') >= 0 || url.indexOf('/spell/getclass') >= 0 || url.indexOf('/spell/test/toAuth') >= 0 || url.indexOf('/spell/_nuxt/') >= 0 || url.indexOf('__webpack_hmr') >= 0 || url.indexOf('/spell/toAuth') >= 0 || url.length == 1) {
+    next ()
+  } else {
+    console.log('我在这里面来了')
+    // sessionInfo  用户信息
+    let sessionInfo = req.session.sessionInfo
+    if (sessionInfo !== "" && sessionInfo !== undefined && sessionInfo !== 'undefined') {
+      next()
+    } else {
+      console.log('并且我到这里了')
+      // let storeId = url.split('storeId=')[1].split('&')[0]
+      // console.log('服务器里面的storeId:', 'https://emcs.quanyou.com.cn/spell/test/toAuth?&url=' + baseUrl + url)
+      return res.redirect( baseUrl +'/spell/test/toAuth?url=' + baseUrl + url)
+    }
+  }
+})
 
 app.set('port', port)
 
@@ -50,8 +72,7 @@ async function start () {
   console.log('Server listening on 192.168.79.12:3222') // eslint-disable-line no-console
 }
 
-//引入token管理
-import tokenManager from './tokenManager'
-tokenManager.init();
+import takeManager from './tokenManager'
+takeManager.init()
 
 start()

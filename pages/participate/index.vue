@@ -42,7 +42,6 @@
 </template>
 <script>
   import axios from 'axios'
-  import Wxt from '../../assets/js/WXUtil'
   import Load from '../../components/load'
   import filter from '../../assets/js/filter'
   export default {
@@ -59,7 +58,8 @@
         buyerId: '',
         storeId: '',
         shopId: '',
-        last: ''
+        last: '',
+        teamId: ''
       }
     },
     async asyncData (content) {
@@ -97,6 +97,8 @@
         sessionStorage.setItem('activityId', activityId)
         sessionStorage.setItem('headPhoto', photo)
         sessionStorage.setItem('headNickName', nickName)
+        sessionStorage.setItem('teamId', ids)
+        this.teamId = ids
         let goGroup = {
           teamId: ids,
           buyerId: sessionStorage.getItem('buyerId'),
@@ -118,7 +120,7 @@
         this.data1 = false
       },
       gosee: function () {
-        location.href = 'boon?activityId=' + this.activityId + '&storeId=' + this.storeId + '&shopId=' + this.shopId
+        location.href = 'boon?activityId=' + this.activityId + '&storeId=' + this.storeId + '&shopId=' + this.shopId + '&teamId=' + this.teamId
       },
       loadTop: function () { // 到顶部后的下拉刷新
         // 下拉刷新
@@ -196,13 +198,6 @@
       let elWidth = (window.innerWidth - 605) / 2
       let elHeight = (window.innerHeight - 358) / 2
       let self = this
-
-      //微信鉴权
-      let storeId = sessionStorage.getItem('storeId')
-      let shopId = sessionStorage.getItem('shopId')
-      let buyerId = sessionStorage.getItem('buyerId')
-      console.log('buyerId:', buyerId)
-      Wxt.verify(storeId, shopId)
 
       this.$refs.dailog.style.left = elWidth + 'px'
       this.$refs.dailog.style.top = elHeight + 'px'
