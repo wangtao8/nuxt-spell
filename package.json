@@ -22,7 +22,6 @@
     "eslint-plugin-node": "^5.0.0",
     "express": "4.15.3",
     "express-session": "^1.15.6",
-    "fs": "0.0.1-security",
     "mint-ui": "^2.2.13",
     "mockjs": "^1.0.1-beta3",
     "mongoose": "^5.0.2",

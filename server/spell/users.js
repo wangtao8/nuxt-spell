@@ -81,7 +81,7 @@ router.post('/getGroupInfo', (req, res, next) => {
   let teamId = req.body.teamId
   let token = takeManager.getToken()
   let timestamp = (new Date()).getTime()
-  request.post('http://192.168.79.8:9090/spellapi/spell/getTeamInfo?token='+token+'&timestamp='+timestamp,
+  request.post('http://emcs.quanyou.com.cn/spellapi/spell/getTeamInfo?token='+token+'&timestamp='+timestamp,
     {json: {shopId: shopId, storeId: storeId, activityId: activityId, buyerId: buyerId, teamId: teamId}},
     function (err, response, body) {
       res.json(body)
@@ -322,7 +322,6 @@ router.post('/myGroups', (req, res, next) => {
         return console.error(error);
       }else {
         res.send(body)
-
       }
     })
 

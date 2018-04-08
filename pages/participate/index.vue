@@ -95,8 +95,8 @@
       goct: function (activityId, photo, nickName, ids) {
         // 获取活动id 储存用于查询活动详情
         sessionStorage.setItem('activityId', activityId)
-        sessionStorage.setItem('headPhoto', photo)
-        sessionStorage.setItem('headNickName', nickName)
+//        sessionStorage.setItem('headPhoto', photo)
+//        sessionStorage.setItem('headNickName', nickName)
         sessionStorage.setItem('teamId', ids)
         this.teamId = ids
         let goGroup = {

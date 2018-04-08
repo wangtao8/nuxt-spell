@@ -2,6 +2,7 @@
   <div id="box">
     <div id="baner">
       <div class="el_banner">
+        <img class="el_banner" :src="gethead.homeBannerUrl">
         <div class="el_inform" @click="seeinform">活动详情>></div>
       </div>
     </div>
@@ -205,7 +206,7 @@
     },
     components: { Banner, Btn, Load },
     mounted () {
-
+      console.log('dataEx:', this.dataEx)
 
       let _this = this
       // 分享配置
@@ -216,7 +217,7 @@
         let timestamp = _this.dataEx.timestamp
         let nonceStr = _this.dataEx.nonceStr
         let signature = _this.dataEx.signature
-        console.log('dataEx:', this.dataEx)
+
         wx.config({
           debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
           appId: appId, // 必填，公众号的唯一标识
@@ -302,10 +303,6 @@
         }, Math.random() * 500)
       }
 
-      // 设置banner背景图片
-      let backUrl = this.gethead.homeBannerUrl
-      document.getElementsByClassName('el_banner')[0].style.backgroundImage = 'url(' + backUrl + ')'
-      console.log('time：', self.gethead)
       // 时间格式拼接
       let DATE = new Date()
       let year = DATE.getFullYear()

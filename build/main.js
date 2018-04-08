@@ -65,7 +65,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ 	return __webpack_require__(__webpack_require__.s = 16);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -79,9 +79,9 @@ module.exports = require("express");
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_node_schedule__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_node_schedule__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_node_schedule___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_node_schedule__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_axios__);
 
 
@@ -130,13 +130,7 @@ var getToken = function getToken() {
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
-
-module.exports = require("axios");
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 module.exports = {
   /*
@@ -150,6 +144,18 @@ module.exports = {
     meta: [{ charset: 'utf-8' }, { hid: 'description', name: 'viewport', content: 'width=750,user-scalable=no,target-densitydpi=device-dpi' }],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
+  render: {
+    bundleRenderer: {
+      cache: __webpack_require__(11)({
+        max: 1,
+        maxAge: 1000 * 6
+      })
+    }
+  },
+  cache: {
+    max: 1,
+    maxAge: 6000
+  },
   build: {
     extend: function extend(config, ctx) {
       if (ctx.dev && ctx.isClient) {
@@ -160,7 +166,9 @@ module.exports = {
           exclude: /()/
         });
       }
-    }
+    },
+
+    vendor: ['./assets/js/jweixin-1.2.0.js']
   },
   router: {
     base: '/spell/'
@@ -187,18 +195,20 @@ module.exports = {
     }]]],
     comments: true
   },
-  plugins: [{ src: './plugins/mint-ui', ssr: true }],
+  plugins: [{ src: './plugins/mint-ui', ssr: true
+    // { src: '~/plugins/axios', ssr: false}
+  }],
   css: ['assets/main.css']
 };
 
 /***/ },
-/* 4 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_express__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_express___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_express__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__users__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__users__ = __webpack_require__(9);
 
 
 
@@ -211,47 +221,47 @@ router.use(__WEBPACK_IMPORTED_MODULE_1__users__["a" /* default */]);
 /* harmony default export */ exports["a"] = router;
 
 /***/ },
-/* 5 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(13);
+module.exports = __webpack_require__(14);
 
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports) {
 
 module.exports = require("body-parser");
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports) {
 
 module.exports = require("cookie-parser");
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports) {
 
 module.exports = require("express-session");
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports) {
 
 module.exports = require("nuxt");
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_express__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_express___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_express__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_request__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_request__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_request___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_request__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tokenManager__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_mockjs__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_mockjs__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_mockjs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_mockjs__);
 
 
@@ -334,7 +344,7 @@ router.post('/getGroupInfo', function (req, res, next) {
   var teamId = req.body.teamId;
   var token = __WEBPACK_IMPORTED_MODULE_2__tokenManager__["a" /* default */].getToken();
   var timestamp = new Date().getTime();
-  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://192.168.79.8:9090/spellapi/spell/getTeamInfo?token=' + token + '&timestamp=' + timestamp, { json: { shopId: shopId, storeId: storeId, activityId: activityId, buyerId: buyerId, teamId: teamId } }, function (err, response, body) {
+  __WEBPACK_IMPORTED_MODULE_1_request___default.a.post('http://emcs.quanyou.com.cn/spellapi/spell/getTeamInfo?token=' + token + '&timestamp=' + timestamp, { json: { shopId: shopId, storeId: storeId, activityId: activityId, buyerId: buyerId, teamId: teamId } }, function (err, response, body) {
     res.json(body);
   });
 });
@@ -644,62 +654,74 @@ router.post('/consultant', function (req, res, next) {
 /* harmony default export */ exports["a"] = router;
 
 /***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+module.exports = require("axios");
+
+/***/ },
 /* 11 */
 /***/ function(module, exports) {
 
-module.exports = require("mockjs");
+module.exports = require("lru-cache");
 
 /***/ },
 /* 12 */
 /***/ function(module, exports) {
 
-module.exports = require("node-schedule");
+module.exports = require("mockjs");
 
 /***/ },
 /* 13 */
 /***/ function(module, exports) {
 
-module.exports = require("regenerator-runtime");
+module.exports = require("node-schedule");
 
 /***/ },
 /* 14 */
 /***/ function(module, exports) {
 
-module.exports = require("request");
+module.exports = require("regenerator-runtime");
 
 /***/ },
 /* 15 */
+/***/ function(module, exports) {
+
+module.exports = require("request");
+
+/***/ },
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_F_ptg_nuxt_spell_node_modules_babel_runtime_regenerator__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_F_ptg_nuxt_spell_node_modules_babel_runtime_regenerator___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_F_ptg_nuxt_spell_node_modules_babel_runtime_regenerator__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_nuxt__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_F_02_nuxt_spell_node_modules_babel_runtime_regenerator__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_F_02_nuxt_spell_node_modules_babel_runtime_regenerator___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_F_02_nuxt_spell_node_modules_babel_runtime_regenerator__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_nuxt__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_nuxt___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_nuxt__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_express__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_express___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_express__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_body_parser__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_body_parser__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_body_parser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_body_parser__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_cookie_parser__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_cookie_parser__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_cookie_parser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_cookie_parser__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_express_session__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_express_session__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_express_session___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_express_session__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__spell__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__spell__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__tokenManager__ = __webpack_require__(1);
 
 
 // app.use('${config.router.base}spell', spell)
 // Start nuxt.js
 var start = function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_F_ptg_nuxt_spell_node_modules_babel_runtime_regenerator___default.a.mark(function _callee() {
+  var _ref = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_F_02_nuxt_spell_node_modules_babel_runtime_regenerator___default.a.mark(function _callee() {
     var config, nuxt;
-    return __WEBPACK_IMPORTED_MODULE_0_F_ptg_nuxt_spell_node_modules_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
+    return __WEBPACK_IMPORTED_MODULE_0_F_02_nuxt_spell_node_modules_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             // Import and Set Nuxt.js options
-            config = __webpack_require__(3);
+            config = __webpack_require__(2);
 
             config.dev = !("development" === 'production');
             // Instanciate nuxt.js
@@ -785,13 +807,11 @@ app.use(function (req, res, next) {
   if (url.indexOf('/spell/getHasBeenGroup') >= 0 || url.indexOf('/spell/myOffered') >= 0 || url.indexOf('/spell/myGroups') >= 0 || url.indexOf('/spell/gethead') >= 0 || url.indexOf('/spell/gettitle') >= 0 || url.indexOf('/spell/getclass') >= 0 || url.indexOf('/spell/test/toAuth') >= 0 || url.indexOf('/spell/_nuxt/') >= 0 || url.indexOf('__webpack_hmr') >= 0 || url.indexOf('/spell/toAuth') >= 0 || url.length == 1) {
     next();
   } else {
-    console.log('我在这里面来了');
     // sessionInfo  用户信息
     var sessionInfo = req.session.sessionInfo;
     if (sessionInfo !== "" && sessionInfo !== undefined && sessionInfo !== 'undefined') {
       next();
     } else {
-      console.log('并且我到这里了');
       // let storeId = url.split('storeId=')[1].split('&')[0]
       // console.log('服务器里面的storeId:', 'https://emcs.quanyou.com.cn/spell/test/toAuth?&url=' + baseUrl + url)
       return res.redirect(baseUrl + '/spell/test/toAuth?url=' + baseUrl + url);

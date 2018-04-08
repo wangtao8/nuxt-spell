@@ -1,7 +1,6 @@
 <template>
   <div class="el_box">
-    <div class="el_banner">
-    </div>
+    <img class="el_banner" :src="gethead.homeBannerUrl">
     <div class="el_personnel">
       <span class="el_avatar"></span>
       <span class="el_jion">{{ nickName }}正在组团抢优惠，快来加入吧！</span>
@@ -22,7 +21,7 @@
         </ul>
       </div>
     </div>
-    <div class="el_content">
+    <div :class="content">
       <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" @bottom-status-change="handleBottomChange" :auto-fill="autoFill">
         <div class="el_goods" v-for="(item, index) in goodss" :key="index" @click="goDetail(item.goodsId)">
           <div class="el_img">
@@ -49,8 +48,19 @@
         </div>
       </mt-loadmore>
     </div>
-    <div id="btn">
-      <div class="el_btn" @click="goct" v-show="true">去参团</div>
+    <div class="el_dailog" v-show="daiLog">
+      <div class="el_window" ref="dailog">
+        <div class="el_cloose" @click="cloose">x</div>
+        <div class="el_explain">
+          <p>恭喜您！参团成功！</p>
+        </div>
+        <div class="el_definite">
+          <div @click="cloose">知道了</div>
+        </div>
+      </div>
+    </div>
+    <div id="btn" v-if="isJoin === 0">
+      <div class="el_btn" @click="goct">去参团</div>
     </div>
   </div>
 </template>
@@ -75,7 +85,10 @@
         activityId: '',
         shopId: '',
         storeId: '',
-        buyerId: ''
+        buyerId: '',
+        isJoin: '',
+        daiLog: false,
+        content: 'el_content'
       }
     },
     head () {
@@ -115,8 +128,6 @@
       goct: function (activityId, photo, nickName, ids) { // 去参团
         // 获取活动id 储存用于查询活动详情
         sessionStorage.setItem('activityId', activityId)
-        sessionStorage.setItem('headPhoto', photo)
-        sessionStorage.setItem('headNickName', nickName)
         let goGroup = {
           teamId: ids,
           buyerId: sessionStorage.getItem('buyerId'),
@@ -128,11 +139,14 @@
         // 发送参团请求
         axios.post('./goGroup', goGroup)
           .then(function (response) {
-//            console.log('eeeeeeee:', response.data)
+            console.log('eeeeeeee:', response.data)
           })
         if (!this.data1) {
-          this.data1 = true
+          this.daiLog = true
         }
+      },
+      cloose: function () {
+        this.daiLog = false
       },
       loadTop: function () { // 到顶部后的下拉刷新
         // 下拉刷新
@@ -216,15 +230,13 @@
       let elWidth = 0
       let lis = self.$refs.mybox.children
 
-      self.buyerId = sessionStorage.getItem('buyerId')
+      let elWinWidth = (window.innerWidth - 605) / 2
+      let elWinHeight = (window.innerHeight - 358) / 2
 
-//      if (process.BROWSER_BUILD) {
-//        let Wxt = require('~assets/js/WXUtil')
-//        //微信鉴权
-//        let storeId = sessionStorage.getItem('storeId')
-//        let shopId = sessionStorage.getItem('shopId')
-//        Wxt.default.verify(storeId, shopId)
-//      }
+      this.$refs.dailog.style.left = elWinWidth + 'px'
+      this.$refs.dailog.style.top = elWinHeight + 'px'
+
+      self.buyerId = sessionStorage.getItem('buyerId')
 
       for (var i = 0; i < lis.length; i++) {
         elWidth += lis[i].clientWidth
@@ -240,26 +252,29 @@
         self.show2 = true
       }
 
-      // 设置团长头像  及显示团长昵称
+      // 设置团长头像及显示团长昵称
       let getGroupInfo = {
-         shopId : this.shopId,
-         storeId : this.storeId,
-         activityId : this.activityId,
+         shopId : self.shopId,
+         storeId : self.storeId,
+         activityId : self.activityId,
          buyerId : sessionStorage.getItem('buyerId'),
-         teamId : this.teamId
+         teamId : self.teamId
       }
       axios.post('./getGroupInfo', getGroupInfo)
         .then(function (response) {
-          console.log('232323232:', response)
+          sessionStorage.setItem('headNickName', response.data.data.nickName)
+          sessionStorage.setItem('headPhoto', response.data.data.photo)
+          let photo = response.data.data.photo
+          self.nickName = response.data.data.nickName
+          self.isJoin = response.data.data.isJoin
+          // 如果isJoin等于1，那么商品显示框class变为 el_content2的样式  否则为el_content的样式
+          if (response.data.data.isJoin === 1){
+            self.content = "el_content2"
+          } else {
+            self.content = "el_content"
+          }
+          document.getElementsByClassName('el_avatar')[0].style.backgroundImage = 'url(' + photo + ')'
         })
-      self.nickName = sessionStorage.getItem('headNickName')
-      let photo = sessionStorage.getItem('headPhoto')
-      document.getElementsByClassName('el_avatar')[0].style.backgroundImage = 'url(' + photo + ')'
-
-      // 设置banner背景图片
-      let backUrl = this.gethead.homeBannerUrl
-      document.getElementsByClassName('el_banner')[0].style.backgroundImage = 'url(' + backUrl + ')'
-      console.log(self.gethead.endTime)
 
       // 时间格式拼接
       let DATE = new Date()

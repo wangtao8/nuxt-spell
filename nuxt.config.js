@@ -15,6 +15,18 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
+  render: {
+    bundleRenderer: {
+      cache: require('lru-cache')({
+        max: 1,
+        maxAge: 1000 * 6
+      })
+    }
+  },
+  cache: {
+    max: 1,
+    maxAge: 6000
+  },
   build: {
     extend (config, ctx) {
       if (ctx.dev && ctx.isClient) {
@@ -25,7 +37,8 @@ module.exports = {
           exclude: /()/
         })
       }
-    }
+    },
+    vendor: ['./assets/js/jweixin-1.2.0.js']
   },
   router: {
     base: '/spell/'
@@ -60,6 +73,7 @@ module.exports = {
   },
   plugins: [
     { src: './plugins/mint-ui', ssr: true }
+    // { src: '~/plugins/axios', ssr: false}
   ],
   css: [
     'assets/main.css'

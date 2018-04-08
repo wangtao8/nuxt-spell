@@ -136,6 +136,7 @@ li {
   font-size: 26px;
   box-sizing: border-box;
   padding-left: 15px;
+  z-index: 2;
 }
 .el_dailog {
   width: 100%;
@@ -256,8 +257,8 @@ li {
   color: rgb(0,191,142);
 }
 /*.mint-loadmore{*/
-/*height: calc(100% - 500px);*/
-/*overflow: auto;*/
+  /*height: calc(100% - 500px);*/
+  /*overflow: auto;*/
 /*}*/
 .main-body{
   height: calc(100% - 500px);

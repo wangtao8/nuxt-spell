@@ -105,7 +105,6 @@
 </template>
 <script>
   import axios from 'axios'
-  import Wxt from '../../assets/js/WXUtil'
   import filter from '../../assets/js/filter'
   import Load from '../../components/load'
   import Dial from '../../components/dialog'
@@ -154,13 +153,6 @@
       this.Picurl = this.imgurl[0]
       this.goodsName = this.goodss.goodsName
       this.headPrice = this.goodss.headPrice
-
-      //微信鉴权
-      let storeId = 'bd9164c8-aa81-4303-9164-c8aa817303a7'
-      let shopId = 'a7fce96a-0126-4b05-bce9-6a01268b0534'
-      Wxt.verify(storeId, shopId)
-
-//      console.log('Attrdata:', this.Attrdata)
     },
     beforeMount () {
       let self = this

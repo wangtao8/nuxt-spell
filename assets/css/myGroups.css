@@ -57,7 +57,6 @@
 /*.everyGroup{*/
 /*display: none;*/
 /*}*/
-
 .everyGroup:first-child{
   display: block;
 }
