@@ -46,9 +46,9 @@
           </div>
         </div>
 
-        <div class="payment clean" v-if="hide">
-          <a class="payBtn _right" href="javascript:;">提前购买</a>
-        </div>
+        <!--<div class="payment clean" v-if="hide">-->
+          <!--<a class="payBtn _right" href="javascript:;">提前购买</a>-->
+        <!--</div>-->
       </section>
       <div class="height18"></div>
     </div>
