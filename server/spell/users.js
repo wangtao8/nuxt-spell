@@ -27,6 +27,7 @@ router.post('/gethead', (req, res, next) => {
   let token = takeManager.getToken()
   let timestamp = (new Date()).getTime()
   let appId = req.query.appId
+  console.log('appid:', req.session)
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellHomeInfo?token=' + token + '&timestamp=' + timestamp + '&appId=' + appId,{json:{shopId:shopId, storeId:storeId, activityId:activityId}}, function (err, response, body) {
     if (err) {
       res.json(body)
@@ -66,7 +67,6 @@ router.post('/getclass', (req, res, next) => {
         res.json(body)
       } else {
         // console.log('class:', body)
-        console.log('我在打印body信息wwwwwwwwwwwwwwwwwwwwwwwww:', body)
         res.json(body)
       }
     })
@@ -132,7 +132,7 @@ router.post('/openGroup', (req, res, next) => {
 
 router.post('/toAuth', (req, res, next) => {
   req.session.sessionInfo = req.body
-
+console.log('sessionInfo:', req.session.sessionInfo)
   res.send("1")
 })
 
