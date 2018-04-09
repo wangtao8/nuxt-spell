@@ -37,8 +37,7 @@ module.exports = {
           exclude: /()/
         })
       }
-    },
-    vendor: ['./assets/js/jweixin-1.2.0.js']
+    }
   },
   router: {
     base: '/spell/'

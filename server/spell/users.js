@@ -27,7 +27,7 @@ router.post('/gethead', (req, res, next) => {
   let token = takeManager.getToken()
   let timestamp = (new Date()).getTime()
   let appId = req.query.appId
-  console.log('appid:', req.session)
+  // console.log('appid:', req.session)
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellHomeInfo?token=' + token + '&timestamp=' + timestamp + '&appId=' + appId,{json:{shopId:shopId, storeId:storeId, activityId:activityId}}, function (err, response, body) {
     if (err) {
       res.json(body)

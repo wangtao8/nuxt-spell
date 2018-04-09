@@ -30,6 +30,7 @@
             .then(function (respons) {
                 if (respons.data === 1) {
                   let appId = JSON.parse(sessionStorage.getItem('local-session-info')).appId
+                  sessionStorage.setItem('myhref', (urls + '&appId=' + appId))
                   location.href = urls + '&appId=' + appId
                 }
             })
