@@ -85,10 +85,15 @@
         activityId: '',
         shopId: '',
         storeId: '',
-        buyerId: '',
         isJoin: '',
         daiLog: false,
-        content: 'el_content'
+        content: 'el_content',
+        headShareTitle: '',
+        memberShareTitle: '',
+        memberShareDescribe: '',
+        memberSharePicUrl: '',
+        endTime: '',
+        dataEx: ''
       }
     },
     head () {
@@ -230,6 +235,73 @@
       let elWidth = 0
       let lis = self.$refs.mybox.children
 
+      // 分享
+      console.log('xxxxxxxxxxxxxxxx:', new Date(self.gethead.endTime))
+      if (process.BROWSER_BUILD) {
+        let wx = require('weixin-js-sdk')
+        let appId = self.dataEx.appId
+        let timestamp = self.dataEx.timestamp
+        let nonceStr = self.dataEx.noncestr
+        let signature = self.dataEx.signature
+        let headShareTitle=self.headShareTitle
+        let memberShareTitle=self.memberShareTitle
+        let memberShareDescribe=self.memberShareDescribe
+        let memberSharePicUrl=self.memberSharePicUrl
+        // 时间格式拼接
+        let DATE = new Date()
+        let year = DATE.getFullYear()
+        let month = DATE.getMonth() + 1
+        let day = DATE.getDate()
+        let hour = DATE.getHours()
+        let mint = DATE.getMinutes()
+        let S = DATE.getSeconds()
+        let currenttime = new Date(year + '/' + month + '/' + day + ' ' + hour + ':' + mint + ':' + S)// 当前时间
+        let endtime = new Date(self.gethead.endTime.replace(/-/g, '/')) // 请求来的结束时间
+        let curDay = Math.floor((endtime - currenttime) / 1000 / 60 / 60 / 24)
+        let curHour = Math.floor((endtime - currenttime) / 1000 / 60 / 60) % 24
+        let curMint = Math.floor((endtime - currenttime) / 1000 / 60 % 60)
+        let curS = (endtime - currenttime) / 1000 % 60
+
+        wx.config({
+          debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+          appId: `${appId}`, // 必填，公众号的唯一标识
+          timestamp: `${timestamp}`, // 必填，生成签名的时间戳
+          nonceStr: `${nonceStr}`, // 必填，生成签名的随机串
+          signature: `${signature}`,// 必填，签名
+          jsApiList: ['onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
+        })
+
+        if (endtime - currenttime > 0) {
+          // 改变store里面的时分秒数据
+          this.$store.state.day = curDay
+          this.$store.state.hour = curHour
+          this.$store.state.minute = curMint
+          this.$store.state.second = curS
+          wx.ready(function () {
+            console.log("团员标题：",memberShareTitle)
+            console.log("团长标题：",headShareTitle)
+            wx.onMenuShareAppMessage({
+              title: memberShareTitle, // 分享标题
+              desc: memberShareDescribe, // 分享描述
+              link: location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              imgUrl: memberSharePicUrl, // 分享图标
+              type: '', // 分享类型,music、video或link，不填默认为link
+              dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+              success: function () {
+// 用户确认分享后执行的回调函数
+                alert('分享成功！')
+              },
+              cancel: function () {
+// 用户取消分享后执行的回调函数
+                alert('分享失败！')
+              }
+            });
+          })
+        }
+        // 开始倒计时
+        this.start()
+      }
+
       let elWinWidth = (window.innerWidth - 605) / 2
       let elWinHeight = (window.innerHeight - 358) / 2
 
@@ -257,7 +329,7 @@
          shopId : self.shopId,
          storeId : self.storeId,
          activityId : self.activityId,
-         buyerId : sessionStorage.getItem('buyerId'),
+         buyerId : localStorage.getItem('buyerId'),
          teamId : self.teamId
       }
       axios.post('./getGroupInfo', getGroupInfo)
@@ -275,33 +347,11 @@
           }
           document.getElementsByClassName('el_avatar')[0].style.backgroundImage = 'url(' + photo + ')'
         })
-
-      // 时间格式拼接
-      let DATE = new Date()
-      let year = DATE.getFullYear()
-      let month = DATE.getMonth() + 1
-      let day = DATE.getDate()
-      let hour = DATE.getHours()
-      let mint = DATE.getMinutes()
-      let S = DATE.getSeconds()
-      let currenttime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + mint + ':' + S)// 当前时间
-      let endtime = new Date(self.gethead.endTime) // 请求来的结束时间
-      let curDay = Math.floor((endtime - currenttime) / 1000 / 60 / 60 / 24)
-      let curHour = Math.floor((endtime - currenttime) / 1000 / 60 / 60) % 24
-      let curMint = Math.floor((endtime - currenttime) / 1000 / 60 % 60)
-      let curS = (endtime - currenttime) / 1000 % 60
-      if (endtime - currenttime > 0) {
-        // 改变store里面的时分秒数据
-        this.$store.state.day = curDay
-        this.$store.state.hour = curHour
-        this.$store.state.minute = curMint
-        this.$store.state.second = curS
-        console.log(curDay + '天' + curHour + '时' + curMint + '分' + curS + '秒')
-      }
-      // 开始倒计时
-      this.start()
     },
     async asyncData (context) {
+      let baseUrl = 'https://emcs.quanyou.com.cn/spell'
+      let url = baseUrl + context.req.url
+      console.log('打印页面接到的信息:', context.query)
       // 获得头部
       let gethead = {
         activityId: context.query.activityId,
@@ -324,7 +374,7 @@
       }
       // 记得return 不然不会返回结果
       return axios.all([
-        axios.post('http://172.30.3.40:3222/spell/gethead', gethead),
+        axios.post('http://172.30.3.40:3222/spell/gethead?appId='+context.query.appId+'&url='+ encodeURIComponent(url), gethead),
         axios.post('http://172.30.3.40:3222/spell/gettitle', gettitle),
         axios.post('http://172.30.3.40:3222/spell/getclass', getclass)
       ])
@@ -346,7 +396,13 @@
                   activityId: context.query.activityId,
                   shopId: context.query.shopId,
                   storeId: context.query.storeId,
-                  teamId: context.query.teamId
+                  teamId: context.query.teamId,
+                  headShareTitle:gethead.data.data.headShareTitle,
+                  memberShareTitle:gethead.data.data.memberShareTitle,
+                  memberShareDescribe:gethead.data.data.memberShareDescribe,
+                  memberSharePicUrl:gethead.data.data.headSharePicUrl,
+                  endTime:gethead.data.data.endTime,
+                  dataEx: gethead.data.dataEx
                 }
               } else {
                 return {

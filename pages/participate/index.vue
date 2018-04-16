@@ -63,6 +63,7 @@
       }
     },
     async asyncData (content) {
+      console.log('participate里面的数据:', content.query)
       // 定义查询参数
       let params = {
         activityId: content.query.activityId,
@@ -120,7 +121,7 @@
         this.data1 = false
       },
       gosee: function () {
-        location.href = 'boon?activityId=' + this.activityId + '&storeId=' + this.storeId + '&shopId=' + this.shopId + '&teamId=' + this.teamId
+        location.href = 'boon?activityId=' + this.activityId + '&storeId=' + this.storeId + '&shopId=' + this.shopId + '&teamId=' + this.teamId + '&appId=' + sessionStorage.getItem('appId')
       },
       loadTop: function () { // 到顶部后的下拉刷新
         // 下拉刷新
@@ -206,6 +207,18 @@
         self.isShow = false
         filter.flter('participate')
       }, Math.random() * 50)
+
+      //禁用微信右上角菜单
+      if (typeof WeixinJSBridge == "undefined"){
+        if( document.addEventListener ){
+          document.addEventListener('WeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')}, false)
+        }else if (document.attachEvent){
+          document.attachEvent('WeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')})
+          document.attachEvent('onWeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')})
+        }
+      }else {
+        WeixinJSBridge.call('hideOptionMenu')
+      }
     },
     head () {
       return {

@@ -17,7 +17,7 @@ app.use(cookieParser())
 
 app.use(session({
   secret: '88888',
-  cookie: {maxAge: 1*60*60*1000},
+  cookie: {maxAge: 1*30*1000},
   resave: true,
   saveUninitialized: false
 }))
@@ -25,8 +25,6 @@ app.use(session({
 app.use(function (req, res, next) {
   let url = req.url
   let baseUrl = 'https://emcs.quanyou.com.cn'
-  // let baseUrl = 'http://127.0.0.1:3222'
-  // console.log(url,url.indexOf('/spell/test/toAuth'))
   if (url.indexOf('/spell/getHasBeenGroup') >= 0 || url.indexOf('/spell/myOffered') >= 0 || url.indexOf('/spell/myGroups') >= 0 || url.indexOf('/spell/gethead') >= 0 || url.indexOf('/spell/gettitle') >= 0 || url.indexOf('/spell/getclass') >= 0 || url.indexOf('/spell/test/toAuth') >= 0 || url.indexOf('/spell/_nuxt/') >= 0 || url.indexOf('__webpack_hmr') >= 0 || url.indexOf('/spell/toAuth') >= 0 || url.length == 1) {
     next ()
   } else {
@@ -35,9 +33,8 @@ app.use(function (req, res, next) {
     if (sessionInfo !== "" && sessionInfo !== undefined && sessionInfo !== 'undefined') {
       next()
     } else {
-      // let storeId = url.split('storeId=')[1].split('&')[0]
-      // console.log('服务器里面的storeId:', 'https://emcs.quanyou.com.cn/spell/test/toAuth?&url=' + baseUrl + url)
-      return res.redirect( baseUrl +'/spell/test/toAuth?url=' + baseUrl + url)
+      // console.log('url:', baseUrl +'/spell/test/toAuth?url=' + baseUrl + encodeURIComponent(url))
+      return res.redirect( baseUrl +'/spell/test/toAuth?url=' + baseUrl + encodeURIComponent(url))
     }
   }
 })

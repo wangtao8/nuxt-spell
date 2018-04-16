@@ -43,6 +43,18 @@
         self.isShow = false
         filter.flter('success')
       }, Math.random() * 50)
+
+      //禁用微信右上角菜单
+      if (typeof WeixinJSBridge == "undefined"){
+        if( document.addEventListener ){
+          document.addEventListener('WeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')}, false)
+        }else if (document.attachEvent){
+          document.attachEvent('WeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')})
+          document.attachEvent('onWeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')})
+        }
+      }else {
+        WeixinJSBridge.call('hideOptionMenu')
+      }
     }
   }
 </script>

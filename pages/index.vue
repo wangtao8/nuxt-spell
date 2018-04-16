@@ -126,12 +126,22 @@
         shopId: '',
         storeId: '',
         appId: '',
-        dataEx: {}
+        dataEx: {},
+        headShareTitle: '',
+//        headShareDescribe: '',
+//        headSharePicUrl: '',
+        memberShareTitle: '',
+        memberShareDescribe: '',
+        memberSharePicUrl: '',
+
       }
     },
     async asyncData (context) {
       // 获得头部
-//      console.log('打印的东西xxxxxxxxxxxxxx:', context.query)
+      console.log('打印的东西xxxxxxxxxxxxxx:', context.req.url)
+      let baseUrl = 'https://emcs.quanyou.com.cn/spell'
+      let url = baseUrl + context.req.url
+//      console.log('url:', encodeURIComponent(url))
       let gethead = {
         activityId: context.query.activityId,
         shopId: context.query.shopId,
@@ -153,19 +163,21 @@
       }
       // 记得return 不然不会返回结果
       return axios.all([
-        axios.post('http://172.30.3.40:3222/spell/gethead?appId='+context.query.appId, gethead),
-        axios.post('http://172.30.3.40:3222/spell/gettitle', gettitle),
-        axios.post('http://172.30.3.40:3222/spell/getclass', getclass)
+        axios.post(baseUrl+'/gethead?appId='+context.query.appId+'&url='+ encodeURIComponent(url), gethead),
+        axios.post(baseUrl+'/gettitle', gettitle),
+        axios.post(baseUrl+'/getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
-          console.log('gethead:', gethead.data.dataEx)
+//          console.log('gethead:', gethead.data.dataEx)
           if(gethead.data.state === 1) {
             if (gettitle.data.state) {
               if (getclass.data.state) {
                 gettitle.data.data.unshift({categoryName:"全部",id:"",isHaveGoods:0})
+                console.log("获取数据：",gethead.data.data.headShareTitle)
                 return {
                   // 头部信息
                   gethead: gethead.data.data,
+
                   // 头部导航内容
                   clas: gettitle.data.data,
                   // 取索引为1的对象默认展示
@@ -177,7 +189,11 @@
                   shopId: context.query.shopId,
                   storeId: context.query.storeId,
                   appId: context.query.appId,
-                  dataEx: gethead.data.dataEx
+                  dataEx: gethead.data.dataEx,
+                  headShareTitle:gethead.data.data.headShareTitle,
+                  memberShareTitle:gethead.data.data.memberShareTitle,
+                  memberShareDescribe:gethead.data.data.memberShareDescribe,
+                  memberSharePicUrl:gethead.data.data.headSharePicUrl
                 }
               }else {
                 return {
@@ -206,42 +222,47 @@
     },
     components: { Banner, Btn, Load },
     mounted () {
-      console.log('dataEx:', this.dataEx)
-
       let _this = this
-      // 分享配置
-      console.log('process.BROWSER_BUILD:', process.BROWSER_BUILD)
+      console.log('xxxxxxxxxxxxxxxx:', _this.headShareTitle)
       if (process.BROWSER_BUILD) {
         let wx = require('weixin-js-sdk')
         let appId = _this.dataEx.appId
         let timestamp = _this.dataEx.timestamp
-        let nonceStr = _this.dataEx.nonceStr
+        let nonceStr = _this.dataEx.noncestr
         let signature = _this.dataEx.signature
-
+        let headShareTitle=_this.headShareTitle
+        let memberShareTitle=_this.memberShareTitle
+        let memberShareDescribe=_this.memberShareDescribe
+        let memberSharePicUrl=_this.memberSharePicUrl
         wx.config({
-          debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-          appId: appId, // 必填，公众号的唯一标识
-          timestamp: timestamp, // 必填，生成签名的时间戳
-          nonceStr: nonceStr, // 必填，生成签名的随机串
-          signature: signature,// 必填，签名
-          jsApiList: ['onMenuShareTimeline'] // 必填，需要使用的JS接口列表
+          debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+          appId: `${appId}`, // 必填，公众号的唯一标识
+          timestamp: `${timestamp}`, // 必填，生成签名的时间戳
+          nonceStr: `${nonceStr}`, // 必填，生成签名的随机串
+          signature: `${signature}`,// 必填，签名
+          jsApiList: ['onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
         })
 
         wx.ready(function () {
-          wx.onMenuShareTimeline({
-            title: '123123123', // 分享标题
-            link: 'http://172.0.0.1:3222/spell/success', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-            imgUrl: 'http://bmcs.quanyou.com.cn/resources/images/linke-logo.png', // 分享图标
-            success () {
-              alert('分享朋友圈成功')
-              // 用户确认分享后执行的回调函数
+         console.log("团员标题：",memberShareTitle)
+          console.log("团长标题：",headShareTitle)
+          wx.onMenuShareAppMessage({
+            title: memberShareTitle, // 分享标题
+            desc: memberShareDescribe, // 分享描述
+            link: location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: memberSharePicUrl, // 分享图标
+            type: '', // 分享类型,music、video或link，不填默认为link
+            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+            success: function () {
+// 用户确认分享后执行的回调函数
+              alert('成功！')
             },
-            cancel () {
-              // 用户取消分享后执行的回调函数
+            cancel: function () {
+// 用户取消分享后执行的回调函数
+              alert('失败！')
             }
-          })
+          });
         })
-        console.log('客户端:', wx)
       }
 
       if (location.href.length < 100) {
@@ -311,8 +332,8 @@
       let hour = DATE.getHours()
       let mint = DATE.getMinutes()
       let S = DATE.getSeconds()
-      let currenttime = new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + mint + ':' + S)// 当前时间
-      let endtime = new Date(self.gethead.endTime) // 请求来的结束时间
+      let currenttime = new Date(year + '/' + month + '/' + day + ' ' + hour + ':' + mint + ':' + S)// 当前时间
+      let endtime = new Date(self.gethead.endTime.replace(/-/g, '/')) // 请求来的结束时间
       let curDay = Math.floor((endtime - currenttime) / 1000 / 60 / 60 / 24)
       let curHour = Math.floor((endtime - currenttime) / 1000 / 60 / 60) % 24
       let curMint = Math.floor((endtime - currenttime) / 1000 / 60 % 60)

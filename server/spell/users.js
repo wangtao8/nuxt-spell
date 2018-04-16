@@ -27,11 +27,12 @@ router.post('/gethead', (req, res, next) => {
   let token = takeManager.getToken()
   let timestamp = (new Date()).getTime()
   let appId = req.query.appId
-  // console.log('appid:', req.session)
-  request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellHomeInfo?token=' + token + '&timestamp=' + timestamp + '&appId=' + appId,{json:{shopId:shopId, storeId:storeId, activityId:activityId}}, function (err, response, body) {
+  let url = req.query.url
+  request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellHomeInfo?token=' + token + '&timestamp=' + timestamp + '&appId=' + appId + '&url=' + encodeURIComponent(url),{json:{shopId:shopId, storeId:storeId, activityId:activityId}}, function (err, response, body) {
     if (err) {
       res.json(body)
     } else {
+      console.log('请求头部信息查看用户信息:', body)
       res.json(body)
     }
   })
@@ -81,6 +82,7 @@ router.post('/getGroupInfo', (req, res, next) => {
   let teamId = req.body.teamId
   let token = takeManager.getToken()
   let timestamp = (new Date()).getTime()
+  console.log('获取团长信息：', req.body)
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/getTeamInfo?token='+token+'&timestamp='+timestamp,
     {json: {shopId: shopId, storeId: storeId, activityId: activityId, buyerId: buyerId, teamId: teamId}},
     function (err, response, body) {
@@ -132,7 +134,7 @@ router.post('/openGroup', (req, res, next) => {
 
 router.post('/toAuth', (req, res, next) => {
   req.session.sessionInfo = req.body
-console.log('sessionInfo:', req.session.sessionInfo)
+// console.log('sessionInfo:', req.session.sessionInfo)
   res.send("1")
 })
 
