@@ -88,10 +88,6 @@
         isJoin: '',
         daiLog: false,
         content: 'el_content',
-        headShareTitle: '',
-        memberShareTitle: '',
-        memberShareDescribe: '',
-        memberSharePicUrl: '',
         endTime: '',
         dataEx: ''
       }
@@ -130,21 +126,28 @@
       goDetail: function (obj) {
         location.href = 'https://emcs.quanyou.com.cn/emallwap/spellGoodsdetail/' + this.storeId + '/' +obj
       },
-      goct: function (activityId, photo, nickName, ids) { // 去参团
+      goct: function () { // 去参团
         // 获取活动id 储存用于查询活动详情
-        sessionStorage.setItem('activityId', activityId)
+        let _this = this
         let goGroup = {
-          teamId: ids,
+          teamId: _this.teamId,
           buyerId: sessionStorage.getItem('buyerId'),
           storeId: sessionStorage.getItem('storeId'),
           shopId: sessionStorage.getItem('shopId'),
-          nickName: sessionStorage.getItem('nickName'),
-          photo: sessionStorage.getItem('photo')
+          nickName: JSON.parse(sessionStorage.getItem('local-session-info')).nick,
+          photo: JSON.parse(sessionStorage.getItem('local-session-info')).photo
         }
+        console.log('goGroup:', goGroup)
         // 发送参团请求
         axios.post('./goGroup', goGroup)
           .then(function (response) {
-            console.log('eeeeeeee:', response.data)
+//            console.log('eeeeeeee:', response.data)
+            if (response.data.state === 1) {
+              _this.content = "el_content2"
+              _this.isJoin = 1
+            } else {
+              MessageBox.alert(response.data.msg, '')
+            }
           })
         if (!this.data1) {
           this.daiLog = true
@@ -242,10 +245,6 @@
         let timestamp = self.dataEx.timestamp
         let nonceStr = self.dataEx.noncestr
         let signature = self.dataEx.signature
-        let headShareTitle=self.headShareTitle
-        let memberShareTitle=self.memberShareTitle
-        let memberShareDescribe=self.memberShareDescribe
-        let memberSharePicUrl=self.memberSharePicUrl
         // 时间格式拼接
         let DATE = new Date()
         let year = DATE.getFullYear()
@@ -276,26 +275,54 @@
           this.$store.state.hour = curHour
           this.$store.state.minute = curMint
           this.$store.state.second = curS
-          wx.ready(function () {
-            console.log("团员标题：",memberShareTitle)
-            console.log("团长标题：",headShareTitle)
-            wx.onMenuShareAppMessage({
-              title: memberShareTitle, // 分享标题
-              desc: memberShareDescribe, // 分享描述
-              link: location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: memberSharePicUrl, // 分享图标
-              type: '', // 分享类型,music、video或link，不填默认为link
-              dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-              success: function () {
+
+          setTimeout(function () {
+            if (sessionStorage.getItem('headBuyerId') === sessionStorage.getItem('buyerId')){
+              let ShareTitle=self.gethead.headShareTitle
+              let ShareDescribe=self.gethead.headShareDescribe
+              let SharePicUrl=self.gethead.headSharePicUrl
+              wx.ready(function () {
+                wx.onMenuShareAppMessage({
+                  title: ShareTitle, // 分享标题
+                  desc: ShareDescribe, // 分享描述
+                  link: location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                  imgUrl: SharePicUrl, // 分享图标
+                  type: '', // 分享类型,music、video或link，不填默认为link
+                  dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                  success: function () {
 // 用户确认分享后执行的回调函数
-                alert('分享成功！')
-              },
-              cancel: function () {
+                    alert('分享成功！')
+                  },
+                  cancel: function () {
 // 用户取消分享后执行的回调函数
-                alert('分享失败！')
-              }
-            });
-          })
+                    alert('分享失败！')
+                  }
+                });
+              })
+            } else {
+              let ShareTitle=self.gethead.memberShareTitle
+              let ShareDescribe=self.gethead.memberShareDescribe
+              let SharePicUrl=self.gethead.memberSharePicUrl
+              wx.ready(function () {
+                wx.onMenuShareAppMessage({
+                  title: ShareTitle, // 分享标题
+                  desc: ShareDescribe, // 分享描述
+                  link: location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                  imgUrl: SharePicUrl, // 分享图标
+                  type: '', // 分享类型,music、video或link，不填默认为link
+                  dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                  success: function () {
+// 用户确认分享后执行的回调函数
+                    alert('分享成功！')
+                  },
+                  cancel: function () {
+// 用户取消分享后执行的回调函数
+                    alert('分享失败！')
+                  }
+                });
+              })
+            }
+          },400)
         }
         // 开始倒计时
         this.start()
@@ -337,6 +364,7 @@
         .then(function (response) {
           sessionStorage.setItem('headNickName', response.data.data.nickName)
           sessionStorage.setItem('headPhoto', response.data.data.photo)
+          sessionStorage.setItem('headBuyerId', response.data.data.buyerId)
           let photo = response.data.data.photo
           self.nickName = response.data.data.nickName
           self.isJoin = response.data.data.isJoin
