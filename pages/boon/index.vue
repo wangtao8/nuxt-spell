@@ -233,10 +233,9 @@
     mounted () {
       let self = this
       let elWidth = 0
-      let lis = self.$refs.mybox.children
 
+      console.log('dataEx:', self.dataEx)
       // 分享
-      console.log('xxxxxxxxxxxxxxxx:', new Date(self.gethead.endTime))
       if (process.BROWSER_BUILD) {
         let wx = require('weixin-js-sdk')
         let appId = self.dataEx.appId
@@ -310,6 +309,7 @@
 
       self.buyerId = sessionStorage.getItem('buyerId')
 
+      let lis = self.$refs.mybox.children
       for (var i = 0; i < lis.length; i++) {
         elWidth += lis[i].clientWidth
       }
@@ -332,6 +332,7 @@
          buyerId : localStorage.getItem('buyerId'),
          teamId : self.teamId
       }
+      console.log('前台获取团长信息的参数:', getGroupInfo)
       axios.post('./getGroupInfo', getGroupInfo)
         .then(function (response) {
           sessionStorage.setItem('headNickName', response.data.data.nickName)
@@ -380,8 +381,11 @@
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
           if (gethead.data.state) {
+            console.log('1')
             if (gettitle.data.state) {
+              console.log('2')
               if (getclass.data.state) {
+                console.log('3')
                 gettitle.data.data.unshift({categoryName:"全部",id:"",isHaveGoods:0})
                 return {
                   // 头部信息

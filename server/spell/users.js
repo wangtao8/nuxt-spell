@@ -28,6 +28,10 @@ router.post('/gethead', (req, res, next) => {
   let timestamp = (new Date()).getTime()
   let appId = req.query.appId
   let url = req.query.url
+  if (appId.indexOf(',') === 0) {
+    appId = appId.split(',')[1]
+  }
+  console.log('后台接收到的信息:', appId, ' url  ',  url)
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellHomeInfo?token=' + token + '&timestamp=' + timestamp + '&appId=' + appId + '&url=' + encodeURIComponent(url),{json:{shopId:shopId, storeId:storeId, activityId:activityId}}, function (err, response, body) {
     if (err) {
       res.json(body)

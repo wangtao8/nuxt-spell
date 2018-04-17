@@ -168,7 +168,7 @@
         axios.post(baseUrl+'/getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
-//          console.log('gethead:', gethead.data.dataEx)
+          console.log('gethead:', gethead.data.dataEx)
           if(gethead.data.state === 1) {
             if (gettitle.data.state) {
               if (getclass.data.state) {
@@ -223,7 +223,14 @@
     components: { Banner, Btn, Load },
     mounted () {
       let _this = this
-      console.log('xxxxxxxxxxxxxxxx:', _this.headShareTitle)
+      if (sessionStorage.getItem('buyerId') === 'null' || sessionStorage.getItem('buyerId') === null) {
+//        location.href = location.href + '?url=https://emcs.quanyou.com.cn/spell/test/toAuth&storeId=' + _this.storeId
+        let baseUrl = 'https://emcs.quanyou.com.cn'
+        let url = location.href
+        console.log( baseUrl +'/spell/test/toAuth?url=' + encodeURIComponent(url))
+        location.href = baseUrl +'/spell/test/toAuth?url=' + encodeURIComponent(url)
+      }
+      console.log('dataEx:', _this.dataEx)
       if (process.BROWSER_BUILD) {
         let wx = require('weixin-js-sdk')
         let appId = _this.dataEx.appId
@@ -421,6 +428,7 @@
         axios.post('./openGroup', openGroup)
           .then(function (response) {
             if (response.data.state) {
+              console.log('msg:', response.data)
               location.href = 'success'
             } else {
               MessageBox.alert(response.data.msg, '')

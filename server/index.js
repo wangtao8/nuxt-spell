@@ -17,21 +17,37 @@ app.use(cookieParser())
 
 app.use(session({
   secret: '88888',
-  cookie: {maxAge: 1*30*1000},
+  cookie: '',
   resave: true,
   saveUninitialized: false
 }))
-
 app.use(function (req, res, next) {
   let url = req.url
   let baseUrl = 'https://emcs.quanyou.com.cn'
-  if (url.indexOf('/spell/getHasBeenGroup') >= 0 || url.indexOf('/spell/myOffered') >= 0 || url.indexOf('/spell/myGroups') >= 0 || url.indexOf('/spell/gethead') >= 0 || url.indexOf('/spell/gettitle') >= 0 || url.indexOf('/spell/getclass') >= 0 || url.indexOf('/spell/test/toAuth') >= 0 || url.indexOf('/spell/_nuxt/') >= 0 || url.indexOf('__webpack_hmr') >= 0 || url.indexOf('/spell/toAuth') >= 0 || url.length == 1) {
+  if (url.indexOf('/spell/getGroupInfo') >= 0 || url.indexOf('/spell/getHasBeenGroup') >= 0 || url.indexOf('/spell/myOffered') >= 0 || url.indexOf('/spell/myGroups') >= 0 || url.indexOf('/spell/gethead') >= 0 || url.indexOf('/spell/gettitle') >= 0 || url.indexOf('/spell/getclass') >= 0 || url.indexOf('/spell/test/toAuth') >= 0 || url.indexOf('/spell/_nuxt/') >= 0 || url.indexOf('__webpack_hmr') >= 0 || url.indexOf('/spell/toAuth') >= 0 || url.length == 1) {
     next ()
   } else {
     // sessionInfo  用户信息
     let sessionInfo = req.session.sessionInfo
+    // console.log('转发这里的session:', sessionInfo)
+    console.log('外面的url:', req.url)
     if (sessionInfo !== "" && sessionInfo !== undefined && sessionInfo !== 'undefined') {
-      next()
+
+      console.log('判断我是否原来值有appId：', req.query.appId)
+
+      if (!!req.query.appId && url.indexOf('/spell/boon') >= 0 || !!req.query.appId && url.indexOf('/spell/?') >= 0 ) {
+
+          next ()
+
+      } else if (url.indexOf('/spell/boon') >= 0 || url.indexOf('/spell/?') >= 0 ) {
+
+          return res.redirect( baseUrl +req.url + '&appId=' + req.session.sessionInfo.appId )
+
+      } else {
+
+        next ()
+
+      }
     } else {
       // console.log('url:', baseUrl +'/spell/test/toAuth?url=' + baseUrl + encodeURIComponent(url))
       return res.redirect( baseUrl +'/spell/test/toAuth?url=' + baseUrl + encodeURIComponent(url))
