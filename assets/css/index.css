@@ -166,7 +166,6 @@ li {
   overflow-y: auto;
 }
 .el_window2>p:last-child{
-  text-indent: 24px;
   padding: 0 24px;
   font-size: 24px;
   text-align: left;

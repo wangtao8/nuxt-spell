@@ -138,7 +138,7 @@
     },
     async asyncData (context) {
       // 获得头部
-      console.log('打印的东西xxxxxxxxxxxxxx:', context.req.url)
+//      console.log('打印的东西xxxxxxxxxxxxxx:', context.req.url)
       let baseUrl = 'https://emcs.quanyou.com.cn/spell'
       let url = baseUrl + context.req.url
 //      console.log('url:', encodeURIComponent(url))
@@ -168,12 +168,12 @@
         axios.post(baseUrl+'/getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
-          console.log('gethead:', gethead.data.dataEx)
+//          console.log('gethead:', gethead.data.dataEx)
           if(gethead.data.state === 1) {
             if (gettitle.data.state) {
               if (getclass.data.state) {
                 gettitle.data.data.unshift({categoryName:"全部",id:"",isHaveGoods:0})
-                console.log("获取数据：",gethead.data.data.headShareTitle)
+//                console.log("获取数据：",gethead.data.data.headShareTitle)
                 return {
                   // 头部信息
                   gethead: gethead.data.data,
@@ -227,10 +227,10 @@
 //        location.href = location.href + '?url=https://emcs.quanyou.com.cn/spell/test/toAuth&storeId=' + _this.storeId
         let baseUrl = 'https://emcs.quanyou.com.cn'
         let url = location.href
-        console.log( baseUrl +'/spell/test/toAuth?url=' + encodeURIComponent(url))
+//        console.log( baseUrl +'/spell/test/toAuth?url=' + encodeURIComponent(url))
         location.href = baseUrl +'/spell/test/toAuth?url=' + encodeURIComponent(url)
       }
-      console.log('dataEx:', _this.dataEx)
+//      console.log('dataEx:', _this.dataEx)
       if (process.BROWSER_BUILD) {
         let wx = require('weixin-js-sdk')
         let appId = _this.dataEx.appId
@@ -251,8 +251,8 @@
         })
 
         wx.ready(function () {
-         console.log("团员标题：",memberShareTitle)
-          console.log("团长标题：",headShareTitle)
+//         console.log("团员标题：",memberShareTitle)
+//          console.log("团长标题：",headShareTitle)
           wx.onMenuShareAppMessage({
             title: memberShareTitle, // 分享标题
             desc: memberShareDescribe, // 分享描述
@@ -285,12 +285,6 @@
       let win1tp = (window.innerHeight - 828) / 2
       let win2tp = (window.innerHeight - 358) / 2
 
-      if (document.getElementsByClassName('main-body').length){
-//        alert(1)
-      } else {
-        console.log(self.storeId, self.activityId, self.shopId)
-//        location.href = 'https://emcs.quanyou.com.cn/spell/test/toAuth?storeId=' + self.storeId + '&activityId=' + self.activityId + '&shopId='+ self.shopId
-      }
 
       // 存储各种有用信息
       sessionStorage.setItem('shopId', self.shopId)
@@ -358,7 +352,7 @@
 
       // 得到用户信息
       if (sessionStorage.getItem('nickName') !== 'undefined' && sessionStorage.getItem('nickName') !== '' && sessionStorage.getItem('nickName') !== null && sessionStorage.getItem('nickName') !== "null") {
-        console.log('我有值，不请求')
+//        console.log('我有值，不请求')
       } else {
         let getUserInfo = {
           storeId : sessionStorage.getItem('storeId'),
@@ -428,7 +422,7 @@
         axios.post('./openGroup', openGroup)
           .then(function (response) {
             if (response.data.state) {
-              console.log('msg:', response.data)
+//              console.log('msg:', response.data)
               location.href = 'success'
             } else {
               MessageBox.alert(response.data.msg, '')

@@ -30,10 +30,10 @@ app.use(function (req, res, next) {
     // sessionInfo  用户信息
     let sessionInfo = req.session.sessionInfo
     // console.log('转发这里的session:', sessionInfo)
-    console.log('外面的url:', req.url)
+    // console.log('外面的url:', req.url)
     if (sessionInfo !== "" && sessionInfo !== undefined && sessionInfo !== 'undefined') {
 
-      console.log('判断我是否原来值有appId：', req.query.appId)
+      // console.log('判断我是否原来值有appId：', req.query.appId)
 
       if (!!req.query.appId && url.indexOf('/spell/boon') >= 0 || !!req.query.appId && url.indexOf('/spell/?') >= 0 ) {
 

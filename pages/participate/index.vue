@@ -63,7 +63,7 @@
       }
     },
     async asyncData (content) {
-      console.log('participate里面的数据:', content.query)
+//      console.log('participate里面的数据:', content.query)
       // 定义查询参数
       let params = {
         activityId: content.query.activityId,

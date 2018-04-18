@@ -385,7 +385,7 @@
     async asyncData (context) {
       let baseUrl = 'https://emcs.quanyou.com.cn/spell'
       let url = baseUrl + context.req.url
-      console.log('打印页面接到的信息:', context.query)
+//      console.log('打印页面接到的信息:', context.query)
       // 获得头部
       let gethead = {
         activityId: context.query.activityId,
