@@ -137,7 +137,6 @@
           nickName: JSON.parse(sessionStorage.getItem('local-session-info')).nick,
           photo: JSON.parse(sessionStorage.getItem('local-session-info')).photo
         }
-        console.log('goGroup:', goGroup)
         // 发送参团请求
         axios.post('./goGroup', goGroup)
           .then(function (response) {
@@ -259,6 +258,12 @@
         let curHour = Math.floor((endtime - currenttime) / 1000 / 60 / 60) % 24
         let curMint = Math.floor((endtime - currenttime) / 1000 / 60 % 60)
         let curS = (endtime - currenttime) / 1000 % 60
+
+        if (sessionStorage.getItem('buyerId') === 'null' || sessionStorage.getItem('buyerId') === null) {
+          let baseUrl = 'https://emcs.quanyou.com.cn'
+          let url = location.href
+          location.href = baseUrl +'/spell/test/toAuth?url=' + encodeURIComponent(url)
+        }
 
         wx.config({
           debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
