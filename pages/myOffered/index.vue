@@ -100,6 +100,17 @@
       this.storeId = sessionStorage.getItem('storeId')
       this.buyerId= sessionStorage.getItem('buyerId')
       this.activityId=sessionStorage.getItem('activityId')
+      //禁用微信右上角菜单
+      if (typeof WeixinJSBridge == "undefined"){
+        if( document.addEventListener ){
+          document.addEventListener('WeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')}, false)
+        }else if (document.attachEvent){
+          document.attachEvent('WeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')})
+          document.attachEvent('onWeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')})
+        }
+      }else {
+        WeixinJSBridge.call('hideOptionMenu')
+      }
     },
     async asyncData(params) {
       let shopId = params.query.shopId

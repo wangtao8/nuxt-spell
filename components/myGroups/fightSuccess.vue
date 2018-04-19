@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-cloak>
 		 <div class="everyGroup groupsTwo" v-for="(item,$index) in fightData.content" @click="botton">
             <section class="itemGroup">
                 <div class="groupMsg clean">
@@ -81,4 +81,5 @@
 <style>
 @import "../../assets/css/base.css";
 @import "../../assets/css/myGroups.css";
+[v-cloak]{ display: none; }
 </style>

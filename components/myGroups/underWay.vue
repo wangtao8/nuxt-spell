@@ -1,7 +1,7 @@
 <template>
   <!--拼团进行中-->
-  <div>
-    <div class="everyGroup groupsOne " v-for="(item,$index) in fightData.content" @click="botton">
+  <div v-cloak>
+    <div class="everyGroup groupsOne " v-for="(item,$index) in fightData.content" @click="botton(item.teamId,item.activityId)">
       <section class="itemGroup">
         <div class="groupMsg clean">
           <div class="leftImg _left">
@@ -89,31 +89,15 @@
       this.shopId = sessionStorage.getItem('shopId')
       this.storeId = sessionStorage.getItem('storeId')
       this.activityId=sessionStorage.getItem('activityId')
-      // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
+      this.appId=sessionStorage.getItem('appId')
+      console.log("获取首页信息appid",this.appId);
     },
     methods: {
-      botton:function () {
-        let test=this.fightData.content
-        // let bb=[]
-        for(var i=0;i<=test.length-1;i++){
-          let aa={}
-           aa=test[i].teamId
-          this.teamId=aa
-          // console.log("teameid的值：", this.teamId)
-
-          // let aa={}
-          // aa=test[i].teamId
-          // this.bb.push(aa)
-
-          // for(var i=0;i<=this.bb.length-1;i++){
-          //   this.teamId=this.bb[i]
-          // }
-        }
-
-        console.log("teameid的值：", this.teamId)
-        // this.teamId=this.fightData.content[0].teamId
-        // console.log("teameid传值：",this.teamId)
-        location.href="https://emcs.quanyou.com.cn/spell/boon?teamId="+this.teamId+"&shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId
+      botton:function (e,d) {
+        this.teamId=e
+        this.activityId=d
+        console.log("teameid传值：",this.teamId)
+        location.href="https://emcs.quanyou.com.cn/spell/boon?teamId="+this.teamId+"&shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId+"&appId="+this.appId
         // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
       }
 
@@ -125,4 +109,5 @@
 <style>
   @import "../../assets/css/base.css";
   @import "../../assets/css/myGroups.css";
+  [v-cloak]{ display: none; }
 </style>
