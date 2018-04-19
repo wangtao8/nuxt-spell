@@ -8,7 +8,7 @@
                       <div class="rightText _left">
                           <p class="groupTitle">{{item.title}}</p>
                           <!--<p class="groupTime">时间：{{item.startTime | timeFilters}} - {{item.endTime | timeFilters}}</p>-->
-                        <p class="groupTime">时间：{{item.startTime.replace(/-/g,  "/").substr(0,10)}} - {{item.endTime.replace(/-/g,  "/").substr(0,10)}}</p>
+                        <p class="groupTime">到期时间：{{item.endTime.replace(/-/g,  "/")}}</p>
                           <p class="groupPrice">
                               <i class="g-red">{{dataDate}}</i>
                           </p>
