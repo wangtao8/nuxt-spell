@@ -50,6 +50,7 @@
   import fightSuccess from '../../components/myGroups/fightSuccess'
   import collageFailure from '../../components/myGroups/collageFailure'
   import collageFull from '../../components/myGroups/collageFull'
+  // import {WXUtil}  from '../../assets/js/WXUtil.js'
   import axios from 'axios'
 
   export default {
@@ -96,12 +97,26 @@
 
       }
     },
+    // created () {
+    //   console.log("1")
+    //   WeixinJSBridge.call('hideOptionMenu')
+    // },
     mounted () {
       this.shopId = sessionStorage.getItem('shopId')
       this.storeId = sessionStorage.getItem('storeId')
       this.buyerId= sessionStorage.getItem('buyerId')
       this.activityId=sessionStorage.getItem('activityId')
-
+      //禁用微信右上角菜单
+      if (typeof WeixinJSBridge == "undefined"){
+          if( document.addEventListener ){
+              document.addEventListener('WeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')}, false)
+          }else if (document.attachEvent){
+              document.attachEvent('WeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')})
+              document.attachEvent('onWeixinJSBridgeReady', function(){WeixinJSBridge.call('hideOptionMenu')})
+          }
+      }else {
+          WeixinJSBridge.call('hideOptionMenu')
+      }
     },
 
     async asyncData(params) {
@@ -109,6 +124,7 @@
       let shopId = params.query.shopId
       let storeId = params.query.storeId
       let buyerId= params.query.buyerId
+      // let activityId= params.query.activityId
 
       return  axios.post('http://172.30.3.40:3222/spell/myGroups',{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
 
@@ -134,10 +150,6 @@
 
           }
         })
-
-      // console.log('shopId:',shopId);
-      // let res = await axios.post('http://emcs.quanyou.com.cn/spellapi/spell/getMyCreate?token='+token+'&timestamp='+timestamp,{"state":1,"shopId":shopId,"storeId":storeId,"buyerId":buyerId,"pageIndex":"1","pageSize":"10"})
-      // console.log('res:',res.data.data.content);
     },
     methods: {
       errorFrame(data){
@@ -200,9 +212,9 @@
           this.state=3;
           this.paging.pageIndex=1;
           axios.post('../spell/myGroups',{"state":this.state,"shopId":this.shopId,"storeId":this.storeId,"buyerId":this.buyerId,"pageIndex":this.paging.pageIndex,"pageSize":this.paging.pageSize}).then(({ data }) => {
+
             if( data.state==1){
               if(data.data.content.length<=0){
-
                 this.msg='拼团失败'
                 this.noData=false
                 this.msgState=true
@@ -210,6 +222,8 @@
                 this.fightData=data.data
                 this.noData=true
                 this.msgState=false
+                // console.log("拼团失败信息：",data.data.content[0].createTime)
+
               }
             }else{
               this.noData=false
@@ -295,10 +309,14 @@
       botton:function () {
         location.href="https://emcs.quanyou.com.cn/spell/?shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId;
         // console.log(this.shopId,this.storeId,this.activityId);
-      }
+      },
+
+
+
     }
   }
 </script>
+
 
 <style>
   /*@import "../../assets/css/base.css";*/

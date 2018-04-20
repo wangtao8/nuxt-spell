@@ -1,13 +1,14 @@
 <template>
 	  <div class="everyGroup">
-            <section class="itemGroup" v-for="(item,$index) in fightData.content" @click="botton">
+            <section class="itemGroup" v-for="(item,$index) in fightData.content">
                   <div class="groupMsg clean">
                       <div class="leftImg _left">
                           <img :src="item.smPic " alt="商品"/>
                       </div>
                       <div class="rightText _left">
                           <p class="groupTitle">{{item.title}}</p>
-                          <p class="groupTime">时间：{{item.startTime | timeFilters}} - {{item.endTime | timeFilters}}</p>
+                          <!--<p class="groupTime">时间：{{item.startTime | timeFilters}} - {{item.endTime | timeFilters}}</p>-->
+                        <p class="groupTime">到期时间：{{item.endTime.replace(/-/g,  "/")}}</p>
                           <p class="groupPrice">
                               <i class="g-red">{{dataDate}}</i>
                           </p>
@@ -29,14 +30,24 @@
             shopId:'',
             storeId:'',
             activityId:'',
-            dataDate:''
+            dataDate:'',
+            createTime:'',
+
 		      }
 		  },
+    // created(){
+    //   console.log("拼团失败页面信息：",this.fightData.content[0].createTime)
+    //   let starttime=this.fightData.content[0].createTime
+    //   let str=starttime.replace(/-/g,  "/");//转化成2017/5/17 00:00:00格式
+    //   this.createTime=str.substr(0,10);
+    //
+    // },
     mounted (){
       this.shopId = sessionStorage.getItem('shopId')
       this.storeId = sessionStorage.getItem('storeId')
       this.activityId=sessionStorage.getItem('activityId')
       // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
+
       Date.prototype.format =function(format)
       {
         var o = {
@@ -71,31 +82,31 @@
         // console.log("当前时间：",newdate)
       }
     },
-      filters: {
-              timeFilters: function (time) {
-                        let date  =new Date(time);
-                        let arrTime={
-                          'y':date.getFullYear(),
-                          'm': (date.getMonth()+1) < 10 ? "0" + (date.getMonth()+1) : (date.getMonth()+1),
-                          'd':date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
-                        }
-                      return time=arrTime. y+'-'+arrTime.m+'-'+arrTime.d
-              }
-      },
+      // filters: {
+      //         timeFilters: function (time) {
+      //                   let date  =new Date(time);
+      //                   let arrTime={
+      //                     'y':date.getFullYear(),
+      //                     'm': (date.getMonth()+1) < 10 ? "0" + (date.getMonth()+1) : (date.getMonth()+1),
+      //                     'd':date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
+      //                   }
+      //                 return time=arrTime. y+'-'+arrTime.m+'-'+arrTime.d
+      //         }
+      // },
 		    methods:{
-          botton:function () {
-            let test=this.fightData.content
-            for(var i=0;i<=test.length-1;i++){
-              let aa={}
-              aa=test[i].teamId
-              this.teamId=aa
-
-            }
-
-            console.log("teameid的值：", this.teamId)
-            console.log("teameid传值：",this.teamId)
-            location.href="https://emcs.quanyou.com.cn/spell/boon?teamId="+this.teamId+"&shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId
-          }
+          // botton:function () {
+          //   let test=this.fightData.content
+          //   for(var i=0;i<=test.length-1;i++){
+          //     let aa={}
+          //     aa=test[i].teamId
+          //     this.teamId=aa
+          //
+          //   }
+          //
+          //   console.log("teameid的值：", this.teamId)
+          //   console.log("teameid传值：",this.teamId)
+          //   location.href="https://emcs.quanyou.com.cn/spell/boon?teamId="+this.teamId+"&shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId
+          // }
 
         }
 
