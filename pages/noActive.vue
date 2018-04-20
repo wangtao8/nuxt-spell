@@ -5,19 +5,37 @@
     </header>
     <section>
         <div class="noImg">
-            <img src="../assets/images/prompt.png" alt=""/>
+            <img src="../assets/images/promty.png" alt="" style="width: 220px; height: 220px;"/>
         </div>
-        <p class="noTxt">你好，你目前没有</p>
+        <p class="noTxt">当前活动已经结束！</p>
 
     </section>
     <footer class="footBtn">
-        <a href="javascript:;" class="groupBtn joinBtn" >我要拼团</a>
-        <a href="javascript:;" class="groupBtn">我要参团</a>
+        <!--<a href="javascript:;" class="groupBtn joinBtn" >我要拼团</a>-->
+        <a href="javascript:;" class="groupBtn" @click="goMail">去商城看看</a>
     </footer>
 </div>
 </template>
 
 <script>
+  import axios from 'axios'
+  export default {
+    data () {
+      return {
+        storeId: ''
+      }
+    },
+    async asyncData(contents) {
+      return {
+        storeId: contents.query.storeId
+      }
+    },
+    methods: {
+      goMail: function () {
+        location.href = 'https://emcs.quanyou.com.cn/emallwap/whome/' + this.storeId
+      }
+    }
+  }
 </script>
 
 <style scoped>
@@ -33,9 +51,11 @@
 
 .footBtn{
     background: #fff;
-    position: absolute;
-    bottom:16px;
-    left: 0;
+    padding-left: 202px;
+    padding-top: 30px;
+    /*position: absolute;*/
+    /*bottom:16px;*/
+    /*left: 0;*/
 
 }
 .groupBtn{

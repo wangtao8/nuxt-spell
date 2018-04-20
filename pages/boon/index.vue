@@ -254,6 +254,15 @@
     mounted () {
       let self = this
       let elWidth = 0
+      // 如果有失败的返回结果
+      if (self.msg === 'empty_activity') {
+        location.href = '/spell/noActive?storeId=' + self.storeId
+      } else {
+        setTimeout(function () {
+          self.isShow = false
+          filter.flter('box', false)
+        }, Math.random() * 500)
+      }
 
       console.log('dataEx:', self.dataEx)
       // 分享
@@ -367,14 +376,6 @@
       // 得到活动id 用来查询活动详情
       self.$refs.mybox.style.width = elWidth + 30 + 'px'
 
-      // 如果有失败的返回结果
-      if (self.msg) {
-        self.show2 = false
-        MessageBox.alert(self.msg, '')// 提示错误信息
-      } else {
-        self.show2 = true
-      }
-
       // 设置团长头像及显示团长昵称
       let getGroupInfo = {
          shopId : self.shopId,
@@ -463,17 +464,20 @@
                 }
               } else {
                 return {
-                  msg: getclass.data.msg
+                  msg: getclass.data.msg,
+                  storeId: context.query.storeId
                 }
               }
             } else {
               return {
-                msg: gettitle.data.msg
+                msg: gettitle.data.msg,
+                storeId: context.query.storeId
               }
             }
           } else {
             return {
-              msg: gethead.data.msg
+              msg: gethead.data.msg,
+              storeId: context.query.storeId
             }
           }
         }))

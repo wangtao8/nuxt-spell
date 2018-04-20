@@ -210,17 +210,20 @@
                 }
               }else {
                 return {
-                  msg: getclass.data.msg
+                  msg: getclass.data.msg,
+                  storeId: context.query.storeId
                 }
               }
             }else {
               return {
-                msg: gettitle.data.msg
+                msg: gettitle.data.msg,
+                storeId: context.query.storeId
               }
             }
           } else {
             return {
-              msg: gethead.data.msg
+              msg: gethead.data.msg,
+              storeId: context.query.storeId
             }
           }
       }))
@@ -328,16 +331,9 @@
 
       sessionStorage.setItem('myhref', location.href)
       // 如果有失败的返回结果
-      if (self.msg) {
-//        self.show2 = false
-//        MessageBox.alert(self.msg, '')// 提示错误信息
-
-        setTimeout(function () {
-          self.isShow = false
-          filter.flter('box', false)
-        }, Math.random() * 500)
+      if (self.msg === 'empty_activity') {
+        location.href = '/spell/noActive?storeId=' + self.storeId
       } else {
-        self.show2 = true
         setTimeout(function () {
           self.isShow = false
           filter.flter('box', false)
