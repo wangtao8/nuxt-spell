@@ -84,7 +84,7 @@
         </div>
       </div>
     </div>
-    <div id="lead" v-show="show2">
+    <div id="lead">
       <ul class="el_choose">
         <li>
           <div @click="openwin1">引导</div>
@@ -98,20 +98,17 @@
       </ul>
       <nuxt/>
     </div>
-    <!--<Btn :show2="show2"></Btn>-->
     <div id="btn">
-      <div class="el_btn" @click="gotuan" v-show="show2">去开团</div>
+      <div class="el_btn" @click="gotuan">去开团</div>
     </div>
     <Load v-show="isShow"></Load>
   </div>
 </template>
 <script>
-  //  import ht from '../plugins/axios'
   import Banner from '../components/banner'
   import Btn from '../components/button'
   import Load from '../components/load'
   import filter from '../assets/js/filter'
-  //  import request from '../static/spell/request'
   import axios from 'axios'
   import { MessageBox } from 'mint-ui'
   export default {
@@ -124,7 +121,6 @@
         data2: false, // 引导按钮弹出框
         data3: false, // 活动规则弹出框
         isShow: true, // 加载动画
-        show2: false, // 底部去开团按钮
         goodss: [], // 活动商品参数
         alldata: [], // 活动规则
         allLoaded: false, // true禁止下拉刷新
