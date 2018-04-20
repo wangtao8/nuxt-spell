@@ -3,6 +3,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
+import axios from 'axios'
 
 import api from './spell'
 
@@ -23,6 +24,16 @@ app.use(session({
 }))
 app.use(function (req, res, next) {
   let url = req.url
+  if (new Date().getTime() >= takeManager.getIvaliDate()) {
+    axios.post('http://emcs.quanyou.com.cn/spellapi/auth/getToken',{"userName":"ApiActivity_2018", "password":"qy_api_#365!2018"})
+      .then(function (response) {
+        global.token = response.data.data.token
+        global.invalidDate = response.data.data.invalidDate
+      })
+  } else {
+    global.token = takeManager.getToken()
+    global.invalidDate = takeManager.getIvaliDate()
+  }
   let baseUrl = 'https://emcs.quanyou.com.cn'
   if (url.indexOf('/spell/getGroupInfo') >= 0 || url.indexOf('/spell/getHasBeenGroup') >= 0 || url.indexOf('/spell/myOffered') >= 0 || url.indexOf('/spell/myGroups') >= 0 || url.indexOf('/spell/gethead') >= 0 || url.indexOf('/spell/gettitle') >= 0 || url.indexOf('/spell/getclass') >= 0 || url.indexOf('/spell/test/toAuth') >= 0 || url.indexOf('/spell/_nuxt/') >= 0 || url.indexOf('__webpack_hmr') >= 0 || url.indexOf('/spell/toAuth') >= 0 || url.length == 1) {
     next ()
@@ -84,6 +95,6 @@ async function start () {
 }
 
 import takeManager from './tokenManager'
-takeManager.init()
+  takeManager.init()
 
 start()

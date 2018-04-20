@@ -24,13 +24,14 @@ router.post('/gethead', (req, res, next) => {
   let shopId = req.body.shopId
   let storeId = req.body.storeId
   let activityId = req.body.activityId
-  let token = takeManager.getToken()
+  let token = global.token
   let timestamp = (new Date()).getTime()
   let appId = req.query.appId
   let url = req.query.url
   if (appId.indexOf(',') === 0) {
     appId = appId.split(',')[1]
   }
+  console.log('global.token:', global.token)
   // console.log('后台接收到的信息:', appId, ' url  ',  url)
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellHomeInfo?token=' + token + '&timestamp=' + timestamp + '&appId=' + appId + '&url=' + encodeURIComponent(url),{json:{shopId:shopId, storeId:storeId, activityId:activityId}}, function (err, response, body) {
     if (err) {
@@ -47,7 +48,7 @@ router.post('/gettitle', (req, res, next) => {
   // 接收到数据后 请求活动首页接口
   let shopId = req.body.shopId
   let storeId = req.body.storeId
-  let token = takeManager.getToken()
+  let token = global.token
   let timestamp = (new Date()).getTime()
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellCategory?token=' + token + '&timestamp=' + timestamp,{json:{shopId:shopId, storeId:storeId}}, function (err, response, body) {
     // console.log('我在打印body信息tttttttttttttttttttttttt:', body)
@@ -63,7 +64,7 @@ router.post('/getclass', (req, res, next) => {
   let categoryId = req.body.categoryId
   let pageIndex = req.body.pageIndex
   let pageSize = req.body.pageSize
-  let token = takeManager.getToken()
+  let token = global.token
   let timestamp = (new Date()).getTime()
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/getSpellGoods?token=' + token + '&timestamp=' + timestamp,
     {json:{shopId:shopId, storeId:storeId, activityId:activityId, categoryId:categoryId, pageIndex:pageIndex, pageSize:pageSize}},
@@ -84,12 +85,13 @@ router.post('/getGroupInfo', (req, res, next) => {
   let activityId = req.body.activityId
   let buyerId = req.body.buyerId
   let teamId = req.body.teamId
-  let token = takeManager.getToken()
+  let token = global.token
   let timestamp = (new Date()).getTime()
-  // console.log('获取团长信息：', req.body)
+  console.log('获取团长信息：', req.body)
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/getTeamInfo?token='+token+'&timestamp='+timestamp,
     {json: {shopId: shopId, storeId: storeId, activityId: activityId, buyerId: buyerId, teamId: teamId}},
     function (err, response, body) {
+    console.log('获得团信息的数据：', body)
       res.json(body)
     })
 })
@@ -102,7 +104,7 @@ router.post('/getHasBeenGroup', (req, res, next) => {
   let buyerId = req.body.buyerId
   let pageIndex = req.body.pageIndex
   let pageSize = req.body.pageSize
-  let token = takeManager.getToken()
+  let token = global.token
   let timestamp = (new Date()).getTime()
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/getTeamList?token='+token+'&timestamp='+timestamp,
     {json:{shopId:shopId, storeId:storeId, activityId:activityId, buyerId:buyerId, pageIndex:pageIndex, pageSize:pageSize}},
@@ -123,7 +125,7 @@ router.post('/openGroup', (req, res, next) => {
   let photo = req.body.photo
   let shopId = req.body.shopId
   let storeId = req.body.storeId
-  let token = takeManager.getToken()
+  let token = global.token
   let timestamp = (new Date()).getTime()
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/createSpellTeam?token='+token+'&timestamp='+timestamp,
     {json:{activityId:activityId,buyerId:buyerId,nickName:nickName,photo:photo,shopId:shopId,storeId:storeId}},
@@ -161,7 +163,7 @@ router.post('/goGroup', (req, res, next) => {
   let photo = req.body.photo
   let shopId = req.body.shopId
   let storeId = req.body.storeId
-  let token = takeManager.getToken()
+  let token = global.token
   let timestamp = (new Date()).getTime()
   request.post('http://emcs.quanyou.com.cn/spellapi/spell/joinTeam?token='+token+'&timestamp='+timestamp,
     {json:{teamId:teamId,buyerId:buyerId,nickName:nickName,photo:photo,shopId:shopId,storeId:storeId}},
@@ -315,7 +317,7 @@ router.post('/posttest', (req, res, next) => {
 // 我的拼团
 router.post('/myGroups', (req, res, next) => {
   let data={state :req.body.state,shopId:req.body.shopId,storeId:req.body.storeId,buyerId:req.body.buyerId,pageIndex:req.body.pageIndex,pageSize:req.body.pageSize}
-  let token = takeManager.getToken()
+  let token = global.token
   let timestamp = (new Date()).getTime()
   request(
     {
@@ -341,7 +343,7 @@ router.post('/myOffered', (req, res, next) => {
   let buyerId = req.body.buyerId
   let pageIndex = req.body.pageIndex
   let pageSize = req.body.pageSize
-  let token = takeManager.getToken()
+  let token = global.token
   let timestamp = (new Date()).getTime()
   request(
     {

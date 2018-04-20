@@ -59,6 +59,17 @@
         </div>
       </div>
     </div>
+    <div id="lead">
+      <ul class="el_choose">
+        <li>
+          <div @click="openwin1">拼团购</div>
+        </li>
+        <li>
+          <div @click="openwin1">我的团</div>
+        </li>
+      </ul>
+      <nuxt/>
+    </div>
     <div id="btn" v-if="isJoin === 0">
       <div class="el_btn" @click="goct">去参团</div>
     </div>
@@ -154,6 +165,14 @@
       },
       cloose: function () {
         this.daiLog = false
+      },
+      openwin1: function (e) { // 引导  参团 我的团 按钮点击事件
+        if (e.target.innerText === '拼团购') {
+//          location.href = 'participate?buyerId=' + sessionStorage.getItem('buyerId') + '&activityId=' + sessionStorage.getItem('activityId') + '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
+          location.href = 'https://emcs.quanyou.com.cn/spell/?shopId='+ sessionStorage.getItem('shopId') +'&activityId='+ this.activityId +'&storeId='+ sessionStorage.getItem('storeId') +'&appId=' + sessionStorage.getItem('appId')
+        } else {
+          location.href = 'myGroups?buyerId=' + sessionStorage.getItem('buyerId')+ '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
+        }
       },
       loadTop: function () { // 到顶部后的下拉刷新
         // 下拉刷新
@@ -367,6 +386,7 @@
       console.log('前台获取团长信息的参数:', getGroupInfo)
       axios.post('./getGroupInfo', getGroupInfo)
         .then(function (response) {
+          console.log('前台接收到的数据：', response.data.data)
           sessionStorage.setItem('headNickName', response.data.data.nickName)
           sessionStorage.setItem('headPhoto', response.data.data.photo)
           sessionStorage.setItem('headBuyerId', response.data.data.buyerId)

@@ -52,6 +52,7 @@
       </mt-loadmore>
     </div>
     <div class="el_dailog" v-show="data1" ref="dailog">
+      <!--引导弹框提示-->
       <div class="el_window1" v-show="data2">
         <div class="el_cloose" @click="cloose">x</div>
         <div class="el_explain">
@@ -63,12 +64,24 @@
           <div @click="cantuan">参团</div>
         </div>
       </div>
+      <!--活动规则弹框提示-->
       <div class="el_window2" v-show="data3">
         <div class="el_cloose" @click="cloose">x</div>
         <p class="el_top_font">活动规则</p>
         <p>
           {{ gethead.ruleInfo }}
         </p>
+      </div>
+      <!--去开团弹框提示-->
+      <div class="el_window3" v-show="data4">
+        <div class="el_cloose" @click="cloose">x</div>
+        <div class="el_explain">
+          <p>恭喜您开团成功！</p>
+          <p style="margin-top: 20px">点击右上角分享给好友吧！</p>
+        </div>
+        <div class="el_definite">
+          <div @click="cloose">知道了</div>
+        </div>
       </div>
     </div>
     <div id="lead" v-show="show2">
@@ -133,7 +146,7 @@
         memberShareTitle: '',
         memberShareDescribe: '',
         memberSharePicUrl: '',
-
+        data4: false
       }
     },
     async asyncData (context) {
@@ -237,10 +250,11 @@
         let timestamp = _this.dataEx.timestamp
         let nonceStr = _this.dataEx.noncestr
         let signature = _this.dataEx.signature
-        let headShareTitle=_this.headShareTitle
-        let memberShareTitle=_this.memberShareTitle
-        let memberShareDescribe=_this.memberShareDescribe
-        let memberSharePicUrl=_this.memberSharePicUrl
+        let headShareTitle= _this.headShareTitle
+        let memberShareTitle= _this.memberShareTitle
+        let memberShareDescribe= _this.memberShareDescribe
+        let memberSharePicUrl= _this.memberSharePicUrl
+//        let memberSharePicUrl= _this.memberSharePicUrl === '' ? 'http://emcs.quanyou.com.cn/spellweb/resources/images/share/ptg.png' : _this.memberSharePicUrl
         wx.config({
           debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
           appId: `${appId}`, // 必填，公众号的唯一标识
@@ -253,6 +267,7 @@
         wx.ready(function () {
 //         console.log("团员标题：",memberShareTitle)
 //          console.log("团长标题：",headShareTitle)
+//          alert(memberSharePicUrl)
           wx.onMenuShareAppMessage({
             title: memberShareTitle, // 分享标题
             desc: memberShareDescribe, // 分享描述
@@ -302,6 +317,10 @@
       // 设置窗口1为居中
       self.$refs.dailog.children[1].style.left = win1lt + 'px'
       self.$refs.dailog.children[1].style.top = win1tp + 'px'
+
+      // 设置窗口1为居中
+      self.$refs.dailog.children[2].style.left = win1lt + 'px'
+      self.$refs.dailog.children[2].style.top = win2tp + 'px'
 
       // 加载动画
       filter.flter('box', true)
@@ -399,6 +418,7 @@
         this.data1 = false
         this.data2 = false
         this.data3 = false
+        this.data4 = false
       },
       openwin1: function (e) { // 引导  参团 我的团 按钮点击事件
         if (e.target.innerText === '引导') {
@@ -411,6 +431,7 @@
         }
       },
       gotuan: function () { // 去开团按钮点击
+        let _this = this
         let openGroup = {
           nickName : sessionStorage.getItem('nickName'),
           photo : sessionStorage.getItem('photo'),
@@ -422,10 +443,17 @@
         axios.post('./openGroup', openGroup)
           .then(function (response) {
             if (response.data.state) {
-//              console.log('msg:', response.data)
-              location.href = 'success'
+//              location.href = 'success'
+              _this.data1 = true
+              _this.data4 = true
             } else {
-              MessageBox.alert(response.data.msg, '')
+              _this.data1 = true
+              MessageBox.alert(response.data.msg, '').then(action => {
+                _this.data1 = false
+                _this.data2 = false
+                _this.data3 = false
+                _this.data4 = false
+              })
             }
           }).catch((error) => {
             console.log(error)
@@ -461,7 +489,13 @@
                 // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
                 self.$refs.loadmore.onTopLoaded()
               } else {
-                MessageBox.alert(response.data.msg, '')
+                self.data1 = true
+                MessageBox.alert(response.data.msg, '').then(action => {
+                  self.data1 = false
+                  self.data2 = false
+                  self.data3 = false
+                  self.data4 = false
+                })
               }
             })
             .catch(function (err) {
@@ -494,7 +528,13 @@
                     self.goodss.push(response.data.data.content[j])
                   }
                 } else {
-                  MessageBox.alert(response.data.msg, '')
+                  self.data1 = true
+                  MessageBox.alert(response.data.msg, '').then(action => {
+                    self.data1 = false
+                    self.data2 = false
+                    self.data3 = false
+                    self.data4 = false
+                  })
                 }
                 // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
                 self.$refs.loadmore.onBottomLoaded()
@@ -502,7 +542,13 @@
           } else {
             // 这一步很重要  不然无法实时切换loading状态 到 pull的状态
             self.$refs.loadmore.onBottomLoaded()
-            MessageBox.alert('已经加载完全部内容', '')
+            self.data1 = true
+            MessageBox.alert('已经加载完全部内容', '').then(action => {
+              self.data1 = false
+              self.data2 = false
+              self.data3 = false
+              self.data4 = false
+            })
           }
         }, 500)
       },

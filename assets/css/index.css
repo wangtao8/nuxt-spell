@@ -171,7 +171,7 @@ li {
   text-align: left;
   white-space: pre-wrap;
 }
-.el_window1>.el_cloose, .el_window2>.el_cloose {
+.el_window1>.el_cloose, .el_window2>.el_cloose, .el_window3>.el_cloose {
   position: absolute;
   right: 24px;
   top: 6px;
@@ -187,6 +187,7 @@ li {
   padding: 60px 30px 0px 30px;
   box-sizing: border-box;
   font-size: 28px;
+  text-align: center;
 }
 .el_definite {
   height: calc(100% - 230px);
@@ -234,6 +235,18 @@ li {
   margin-top: 38px;
   text-align: center;
 }
+.el_window3 {
+  width: 605px;
+  height: 358px;
+  background: #ffffff;
+  position: absolute;
+  border-radius: 8px;
+  color: #666666;
+  z-index: 2;
+}
+.el_window3>.el_definite>div{
+  width: 560px;
+}
 .el_choose {
   font-size: 26px;
   position: fixed;
@@ -265,13 +278,17 @@ li {
 }
 
 .mint-msgbox{
-  background-color: rgba(0, 0, 0, 0.76);
-  width: 50%;
+  background-color: rgba(230, 202, 168, 0.76);
+  width: 60%;
+  height: 18%;
   border-radius: 16px;
-  font-size: 24px;
+  font-size: 30px;
+}
+.mint-msgbox-btns{
+  height:90px;
 }
 .mint-msgbox-message {
-  color: #fff;
+  color: #000;
 }
 .mint-msgbox-btn{
   background-color: rgba(0, 0, 0, 0);
@@ -280,7 +297,7 @@ li {
   background: rgba(141, 141, 141, 0);
 }
 .mint-msgbox-confirm{
-  color: #fff;
+  color: #dc4e09;
 }
 .mint-msgbox-content {
   border-bottom: 1px solid #ffffff;

@@ -109,13 +109,13 @@ html,body{
 .el_personnel{
   width: 750px;
   height: 64px;
-  margin-top: 27px;
+  margin-top: 17px;
 }
 .el_avatar{
   display: inline-block;
-  width: 64px;
-  height: 64px;
-  border-radius: 32px;
+  width: 74px;
+  height: 74px;
+  border-radius: 37px;
   float: left;
   margin-left: 27px;
   margin-right: 24px;
@@ -123,13 +123,12 @@ html,body{
 }
 .el_jion{
   display: inline-block;
-  height: 64px;
-  line-height: 64px;
+  height: 74px;
+  line-height: 74px;
   float: left;
-  font-size: 26px;
-  color: rgb(153,153,153);
+  font-size: 28px;
+  color: #333;
 }
-
 
 
 .el_right {
@@ -179,13 +178,17 @@ li {
 }
 /*弹框样式*/
 .mint-msgbox{
-  background-color: rgba(0, 0, 0, 0.76);
-  width: 50%;
+  background-color: rgba(230, 202, 168, 0.76);
+  width: 60%;
+  height: 18%;
   border-radius: 16px;
-  font-size: 24px;
+  font-size: 30px;
+}
+.mint-msgbox-btns{
+  height:90px;
 }
 .mint-msgbox-message {
-  color: #fff;
+  color: #000;
 }
 .mint-msgbox-btn{
   background-color: rgba(0, 0, 0, 0);
@@ -194,7 +197,7 @@ li {
   background: rgba(141, 141, 141, 0);
 }
 .mint-msgbox-confirm{
-  color: #fff;
+  color: #dc4e09;
 }
 .mint-msgbox-content {
   border-bottom: 1px solid #ffffff;
@@ -286,3 +289,24 @@ li {
   margin-left: 20px;
 }
 
+.el_choose {
+  font-size: 26px;
+  position: fixed;
+  bottom: 138px;
+  right: 16px;
+}
+.el_choose>li {
+  width: 84px;
+  height: 84px;
+  border-radius: 42px;
+  border: 1px solid rgb(205,205,205);
+  text-align: center;
+  line-height: 84px;
+  margin-top: 22px;
+  list-style: none;
+  background: #fff;
+}
+.el_choose>li>div {
+  text-decoration: none;
+  color: rgb(0,191,142);
+}

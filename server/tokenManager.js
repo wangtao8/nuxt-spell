@@ -39,8 +39,13 @@ let getToken = function(){
   return token
 }
 
+let getIvaliDate = function () {
+  return invalidDate
+}
+
 // 导出方法
 export default {
   init,
-  getToken
+  getToken,
+  getIvaliDate
 }
