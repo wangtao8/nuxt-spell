@@ -1,4 +1,5 @@
 <template>
+  <h1>123</h1>
 </template>
 <script>
   import axios from 'axios'
@@ -14,13 +15,15 @@
       }
     },
     mounted () {
+//      alert('我进来了')
       let sessionInfo = sessionStorage.getItem('local-session-info')
       let urls = this.url
       let storeId = this.url.split('storeId=')[1].split('&')[0]
 
-      console.log('我第一次查看urls:', urls)
+//      console.log('我第一次查看urls:', urls)
 
-      if (sessionInfo) {
+      if (!!sessionInfo) {
+//        alert(1)
           axios.post('./toAuth', JSON.parse(sessionInfo))
             .then(function (respons) {
                 if (respons.data === 1) {
@@ -45,6 +48,7 @@
                 }
             })
         } else {
+//        alert(2)
         let herf = 'https://emcs.quanyou.com.cn/emallwap/buyer/toAuth/'+ storeId + '?_=' +(new Date()).getTime() + '&rdUrl=' + encodeURIComponent(urls)
         location.href = herf
 //        console.log('鉴权的地址：', herf)

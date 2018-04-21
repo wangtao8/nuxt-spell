@@ -78,6 +78,7 @@
 <script>
   import axios from 'axios'
   import { MessageBox } from 'mint-ui'
+  import api from '../../assets/api/request'
   export default {
     data () {
       return {
@@ -126,7 +127,7 @@
           shopId: self.shopId,
           storeId: self.storeId
         }
-        axios.post('./getclass', getclass)
+        api.api.post('./getclass', getclass)
           .then(function (response) {
             self.goodss = response.data.data.content
             self.last = response.data.data.last
@@ -149,7 +150,7 @@
           photo: JSON.parse(sessionStorage.getItem('local-session-info')).photo
         }
         // 发送参团请求
-        axios.post('./goGroup', goGroup)
+        api.api.post('./goGroup', goGroup)
           .then(function (response) {
 //            console.log('eeeeeeee:', response.data)
             if (response.data.state === 1) {
@@ -188,7 +189,7 @@
             shopId: self.shopId,
             storeId: self.storeId
           }
-          axios.post('./getclass', getclass)
+          api.api.post('./getclass', getclass)
             .then(function (response) {
               if (response.data.state) {
                 // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
@@ -221,7 +222,7 @@
             storeId: self.storeId
           }
           if (!self.last) {
-            axios.post('./getclass', getclass)
+            api.api.post('./getclass', getclass)
               .then(function (response) {
                 if (response.data.state) {
                   //需要每次都重新更新last的状态
@@ -385,7 +386,7 @@
          teamId : self.teamId
       }
       console.log('前台获取团长信息的参数:', getGroupInfo)
-      axios.post('./getGroupInfo', getGroupInfo)
+      api.api.post('./getGroupInfo', getGroupInfo)
         .then(function (response) {
           console.log('前台接收到的数据：', response.data.data)
           sessionStorage.setItem('headNickName', response.data.data.nickName)
@@ -404,9 +405,9 @@
         })
     },
     async asyncData (context) {
-      let baseUrl = 'https://emcs.quanyou.com.cn/spell'
+      let baseUrl = api.baseURL
       let url = baseUrl + context.req.url
-//      console.log('打印页面接到的信息:', context.query)
+      console.log('打印页面接到的信息:', context.req.url)
       // 获得头部
       let gethead = {
         activityId: context.query.activityId,
@@ -429,9 +430,9 @@
       }
       // 记得return 不然不会返回结果
       return axios.all([
-        axios.post('http://172.30.3.40:3222/spell/gethead?appId='+context.query.appId+'&url='+ encodeURIComponent(url), gethead),
-        axios.post('http://172.30.3.40:3222/spell/gettitle', gettitle),
-        axios.post('http://172.30.3.40:3222/spell/getclass', getclass)
+        api.api.post('./gethead?appId='+context.query.appId+'&url='+ encodeURIComponent(url), gethead),
+        api.api.post('./gettitle', gettitle),
+        api.api.post('./getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
           if (gethead.data.state) {

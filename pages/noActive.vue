@@ -13,6 +13,7 @@
     <footer class="footBtn">
         <!--<a href="javascript:;" class="groupBtn joinBtn" >我要拼团</a>-->
         <a href="javascript:;" class="groupBtn" @click="goMail">去商城看看</a>
+        <span class="el_right"></span>
     </footer>
 </div>
 </template>
@@ -68,8 +69,24 @@
     background: #58af8a;
     border-radius: 8px;
     box-sizing: border-box;
-    text-align: center;
-
+    padding-left: 64px;
+}
+.el_right{
+  display: inline-block;
+  height: 14px;
+  width: 14px;
+  margin-left: .3em;
+  position: relative;
+  top: -6px;
+  left: -90px;
+  border: solid #fff;
+  border-width: 2px 2px 0px 0;
+  -webkit-transform: rotate(45deg);
+  -webkit-animation: emptyBox .5s infinite;
+}
+@keyframes emptyBox {
+  from { left: -90px; }
+  to { left: -85px; }
 }
 .joinBtn{
     color: #58af8a;

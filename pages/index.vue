@@ -68,9 +68,11 @@
       <div class="el_window2" v-show="data3">
         <div class="el_cloose" @click="cloose">x</div>
         <p class="el_top_font">活动规则</p>
-        <p>
-          {{ gethead.ruleInfo }}
-        </p>
+        <section style="padding: 0 20px 0 36px;height: 700px;overflow-y: auto;">
+          <pre style="word-wrap: break-word;white-space: pre-wrap;">
+            {{gethead.ruleInfo}}
+          </pre>
+        </section>
       </div>
       <!--去开团弹框提示-->
       <div class="el_window3" v-show="data4">
@@ -111,6 +113,7 @@
   import filter from '../assets/js/filter'
   import axios from 'axios'
   import { MessageBox } from 'mint-ui'
+  import api from '../assets/api/request'
   export default {
     name: 'box',
     data () {
@@ -135,6 +138,7 @@
         shopId: '',
         storeId: '',
         appId: '',
+        teamId: '',
         dataEx: {},
         headShareTitle: '',
 //        headShareDescribe: '',
@@ -148,7 +152,7 @@
     async asyncData (context) {
       // 获得头部
 //      console.log('打印的东西xxxxxxxxxxxxxx:', context.req.url)
-      let baseUrl = 'https://emcs.quanyou.com.cn/spell'
+      let baseUrl = api.baseURL
       let url = baseUrl + context.req.url
 //      console.log('url:', encodeURIComponent(url))
       let gethead = {
@@ -172,9 +176,9 @@
       }
       // 记得return 不然不会返回结果
       return axios.all([
-        axios.post(baseUrl+'/gethead?appId='+context.query.appId+'&url='+ encodeURIComponent(url), gethead),
-        axios.post(baseUrl+'/gettitle', gettitle),
-        axios.post(baseUrl+'/getclass', getclass)
+        api.api.post('./gethead?appId='+context.query.appId+'&url='+ encodeURIComponent(url), gethead),
+        api.api.post('./gettitle', gettitle),
+        api.api.post('./getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
 //          console.log('gethead:', gethead.data.dataEx)
@@ -370,7 +374,7 @@
           shopId : sessionStorage.getItem('shopId'),
           openId : sessionStorage.getItem('openId')
         }
-        axios.post('./getUserInfo', getUserInfo)
+        api.api.post('./getUserInfo', getUserInfo)
           .then(function (response) {
             sessionStorage.setItem('nickName', response.data.nick)
             sessionStorage.setItem('photo', response.data.photo )
@@ -394,7 +398,7 @@
           shopId: self.shopId,
           storeId: self.storeId
         }
-        axios.post('./getclass', getclass)
+        api.api.post('./getclass', getclass)
           .then(function (response) {
             self.goodss = response.data.data.content
             self.last = response.data.data.last
@@ -406,11 +410,16 @@
         this.data1 = true
         this.data3 = true
       },
-      cloose: function () { // 关闭所有弹出框
-        this.data1 = false
-        this.data2 = false
-        this.data3 = false
-        this.data4 = false
+      cloose: function (e) { // 关闭所有弹出框
+        console.log('e.target:', e.target.innerHTML)
+        if (e.target.innerHTML === 'x') {
+          this.data1 = false
+          this.data2 = false
+          this.data3 = false
+          this.data4 = false
+        } else { // 这里teamId还没获得
+          location.href = 'boon?activityId=' + this.activityId + '&storeId=' + this.storeId + '&shopId=' + this.shopId + '&teamId=' + this.teamId + '&appId=' + sessionStorage.getItem('appId')
+        }
       },
       openwin1: function (e) { // 引导  参团 我的团 按钮点击事件
         if (e.target.innerText === '引导') {
@@ -432,12 +441,13 @@
           activityId: sessionStorage.getItem('activityId'),
           buyerId: sessionStorage.getItem('buyerId')
         }
-        axios.post('./openGroup', openGroup)
+        api.api.post('./openGroup', openGroup)
           .then(function (response) {
             if (response.data.state) {
 //              location.href = 'success'
               _this.data1 = true
               _this.data4 = true
+              _this.teamId = response.data.data
             } else {
               _this.data1 = true
               MessageBox.alert(response.data.msg, '').then(action => {
@@ -471,7 +481,7 @@
             shopId: self.shopId,
             storeId: self.storeId
           }
-          axios.post('./getclass', getclass)
+          api.api.post('./getclass', getclass)
             .then(function (response) {
               if (response.data.state) {
                 // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
@@ -509,7 +519,7 @@
             storeId: self.storeId
           }
           if (!self.last) {
-            axios.post('./getclass', getclass)
+            api.api.post('./getclass', getclass)
               .then(function (response) {
                 if (response.data.state) {
                   //需要每次都重新更新last的状态

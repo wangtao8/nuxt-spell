@@ -221,13 +221,19 @@ li {
 }
 .el_window>.el_cloose, .el_window2>.el_cloose {
   position: absolute;
-  right: 24px;
-  top: 6px;
-  font-size: 28px;
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  line-height: 30px;
+  width: 200px;
+  height: 200px;
+  background: #e5e5e5;
+  display: inline-block;
+  border-radius: 100px;
+  right: -100px;
+  top: -100px;
+  text-align: left;
+  line-height: 270px;
+  box-sizing: border-box;
+  padding-left: 50px;
+  font-size: 50px;
+  color: #908888;
 }
 .el_top_font {
   font-size: 34px;
