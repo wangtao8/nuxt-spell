@@ -127,7 +127,7 @@
           shopId: self.shopId,
           storeId: self.storeId
         }
-        api.api.post('./getclass', getclass)
+        api.api.post('./spell/getclass', getclass)
           .then(function (response) {
             self.goodss = response.data.data.content
             self.last = response.data.data.last
@@ -136,7 +136,8 @@
         this.currentpageNum = 1
       },
       goDetail: function (obj) {
-        location.href = 'https://emcs.quanyou.com.cn/emallwap/spellGoodsdetail/' + this.storeId + '/' +obj
+        let baseUrl = api.baseURL
+        location.href = baseUrl + '/emallwap/spellGoodsdetail/' + this.storeId + '/' +obj
       },
       goct: function () { // 去参团
         // 获取活动id 储存用于查询活动详情
@@ -150,7 +151,7 @@
           photo: JSON.parse(sessionStorage.getItem('local-session-info')).photo
         }
         // 发送参团请求
-        api.api.post('./goGroup', goGroup)
+        api.api.post('./spell/goGroup', goGroup)
           .then(function (response) {
 //            console.log('eeeeeeee:', response.data)
             if (response.data.state === 1) {
@@ -170,7 +171,8 @@
       openwin1: function (e) { // 引导  参团 我的团 按钮点击事件
         if (e.target.innerText === '拼团购') {
 //          location.href = 'participate?buyerId=' + sessionStorage.getItem('buyerId') + '&activityId=' + sessionStorage.getItem('activityId') + '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
-          location.href = 'https://emcs.quanyou.com.cn/spell/?shopId='+ sessionStorage.getItem('shopId') +'&activityId='+ this.activityId +'&storeId='+ sessionStorage.getItem('storeId') +'&appId=' + sessionStorage.getItem('appId')
+          let baseUrl = api.baseURL
+          location.href = baseUrl +'/spell/?shopId='+ sessionStorage.getItem('shopId') +'&activityId='+ this.activityId +'&storeId='+ sessionStorage.getItem('storeId') +'&appId=' + sessionStorage.getItem('appId')
         } else {
           location.href = 'myGroups?buyerId=' + sessionStorage.getItem('buyerId')+ '&storeId=' + sessionStorage.getItem('storeId') +'&shopId=' + sessionStorage.getItem('shopId')
         }
@@ -189,7 +191,7 @@
             shopId: self.shopId,
             storeId: self.storeId
           }
-          api.api.post('./getclass', getclass)
+          api.api.post('./spell/getclass', getclass)
             .then(function (response) {
               if (response.data.state) {
                 // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
@@ -222,7 +224,7 @@
             storeId: self.storeId
           }
           if (!self.last) {
-            api.api.post('./getclass', getclass)
+            api.api.post('./spell/getclass', getclass)
               .then(function (response) {
                 if (response.data.state) {
                   //需要每次都重新更新last的状态
@@ -386,7 +388,7 @@
          teamId : self.teamId
       }
       console.log('前台获取团长信息的参数:', getGroupInfo)
-      api.api.post('./getGroupInfo', getGroupInfo)
+      api.api.post('./spell/getGroupInfo', getGroupInfo)
         .then(function (response) {
           console.log('前台接收到的数据：', response.data.data)
           sessionStorage.setItem('headNickName', response.data.data.nickName)
@@ -406,7 +408,7 @@
     },
     async asyncData (context) {
       let baseUrl = api.baseURL
-      let url = baseUrl + context.req.url
+      let url = baseUrl + '/spell' +context.req.url
       console.log('打印页面接到的信息:', context.req.url)
       // 获得头部
       let gethead = {
@@ -430,9 +432,9 @@
       }
       // 记得return 不然不会返回结果
       return axios.all([
-        api.api.post('./gethead?appId='+context.query.appId+'&url='+ encodeURIComponent(url), gethead),
-        api.api.post('./gettitle', gettitle),
-        api.api.post('./getclass', getclass)
+        api.api.post('./spell/gethead?appId='+context.query.appId+'&url='+ encodeURIComponent(url), gethead),
+        api.api.post('./spell/gettitle', gettitle),
+        api.api.post('./spell/getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
           if (gethead.data.state) {

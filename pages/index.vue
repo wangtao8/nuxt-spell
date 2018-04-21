@@ -153,8 +153,8 @@
       // 获得头部
 //      console.log('打印的东西xxxxxxxxxxxxxx:', context.req.url)
       let baseUrl = api.baseURL
-      let url = baseUrl + context.req.url
-//      console.log('url:', encodeURIComponent(url))
+      let url = baseUrl + '/spell' +context.req.url
+      console.log('url:', url)
       let gethead = {
         activityId: context.query.activityId,
         shopId: context.query.shopId,
@@ -176,9 +176,9 @@
       }
       // 记得return 不然不会返回结果
       return axios.all([
-        api.api.post('./gethead?appId='+context.query.appId+'&url='+ encodeURIComponent(url), gethead),
-        api.api.post('./gettitle', gettitle),
-        api.api.post('./getclass', getclass)
+        api.api.post('./spell/gethead?appId='+context.query.appId+'&url='+ encodeURIComponent(url), gethead),
+        api.api.post('./spell/gettitle', gettitle),
+        api.api.post('./spell/getclass', getclass)
       ])
         .then(axios.spread(function (gethead, gettitle, getclass) {
 //          console.log('gethead:', gethead.data.dataEx)
@@ -374,7 +374,7 @@
           shopId : sessionStorage.getItem('shopId'),
           openId : sessionStorage.getItem('openId')
         }
-        api.api.post('./getUserInfo', getUserInfo)
+        api.api.post('./spell/getUserInfo', getUserInfo)
           .then(function (response) {
             sessionStorage.setItem('nickName', response.data.nick)
             sessionStorage.setItem('photo', response.data.photo )
@@ -398,7 +398,7 @@
           shopId: self.shopId,
           storeId: self.storeId
         }
-        api.api.post('./getclass', getclass)
+        api.api.post('./spell/getclass', getclass)
           .then(function (response) {
             self.goodss = response.data.data.content
             self.last = response.data.data.last
@@ -422,6 +422,7 @@
         }
       },
       openwin1: function (e) { // 引导  参团 我的团 按钮点击事件
+        let baseUrl = api.baseURL
         if (e.target.innerText === '引导') {
           this.data1 = true
           this.data2 = true
@@ -441,7 +442,7 @@
           activityId: sessionStorage.getItem('activityId'),
           buyerId: sessionStorage.getItem('buyerId')
         }
-        api.api.post('./openGroup', openGroup)
+        api.api.post('./spell/openGroup', openGroup)
           .then(function (response) {
             if (response.data.state) {
 //              location.href = 'success'
@@ -481,7 +482,7 @@
             shopId: self.shopId,
             storeId: self.storeId
           }
-          api.api.post('./getclass', getclass)
+          api.api.post('./spell/getclass', getclass)
             .then(function (response) {
               if (response.data.state) {
                 // 更新一下所有数据，因为这里刷新了一下，而前面的alldata是进来就请求的数据，需要更新
@@ -519,7 +520,7 @@
             storeId: self.storeId
           }
           if (!self.last) {
-            api.api.post('./getclass', getclass)
+            api.api.post('./spell/getclass', getclass)
               .then(function (response) {
                 if (response.data.state) {
                   //需要每次都重新更新last的状态
