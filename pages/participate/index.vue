@@ -44,6 +44,7 @@
   import axios from 'axios'
   import Load from '../../components/load'
   import filter from '../../assets/js/filter'
+  import api from '../../assets/api/request'
   export default {
     data () {
       return {
@@ -75,7 +76,7 @@
       }
       return axios({
         method: 'POST',
-        url: 'http://172.30.3.40:3222/spell/getHasBeenGroup',
+        url: api.baseURL + './spell/getHasBeenGroup',
         data: params
       })
         .then(function (response) {
@@ -109,7 +110,7 @@
           photo: sessionStorage.getItem('photo')
         }
         // 发送参团请求
-        axios.post('./goGroup', goGroup)
+        api.api.post('./spell/goGroup', goGroup)
           .then(function (response) {
 //            console.log('eeeeeeee:', response.data)
           })
