@@ -1,18 +1,18 @@
 <template>
 	<div class="everyGroup groupsFour">
-            <section class="itemGroup" v-for="(item,$index) in fightData.content" >
+            <section class="itemGroup" v-for="(item,$index) in fightData.content" @click="botton(item.orderNo)">
                 <div class="orderNum clean">
                     <i class="_left numberTxt">订单号：{{item.orderNo}}</i>
                     <span class="g-red _right">大家一起来团购</span>
                 </div>
                 <div class="groupMsg clean">
                     <div class="leftImg _left">
-                        <img :src="item.smPic " alt="商品"/>
+                        <img :src="item.smPic " alt="活动小图"/>
                     </div>
                     <div class="rightText _left">
                         <p class="groupTitle">{{item.title}}</p>
                         <p class="groupPrice">
-                            <i class="g-red">￥{{item.amount/100}}</i>
+                            <i class="g-red">拼团商品实付：￥{{item.amount/100}}</i>
                         </p>
                     </div>
                 </div>
@@ -30,7 +30,8 @@
       return {
         shopId:'',
         storeId:'',
-        activityId:''
+        activityId:'',
+        orderNo:''
       }
     },
     mounted (){
@@ -40,18 +41,10 @@
       // console.log("获取首页信息",this.shopId,this.storeId,this.activityId);
     },
     methods:{
-  //      botton:function () {
-  //     let test=this.fightData.content
-  //     for(var i=0;i<=test.length-1;i++){
-  //     let aa={}
-  //     aa=test[i].teamId
-  //     this.teamId=aa
-  //
-  // }
-  //
-  // console.log("teameid的值：", this.teamId)
-  // location.href="https://emcs.quanyou.com.cn/spell/boon?teamId="+this.teamId+"&shopId="+this.shopId+"&activityId="+this.activityId+"&storeId="+this.storeId
-  // }
+       botton:function (e) {
+       this.orderNo=e;
+         location.href="https://emcs.quanyou.com.cn/emallwap/order/orderDetail/"+this.storeId+"/"+this.orderNo
+  }
     }
 
 
