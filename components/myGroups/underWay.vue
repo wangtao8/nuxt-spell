@@ -5,7 +5,7 @@
       <section class="itemGroup">
         <div class="groupMsg clean">
           <div class="leftImg _left">
-            <img :src="item.smPic " alt="商品"/>
+            <img :src="item.smPic " alt="活动小图"/>
           </div>
           <div class="rightText _left">
             <p class="groupTitle">{{item.title}}</p>
