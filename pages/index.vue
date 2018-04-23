@@ -47,7 +47,7 @@
         <div slot="bottom" class="mint-loadmore-bottom">
           <span v-show="bottomStatus === 'pull'">上拉加载更多</span>
           <span v-show="bottomStatus === 'drop'">加载完成</span>
-          <span v-show="bottomStatus === 'loading'">加载中...</span>
+          <span v-show="bottomStatus === 'loading'">加载中....</span>
         </div>
       </mt-loadmore>
     </div>
